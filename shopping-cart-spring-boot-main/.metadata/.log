@@ -1,0 +1,811 @@
+!SESSION 2026-02-07 21:04:04.124 -----------------------------------------------
+eclipse.buildId=4.39.0.20260129-0236
+java.version=23.0.2
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=macosx, ARCH=aarch64, WS=cocoa, NL=en_TH
+Framework arguments:  -product org.eclipse.epp.package.java.product -keyring /Users/kriangkrai/.eclipse_keyring
+Command-line arguments:  -os macosx -ws cocoa -arch aarch64 -product org.eclipse.epp.package.java.product -keyring /Users/kriangkrai/.eclipse_keyring
+
+This is a continuation of log file /Users/kriangkrai/Downloads/shopping-cart-spring-boot-main/.metadata/.bak_0.log
+Created Time: 2026-02-07 21:31:56.725
+
+!ENTRY org.eclipse.equinox.p2.artifact.repository 2 0 2026-02-07 21:31:56.726
+!MESSAGE No digest algorithm is available to verify download of osgi.bundle,com.microsoft.copilot.eclipse.core.agent.macosx.aarch64,0.15.0.202601270459 from repository https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/.
+
+!ENTRY org.eclipse.equinox.p2.artifact.repository 2 0 2026-02-07 21:31:56.726
+!MESSAGE No digest algorithm is available to verify download of osgi.bundle,com.microsoft.copilot.eclipse.ui,0.15.0.202601270459 from repository https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/.
+
+!ENTRY org.eclipse.equinox.p2.artifact.repository 2 0 2026-02-07 21:31:56.726
+!MESSAGE No digest algorithm is available to verify download of osgi.bundle,com.microsoft.copilot.eclipse.terminal.api,0.15.0.202601270459 from repository https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/.
+
+!ENTRY org.eclipse.equinox.p2.artifact.repository 2 0 2026-02-07 21:31:56.727
+!MESSAGE No digest algorithm is available to verify download of osgi.bundle,com.microsoft.copilot.eclipse.ui.jobs,0.15.0.202601270459 from repository https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/.
+
+!ENTRY org.eclipse.equinox.p2.artifact.repository 2 0 2026-02-07 21:31:56.728
+!MESSAGE No digest algorithm is available to verify download of osgi.bundle,com.microsoft.copilot.eclipse.core,0.15.0.202601270459 from repository https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/.
+
+!ENTRY org.eclipse.equinox.p2.artifact.repository 2 0 2026-02-07 21:31:56.729
+!MESSAGE No digest algorithm is available to verify download of osgi.bundle,com.microsoft.copilot.eclipse.branding,0.15.0.202601270459 from repository https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/.
+
+!ENTRY org.eclipse.equinox.p2.artifact.repository 2 0 2026-02-07 21:31:56.729
+!MESSAGE No digest algorithm is available to verify download of org.eclipse.update.feature,com.microsoft.copilot.eclipse.feature,0.15.0.202601270459 from repository https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/.
+
+!ENTRY org.eclipse.equinox.p2.engine 4 4 2026-02-07 21:34:36.549
+!MESSAGE An error occurred while collecting items to be installed
+!SUBENTRY 1 org.eclipse.equinox.p2.engine 4 0 2026-02-07 21:34:36.549
+!MESSAGE session context was:(profile=_Users_kriangkrai_java-latest_Eclipse.app_Contents_Eclipse, phase=org.eclipse.equinox.internal.p2.engine.phases.Collect, operand=, action=).
+!SUBENTRY 1 org.eclipse.equinox.p2.transport.ecf 4 1002 2026-02-07 21:34:36.549
+!MESSAGE Unable to read repository at https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/plugins/com.microsoft.copilot.eclipse.branding_0.15.0.202601270459.jar.
+!STACK 0
+java.net.SocketTimeoutException: Read timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:278)
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:304)
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1116)
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1103)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:489)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:483)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70)
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1462)
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1068)
+	at org.apache.hc.core5.http.impl.io.SessionInputBufferImpl.fillBuffer(SessionInputBufferImpl.java:149)
+	at org.apache.hc.core5.http.impl.io.SessionInputBufferImpl.readLine(SessionInputBufferImpl.java:280)
+	at org.apache.hc.core5.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:250)
+	at org.apache.hc.core5.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:56)
+	at org.apache.hc.core5.http.impl.io.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:331)
+	at org.apache.hc.core5.http.impl.io.HttpRequestExecutor.execute(HttpRequestExecutor.java:197)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.lambda$execute$0(InternalExecRuntime.java:236)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$InternalConnectionEndpoint.execute(PoolingHttpClientConnectionManager.java:851)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.execute(InternalExecRuntime.java:233)
+	at org.apache.hc.client5.http.impl.classic.MainClientExec.execute(MainClientExec.java:120)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:195)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:138)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:112)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:106)
+	at org.eclipse.ecf.provider.filetransfer.httpclient5.HttpClientRetrieveFileTransfer.performConnect(HttpClientRetrieveFileTransfer.java:1009)
+	at org.eclipse.ecf.provider.filetransfer.httpclient5.HttpClientRetrieveFileTransfer$1.performFileTransfer(HttpClientRetrieveFileTransfer.java:997)
+	at org.eclipse.ecf.filetransfer.FileTransferJob.run(FileTransferJob.java:76)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.equinox.p2.engine 4 0 2026-02-07 21:34:36.549
+!MESSAGE Can't download artifact osgi.bundle,com.microsoft.copilot.eclipse.branding,0.15.0.202601270459 required by com.microsoft.copilot.eclipse.branding[0.15.0.202601270459], org.sonarlint.eclipse.ui[11.26.0.84482], com.genuitec.eclipse.tm4e.languageconfiguration[2025.4.1.202510061827], javax.websocket[1.0.0.v20140310-1603], org.springframework.ide.eclipse.buildship30[4.32.2.202511091838], com.genuitec.eclipse.codetogether.ui[2025.4.1.202510061827], org.springframework.ide.eclipse.boot.restart[4.32.2.202511091838], org.sonarsource.sonarlint.core.sonarlint-java-client-osgi[10.43.0.84255], org.springframework.tooling.gradle[4.32.1.202510250117], com.genuitec.eclipse.codetogether.webicons[2025.4.1.202510061827], net.sf.eclipsecs.core[12.0.1.202511121620], org.springsource.ide.eclipse.commons.frameworks.core[4.32.1.202510250117], org.springsource.ide.eclipse.commons.core[4.32.1.202510250117], org.sonarlint.eclipse.jdt[11.26.0.84482], org.springframework.tooling.boot.ls[1.64.1.202510250117], net.sf.eclipsecs.checkstyle[12.0.1.202511131535], org.springframework.ide.eclipse.boot.wizard[4.32.2.202511091838], net.sf.eclipsecs.branding[12.0.1.202511121620], org.springsource.ide.eclipse.commons.frameworks.ui[4.32.1.202510250117], com.genuitec.eclipse.codetogether.ui.client.tests[2025.4.1.202510061827], com.genuitec.eclipse.codetogether.core[2025.4.1.202510061827], com.microsoft.copilot.eclipse.feature.feature.group[0.15.0.202601270459], com.genuitec.eclipse.codetogether.api[2025.4.1.202510061827], org.sonarlint.eclipse.cdt[11.26.0.84482], org.springframework.ide.eclipse.beans.ui.live[4.32.2.202511091838], net.sourceforge.pmd.eclipse.plugin[7.21.0.v20260130-1017-r], org.springframework.tooling.ls.eclipse.commons[4.32.1.202510250117], org.springframework.tooling.concourse.ls[1.57.0.202510250117], org.springframework.ide.eclipse.boot.refactoring[4.32.2.202511091838], org.springframework.tooling.jdt.ls.commons[4.32.1.202510250117], org.springsource.ide.eclipse.commons.livexp[4.32.1.202510250117], org.springsource.ide.eclipse.commons.ui[4.32.1.202510250117], net.sf.eclipsecs.doc[12.0.1.202511121620], org.sonarlint.eclipse.core[11.26.0.84482], org.springframework.ide.eclipse.boot[4.32.2.202511091838], com.microsoft.copilot.eclipse.core[0.15.0.202601270459], com.genuitec.eclipse.codetogether.ui.client[2025.4.1.202510061827], org.sonarlint.eclipse.sloop.macosx.aarch64[11.26.0.84482], org.springframework.tooling.cloudfoundry.manifest.ls[1.57.0.202510250117], com.genuitec.eclipse.genericeditor[2025.4.1.202510061827], org.springframework.ide.eclipse.maven.pom[4.32.2.202511091838], org.springframework.ide.eclipse.boot.dash.docker[4.32.2.202511091838], org.springsource.ide.eclipse.commons.boot.ls[4.32.1.202510250117], com.microsoft.copilot.eclipse.terminal.api[0.15.0.202601270459], org.springsource.ide.eclipse.commons.jdk_tools[4.32.1.202510250117], com.codetogether.hq.eclipse[2025.4.1.202510061827], com.microsoft.copilot.eclipse.branding[0.15.0.202601270459], org.springframework.ide.eclipse.imports[4.32.2.202511091838], net.sf.eclipsecs.ui[12.0.1.202511121620], org.sonarlint.eclipse.m2e[11.26.0.84482], org.springframework.ide.eclipse.boot.dash[4.32.2.202511091838], com.microsoft.copilot.eclipse.ui.jobs[0.15.0.202601270459], org.springframework.ide.eclipse.editor.support[4.32.1.202510250117], com.genuitec.eclipse.lsp4e[2025.4.1.202510061827], com.genuitec.eclipse.codetogether.patches[2025.4.1.202510061827], org.springframework.tooling.ls.eclipse.gotosymbol[4.32.1.202510250117], org.springframework.ide.eclipse.docker.client[4.32.2.202511091838], org.springframework.ide.eclipse.boot.launch[4.32.2.202511091838], org.springframework.ide.eclipse.xml.namespaces[4.32.2.202511091838], com.genuitec.eclipse.codetogether.epl[2025.4.1.202510061827], com.codetogether.hq[2025.4.1.v20251006-1827], org.sonarlint.eclipse.buildship[11.26.0.84482], org.springframework.ide.eclipse.boot.validation[4.32.2.202511091838], com.microsoft.copilot.eclipse.ui[0.15.0.202601270459], com.microsoft.copilot.eclipse.core.agent.macosx.aarch64[0.15.0.202601270459] from any of the following repositories: 
+file:/Users/kriangkrai/.p2/pool/.eclipseextension
+file:/Users/kriangkrai/.p2/pool/
+file:/Users/kriangkrai/.eclipse/org.eclipse.platform_4.32.0_1231987628_macosx_cocoa_aarch64/
+file:/Users/kriangkrai/.p2/org.eclipse.equinox.p2.core/cache/
+file:/Applications/Eclipse.app/Contents/Eclipse/configuration/org.eclipse.osgi/2674/data/listener_1925729951/
+https://download.eclipse.org/jdt/updates/4.37-P-builds
+https://download.eclipse.org/eclipse/updates/4.36
+https://download.eclipse.org/eclipse/updates/4.39
+http://download.eclipse.org/usssdk/updates/release/latest
+https://checkstyle.org/eclipse-cs-update-site
+https://download.eclipse.org/egit/updates-7.3
+https://download.eclipse.org/technology/epp/packages/2025-12/202511271000
+https://download.eclipse.org/lsp4e/releases/0.27.4
+https://pmd.github.io/pmd-eclipse-plugin-p2-site/
+https://download.eclipse.org/releases/2026-03
+https://download.eclipse.org/releases/2025-12
+https://download.eclipse.org/technology/epp/packages/2025-12/
+https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/
+https://download.eclipse.org/releases/milestone
+https://download.eclipse.org/technology/m2e/releases/latest
+https://download.eclipse.org/tm4e/releases/0.15.0
+https://download.eclipse.org/modeling/emf/emf/builds/release/2.42.0
+https://download.eclipse.org/technology/epp/packages/2026-03/202601291000
+https://download.eclipse.org/modeling/emf/emf/builds/release/2.43.0
+https://devstyle.codetogether.io
+https://download.eclipse.org/wildwebdeveloper/releases/1.3.10
+https://download.eclipse.org/webtools/downloads/drops/R3.37.0/R-3.37.0-20250303081219/repository
+https://download.eclipse.org/technology/epp/packages/2025-09/202507311000
+https://download.eclipse.org/releases/2026-03/202601301000
+https://cdn.spring.io/spring-tools/release/TOOLS/sts4/update/e4.37/
+https://cdn.spring.io/spring-tools/release/TOOLS/sts4/update/e4.36/
+https://download.eclipse.org/egit/updates-7.4
+https://download.eclipse.org/lsp4e/releases/0.27.9
+https://download.eclipse.org/releases/2025-09
+https://download.eclipse.org/lsp4e/releases/0.27.6
+https://eclipse-uc.sonarlint.org
+https://download.eclipse.org/technology/epp/packages/2025-09/202508281000
+https://download.eclipse.org/lsp4j/updates/releases/0.24.0
+https://download.eclipse.org/eclipse/updates/4.35
+https://www.codetogether.com/updates/ci/
+https://download.eclipse.org/technology/epp/packages/2025-09/202507101000
+https://download.eclipse.org/tm4e/releases/0.14.1
+https://download.eclipse.org/webtools/downloads/drops/R3.38.0/S-3.38RC1-20250601070120/repository
+https://download.eclipse.org/technology/epp/packages/2026-03/
+https://download.eclipse.org/technology/epp/packages/latest/
+https://download.eclipse.org/technology/epp/packages/2025-12/202510091000
+https://download.eclipse.org/releases/latest
+https://download.eclipse.org/technology/epp/packages/2025-09/
+https://download.eclipse.org/oomph/updates/milestone/latest
+https://download.eclipse.org/webtools/downloads/drops/R3.39.0/R-3.39.0-20250902093744/repository
+!SUBENTRY 1 org.eclipse.equinox.p2.transport.ecf 4 1002 2026-02-07 21:34:36.549
+!MESSAGE Unable to read repository at https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/plugins/com.microsoft.copilot.eclipse.core.agent.macosx.aarch64_0.15.0.202601270459.jar.
+!STACK 0
+java.net.SocketTimeoutException: Read timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:278)
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:304)
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1116)
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1103)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:489)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:483)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70)
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1462)
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1068)
+	at org.apache.hc.core5.http.impl.io.SessionInputBufferImpl.fillBuffer(SessionInputBufferImpl.java:149)
+	at org.apache.hc.core5.http.impl.io.SessionInputBufferImpl.readLine(SessionInputBufferImpl.java:280)
+	at org.apache.hc.core5.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:250)
+	at org.apache.hc.core5.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:56)
+	at org.apache.hc.core5.http.impl.io.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:331)
+	at org.apache.hc.core5.http.impl.io.HttpRequestExecutor.execute(HttpRequestExecutor.java:197)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.lambda$execute$0(InternalExecRuntime.java:236)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$InternalConnectionEndpoint.execute(PoolingHttpClientConnectionManager.java:851)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.execute(InternalExecRuntime.java:233)
+	at org.apache.hc.client5.http.impl.classic.MainClientExec.execute(MainClientExec.java:120)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:195)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:138)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:112)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:106)
+	at org.eclipse.ecf.provider.filetransfer.httpclient5.HttpClientRetrieveFileTransfer.performConnect(HttpClientRetrieveFileTransfer.java:1009)
+	at org.eclipse.ecf.provider.filetransfer.httpclient5.HttpClientRetrieveFileTransfer$1.performFileTransfer(HttpClientRetrieveFileTransfer.java:997)
+	at org.eclipse.ecf.filetransfer.FileTransferJob.run(FileTransferJob.java:76)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.equinox.p2.engine 4 0 2026-02-07 21:34:36.549
+!MESSAGE Can't download artifact osgi.bundle,com.microsoft.copilot.eclipse.core.agent.macosx.aarch64,0.15.0.202601270459 required by com.microsoft.copilot.eclipse.core.agent.macosx.aarch64[0.15.0.202601270459], org.sonarlint.eclipse.ui[11.26.0.84482], com.genuitec.eclipse.tm4e.languageconfiguration[2025.4.1.202510061827], javax.websocket[1.0.0.v20140310-1603], org.springframework.ide.eclipse.buildship30[4.32.2.202511091838], com.genuitec.eclipse.codetogether.ui[2025.4.1.202510061827], org.springframework.ide.eclipse.boot.restart[4.32.2.202511091838], org.sonarsource.sonarlint.core.sonarlint-java-client-osgi[10.43.0.84255], org.springframework.tooling.gradle[4.32.1.202510250117], com.genuitec.eclipse.codetogether.webicons[2025.4.1.202510061827], net.sf.eclipsecs.core[12.0.1.202511121620], org.springsource.ide.eclipse.commons.frameworks.core[4.32.1.202510250117], org.springsource.ide.eclipse.commons.core[4.32.1.202510250117], org.sonarlint.eclipse.jdt[11.26.0.84482], org.springframework.tooling.boot.ls[1.64.1.202510250117], net.sf.eclipsecs.checkstyle[12.0.1.202511131535], org.springframework.ide.eclipse.boot.wizard[4.32.2.202511091838], net.sf.eclipsecs.branding[12.0.1.202511121620], org.springsource.ide.eclipse.commons.frameworks.ui[4.32.1.202510250117], com.genuitec.eclipse.codetogether.ui.client.tests[2025.4.1.202510061827], com.genuitec.eclipse.codetogether.core[2025.4.1.202510061827], com.microsoft.copilot.eclipse.feature.feature.group[0.15.0.202601270459], com.genuitec.eclipse.codetogether.api[2025.4.1.202510061827], org.sonarlint.eclipse.cdt[11.26.0.84482], org.springframework.ide.eclipse.beans.ui.live[4.32.2.202511091838], net.sourceforge.pmd.eclipse.plugin[7.21.0.v20260130-1017-r], org.springframework.tooling.ls.eclipse.commons[4.32.1.202510250117], org.springframework.tooling.concourse.ls[1.57.0.202510250117], org.springframework.ide.eclipse.boot.refactoring[4.32.2.202511091838], org.springframework.tooling.jdt.ls.commons[4.32.1.202510250117], org.springsource.ide.eclipse.commons.livexp[4.32.1.202510250117], org.springsource.ide.eclipse.commons.ui[4.32.1.202510250117], net.sf.eclipsecs.doc[12.0.1.202511121620], org.sonarlint.eclipse.core[11.26.0.84482], org.springframework.ide.eclipse.boot[4.32.2.202511091838], com.microsoft.copilot.eclipse.core[0.15.0.202601270459], com.genuitec.eclipse.codetogether.ui.client[2025.4.1.202510061827], org.sonarlint.eclipse.sloop.macosx.aarch64[11.26.0.84482], org.springframework.tooling.cloudfoundry.manifest.ls[1.57.0.202510250117], com.genuitec.eclipse.genericeditor[2025.4.1.202510061827], org.springframework.ide.eclipse.maven.pom[4.32.2.202511091838], org.springframework.ide.eclipse.boot.dash.docker[4.32.2.202511091838], org.springsource.ide.eclipse.commons.boot.ls[4.32.1.202510250117], com.microsoft.copilot.eclipse.terminal.api[0.15.0.202601270459], org.springsource.ide.eclipse.commons.jdk_tools[4.32.1.202510250117], com.codetogether.hq.eclipse[2025.4.1.202510061827], com.microsoft.copilot.eclipse.branding[0.15.0.202601270459], org.springframework.ide.eclipse.imports[4.32.2.202511091838], net.sf.eclipsecs.ui[12.0.1.202511121620], org.sonarlint.eclipse.m2e[11.26.0.84482], org.springframework.ide.eclipse.boot.dash[4.32.2.202511091838], com.microsoft.copilot.eclipse.ui.jobs[0.15.0.202601270459], org.springframework.ide.eclipse.editor.support[4.32.1.202510250117], com.genuitec.eclipse.lsp4e[2025.4.1.202510061827], com.genuitec.eclipse.codetogether.patches[2025.4.1.202510061827], org.springframework.tooling.ls.eclipse.gotosymbol[4.32.1.202510250117], org.springframework.ide.eclipse.docker.client[4.32.2.202511091838], org.springframework.ide.eclipse.boot.launch[4.32.2.202511091838], org.springframework.ide.eclipse.xml.namespaces[4.32.2.202511091838], com.genuitec.eclipse.codetogether.epl[2025.4.1.202510061827], com.codetogether.hq[2025.4.1.v20251006-1827], org.sonarlint.eclipse.buildship[11.26.0.84482], org.springframework.ide.eclipse.boot.validation[4.32.2.202511091838], com.microsoft.copilot.eclipse.ui[0.15.0.202601270459], com.microsoft.copilot.eclipse.core.agent.macosx.aarch64[0.15.0.202601270459] from any of the following repositories: 
+file:/Users/kriangkrai/.p2/pool/.eclipseextension
+file:/Users/kriangkrai/.p2/pool/
+file:/Users/kriangkrai/.eclipse/org.eclipse.platform_4.32.0_1231987628_macosx_cocoa_aarch64/
+file:/Users/kriangkrai/.p2/org.eclipse.equinox.p2.core/cache/
+file:/Applications/Eclipse.app/Contents/Eclipse/configuration/org.eclipse.osgi/2674/data/listener_1925729951/
+https://download.eclipse.org/jdt/updates/4.37-P-builds
+https://download.eclipse.org/eclipse/updates/4.36
+https://download.eclipse.org/eclipse/updates/4.39
+http://download.eclipse.org/usssdk/updates/release/latest
+https://checkstyle.org/eclipse-cs-update-site
+https://download.eclipse.org/egit/updates-7.3
+https://download.eclipse.org/technology/epp/packages/2025-12/202511271000
+https://download.eclipse.org/lsp4e/releases/0.27.4
+https://pmd.github.io/pmd-eclipse-plugin-p2-site/
+https://download.eclipse.org/releases/2026-03
+https://download.eclipse.org/releases/2025-12
+https://download.eclipse.org/technology/epp/packages/2025-12/
+https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/
+https://download.eclipse.org/releases/milestone
+https://download.eclipse.org/technology/m2e/releases/latest
+https://download.eclipse.org/tm4e/releases/0.15.0
+https://download.eclipse.org/modeling/emf/emf/builds/release/2.42.0
+https://download.eclipse.org/technology/epp/packages/2026-03/202601291000
+https://download.eclipse.org/modeling/emf/emf/builds/release/2.43.0
+https://devstyle.codetogether.io
+https://download.eclipse.org/wildwebdeveloper/releases/1.3.10
+https://download.eclipse.org/webtools/downloads/drops/R3.37.0/R-3.37.0-20250303081219/repository
+https://download.eclipse.org/technology/epp/packages/2025-09/202507311000
+https://download.eclipse.org/releases/2026-03/202601301000
+https://cdn.spring.io/spring-tools/release/TOOLS/sts4/update/e4.37/
+https://cdn.spring.io/spring-tools/release/TOOLS/sts4/update/e4.36/
+https://download.eclipse.org/egit/updates-7.4
+https://download.eclipse.org/lsp4e/releases/0.27.9
+https://download.eclipse.org/releases/2025-09
+https://download.eclipse.org/lsp4e/releases/0.27.6
+https://eclipse-uc.sonarlint.org
+https://download.eclipse.org/technology/epp/packages/2025-09/202508281000
+https://download.eclipse.org/lsp4j/updates/releases/0.24.0
+https://download.eclipse.org/eclipse/updates/4.35
+https://www.codetogether.com/updates/ci/
+https://download.eclipse.org/technology/epp/packages/2025-09/202507101000
+https://download.eclipse.org/tm4e/releases/0.14.1
+https://download.eclipse.org/webtools/downloads/drops/R3.38.0/S-3.38RC1-20250601070120/repository
+https://download.eclipse.org/technology/epp/packages/2026-03/
+https://download.eclipse.org/technology/epp/packages/latest/
+https://download.eclipse.org/technology/epp/packages/2025-12/202510091000
+https://download.eclipse.org/releases/latest
+https://download.eclipse.org/technology/epp/packages/2025-09/
+https://download.eclipse.org/oomph/updates/milestone/latest
+https://download.eclipse.org/webtools/downloads/drops/R3.39.0/R-3.39.0-20250902093744/repository
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:44:27.012
+!MESSAGE No repository found at https://download.eclipse.org/releases/2025-09/202507111000.
+
+!ENTRY org.eclipse.equinox.p2.core 4 0 2026-02-07 21:44:36.670
+!MESSAGE Provisioning exception
+!STACK 1
+org.eclipse.equinox.p2.core.ProvisionException: No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.fail(AbstractRepositoryManager.java:437)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.fail(CachingRepositoryManager.java:387)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:278)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.addChild(CompositeMetadataRepository.java:165)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.<init>(CompositeMetadataRepository.java:93)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepositoryFactory.load(CompositeMetadataRepositoryFactory.java:131)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:65)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:853)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:447)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:230)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.internal.p2.updatechecker.UpdateChecker.getAvailableRepositories(UpdateChecker.java:168)
+	at org.eclipse.equinox.internal.p2.updatechecker.UpdateChecker.checkForUpdates(UpdateChecker.java:146)
+	at org.eclipse.equinox.internal.p2.updatechecker.UpdateChecker$UpdateCheckThread.run(UpdateChecker.java:83)
+!SUBENTRY 1 org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:44:36.670
+!MESSAGE No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1002 2026-02-07 21:44:36.671
+!MESSAGE Unable to read repository at https://download.eclipse.org/buildship/updates/e410/releases/3.x.
+!STACK 1
+org.eclipse.equinox.p2.core.ProvisionException: No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.fail(AbstractRepositoryManager.java:437)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.fail(CachingRepositoryManager.java:387)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:278)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.addChild(CompositeMetadataRepository.java:165)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.<init>(CompositeMetadataRepository.java:93)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepositoryFactory.load(CompositeMetadataRepositoryFactory.java:131)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:65)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:853)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:447)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:230)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.internal.p2.updatechecker.UpdateChecker.getAvailableRepositories(UpdateChecker.java:168)
+	at org.eclipse.equinox.internal.p2.updatechecker.UpdateChecker.checkForUpdates(UpdateChecker.java:146)
+	at org.eclipse.equinox.internal.p2.updatechecker.UpdateChecker$UpdateCheckThread.run(UpdateChecker.java:83)
+!SUBENTRY 1 org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:44:36.671
+!MESSAGE No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:44:44.517
+!MESSAGE No repository found at https://download.eclipse.org/releases/2025-12/202511281000.
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:44:52.813
+!MESSAGE No repository found at https://download.eclipse.org/releases/2025-09/202508291000.
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:45:00.700
+!MESSAGE No repository found at https://download.eclipse.org/releases/2025-09/202508011000.
+
+!ENTRY org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:45:07.883
+!MESSAGE No repository found at https://download.eclipse.org/releases/2025-12/202510101000.
+
+!ENTRY org.eclipse.equinox.p2.core 4 0 2026-02-07 21:45:24.663
+!MESSAGE Provisioning exception
+!STACK 1
+org.eclipse.equinox.p2.core.ProvisionException: No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.fail(AbstractRepositoryManager.java:437)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.fail(CachingRepositoryManager.java:387)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:278)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.addChild(CompositeMetadataRepository.java:165)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.<init>(CompositeMetadataRepository.java:93)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepositoryFactory.load(CompositeMetadataRepositoryFactory.java:131)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:65)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:853)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:447)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:230)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.loadMetadataRepository(ProvisioningContext.java:238)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.getLoadedMetadataRepositories(ProvisioningContext.java:220)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.getMetadata(ProvisioningContext.java:302)
+	at org.eclipse.equinox.internal.p2.director.SimplePlanner.updatesFor(SimplePlanner.java:979)
+	at org.eclipse.equinox.p2.operations.UpdateOperation.updatesFor(UpdateOperation.java:146)
+	at org.eclipse.equinox.p2.operations.UpdateOperation.computeProfileChangeRequest(UpdateOperation.java:183)
+	at org.eclipse.equinox.p2.operations.UpdateOperation.lambda$0(UpdateOperation.java:320)
+	at org.eclipse.equinox.internal.p2.operations.SearchForUpdatesResolutionJob.runModal(SearchForUpdatesResolutionJob.java:41)
+	at org.eclipse.equinox.p2.operations.ProfileChangeOperation.resolveModal(ProfileChangeOperation.java:117)
+	at org.eclipse.equinox.internal.p2.ui.sdk.scheduler.AutomaticUpdater.updatesAvailable(AutomaticUpdater.java:121)
+	at org.eclipse.equinox.internal.p2.ui.sdk.scheduler.AutomaticUpdater.updatesAvailable(AutomaticUpdater.java:100)
+	at org.eclipse.equinox.internal.p2.ui.sdk.scheduler.AutomaticUpdateScheduler$2.updatesAvailable(AutomaticUpdateScheduler.java:156)
+	at org.eclipse.equinox.internal.p2.updatechecker.UpdateChecker$UpdateCheckThread.run(UpdateChecker.java:89)
+!SUBENTRY 1 org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:45:24.664
+!MESSAGE No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+
+!ENTRY org.eclipse.equinox.p2.core 4 0 2026-02-07 21:54:00.500
+!MESSAGE Provisioning exception
+!STACK 1
+org.eclipse.equinox.p2.core.ProvisionException: No repository found at https://download.eclipse.org/releases/2025-09/202507111000.
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.fail(AbstractRepositoryManager.java:437)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.fail(CachingRepositoryManager.java:387)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:278)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.p2.ui.LoadMetadataRepositoryJob.doLoad(LoadMetadataRepositoryJob.java:133)
+	at org.eclipse.equinox.p2.ui.LoadMetadataRepositoryJob.runModal(LoadMetadataRepositoryJob.java:115)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler$1.runModal(PreloadingRepositoryHandler.java:84)
+	at org.eclipse.equinox.p2.operations.ProvisioningJob.run(ProvisioningJob.java:190)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:54:00.501
+!MESSAGE No repository found at https://download.eclipse.org/releases/2025-09/202507111000.
+
+!ENTRY org.eclipse.equinox.p2.core 4 0 2026-02-07 21:54:08.925
+!MESSAGE Provisioning exception
+!STACK 1
+org.eclipse.equinox.p2.core.ProvisionException: No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.fail(AbstractRepositoryManager.java:437)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.fail(CachingRepositoryManager.java:387)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:278)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.addChild(CompositeMetadataRepository.java:165)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.<init>(CompositeMetadataRepository.java:93)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepositoryFactory.load(CompositeMetadataRepositoryFactory.java:131)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:65)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:853)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:447)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:230)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.p2.ui.LoadMetadataRepositoryJob.doLoad(LoadMetadataRepositoryJob.java:133)
+	at org.eclipse.equinox.p2.ui.LoadMetadataRepositoryJob.runModal(LoadMetadataRepositoryJob.java:115)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler$1.runModal(PreloadingRepositoryHandler.java:84)
+	at org.eclipse.equinox.p2.operations.ProvisioningJob.run(ProvisioningJob.java:190)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:54:08.925
+!MESSAGE No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+
+!ENTRY org.eclipse.equinox.p2.core 4 0 2026-02-07 21:54:08.927
+!MESSAGE Provisioning exception
+!STACK 1
+org.eclipse.equinox.p2.core.ProvisionException: Unable to read repository at https://download.eclipse.org/buildship/updates/e410/releases/3.x.
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.addChild(CompositeMetadataRepository.java:185)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.<init>(CompositeMetadataRepository.java:93)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepositoryFactory.load(CompositeMetadataRepositoryFactory.java:131)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:65)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:853)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:447)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:230)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.p2.ui.LoadMetadataRepositoryJob.doLoad(LoadMetadataRepositoryJob.java:133)
+	at org.eclipse.equinox.p2.ui.LoadMetadataRepositoryJob.runModal(LoadMetadataRepositoryJob.java:115)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler$1.runModal(PreloadingRepositoryHandler.java:84)
+	at org.eclipse.equinox.p2.operations.ProvisioningJob.run(ProvisioningJob.java:190)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+Caused by: org.eclipse.equinox.p2.core.ProvisionException: No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.fail(AbstractRepositoryManager.java:437)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.fail(CachingRepositoryManager.java:387)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:278)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.addChild(CompositeMetadataRepository.java:165)
+	... 17 more
+!SUBENTRY 1 org.eclipse.equinox.p2.metadata.repository 4 1002 2026-02-07 21:54:08.927
+!MESSAGE Unable to read repository at https://download.eclipse.org/buildship/updates/e410/releases/3.x.
+!STACK 1
+org.eclipse.equinox.p2.core.ProvisionException: No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.fail(AbstractRepositoryManager.java:437)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.fail(CachingRepositoryManager.java:387)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:278)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.addChild(CompositeMetadataRepository.java:165)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.<init>(CompositeMetadataRepository.java:93)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepositoryFactory.load(CompositeMetadataRepositoryFactory.java:131)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:65)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:853)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:447)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:230)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.p2.ui.LoadMetadataRepositoryJob.doLoad(LoadMetadataRepositoryJob.java:133)
+	at org.eclipse.equinox.p2.ui.LoadMetadataRepositoryJob.runModal(LoadMetadataRepositoryJob.java:115)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler$1.runModal(PreloadingRepositoryHandler.java:84)
+	at org.eclipse.equinox.p2.operations.ProvisioningJob.run(ProvisioningJob.java:190)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 2 org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:54:08.927
+!MESSAGE No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+
+!ENTRY org.eclipse.equinox.p2.core 4 0 2026-02-07 21:54:57.091
+!MESSAGE Provisioning exception
+!STACK 1
+org.eclipse.equinox.p2.core.ProvisionException: No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.fail(AbstractRepositoryManager.java:437)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.fail(CachingRepositoryManager.java:387)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:278)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.addChild(CompositeMetadataRepository.java:165)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.<init>(CompositeMetadataRepository.java:93)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepositoryFactory.load(CompositeMetadataRepositoryFactory.java:131)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:65)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:853)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:447)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:230)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.loadMetadataRepository(ProvisioningContext.java:238)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.getLoadedMetadataRepositories(ProvisioningContext.java:220)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.getMetadata(ProvisioningContext.java:302)
+	at org.eclipse.equinox.internal.p2.director.SimplePlanner.updatesFor(SimplePlanner.java:979)
+	at org.eclipse.equinox.p2.operations.UpdateOperation.updatesFor(UpdateOperation.java:146)
+	at org.eclipse.equinox.p2.operations.UpdateOperation.computeProfileChangeRequest(UpdateOperation.java:183)
+	at org.eclipse.equinox.p2.operations.UpdateOperation.lambda$0(UpdateOperation.java:320)
+	at org.eclipse.equinox.internal.p2.operations.SearchForUpdatesResolutionJob.runModal(SearchForUpdatesResolutionJob.java:41)
+	at org.eclipse.equinox.p2.operations.ProfileChangeOperation.resolveModal(ProfileChangeOperation.java:117)
+	at org.eclipse.equinox.internal.p2.ui.sdk.UpdateHandler.doPostLoadBackgroundWork(UpdateHandler.java:80)
+	at org.eclipse.equinox.internal.p2.ui.sdk.PreloadingRepositoryHandler$1.runModal(PreloadingRepositoryHandler.java:89)
+	at org.eclipse.equinox.p2.operations.ProvisioningJob.run(ProvisioningJob.java:190)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:54:57.091
+!MESSAGE No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+
+!ENTRY org.eclipse.equinox.p2.core 4 0 2026-02-07 21:55:45.067
+!MESSAGE Provisioning exception
+!STACK 1
+org.eclipse.equinox.p2.core.ProvisionException: No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.fail(AbstractRepositoryManager.java:437)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.fail(CachingRepositoryManager.java:387)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:278)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.addChild(CompositeMetadataRepository.java:165)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository.<init>(CompositeMetadataRepository.java:93)
+	at org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepositoryFactory.load(CompositeMetadataRepositoryFactory.java:131)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.factoryLoad(MetadataRepositoryManager.java:65)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:853)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:447)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:230)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Metadata.loadRepository(CachingRepositoryManager.java:519)
+	at org.eclipse.equinox.internal.p2.metadata.repository.MetadataRepositoryManager.loadRepository(MetadataRepositoryManager.java:107)
+	at org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager.loadRepository(IMetadataRepositoryManager.java:101)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.loadMetadataRepository(ProvisioningContext.java:238)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.getLoadedMetadataRepositories(ProvisioningContext.java:220)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.getMetadata(ProvisioningContext.java:302)
+	at org.eclipse.equinox.internal.p2.operations.RequestFlexer.findIUsWithSameId(RequestFlexer.java:337)
+	at org.eclipse.equinox.internal.p2.operations.RequestFlexer.findAllVersionsAvailable(RequestFlexer.java:330)
+	at org.eclipse.equinox.internal.p2.operations.RequestFlexer.loosenUpOriginalRequest(RequestFlexer.java:270)
+	at org.eclipse.equinox.internal.p2.operations.RequestFlexer.computeLooseRequest(RequestFlexer.java:232)
+	at org.eclipse.equinox.internal.p2.operations.RequestFlexer.getChangeRequest(RequestFlexer.java:89)
+	at org.eclipse.equinox.p2.operations.RemediationOperation.computeRemedy(RemediationOperation.java:155)
+	at org.eclipse.equinox.p2.operations.RemediationOperation.computeAllRemediations(RemediationOperation.java:114)
+	at org.eclipse.equinox.p2.operations.RemediationOperation.computeProfileChangeRequest(RemediationOperation.java:97)
+	at org.eclipse.equinox.p2.operations.RemediationOperation.lambda$0(RemediationOperation.java:226)
+	at org.eclipse.equinox.internal.p2.operations.RemediationResolutionJob.runModal(RemediationResolutionJob.java:41)
+	at org.eclipse.equinox.p2.operations.ProfileChangeOperation.resolveModal(ProfileChangeOperation.java:117)
+	at org.eclipse.equinox.internal.p2.ui.sdk.UpdateHandler$1.runModal(UpdateHandler.java:59)
+	at org.eclipse.equinox.p2.operations.ProvisioningJob.run(ProvisioningJob.java:190)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.equinox.p2.metadata.repository 4 1000 2026-02-07 21:55:45.068
+!MESSAGE No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+
+!ENTRY org.eclipse.equinox.p2.operations 4 0 2026-02-07 21:56:16.398
+!MESSAGE Operation details
+!SUBENTRY 1 org.eclipse.equinox.p2.director 4 10054 2026-02-07 21:56:16.398
+!MESSAGE Cannot complete the install because of a conflicting dependency.
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.398
+!MESSAGE Software being installed: Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.group 1.0.100.v20251015-0620)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.398
+!MESSAGE Software currently installed: Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.group 1.0.200.v20260109-1019)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:16.398
+!MESSAGE Only one of the following can be installed at once: 
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.398
+!MESSAGE Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.jar 1.0.100.v20251015-0620)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.398
+!MESSAGE Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.jar 1.0.200.v20260109-1019)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:16.398
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.398
+!MESSAGE From: Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.group 1.0.100.v20251015-0620)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.398
+!MESSAGE To: org.eclipse.equinox.p2.iu; org.eclipse.terminal.feature.feature.jar [1.0.100.v20251015-0620,1.0.100.v20251015-0620], filter=(org.eclipse.update.install.features=true)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:16.398
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.398
+!MESSAGE From: Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.group 1.0.200.v20260109-1019)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.398
+!MESSAGE To: org.eclipse.equinox.p2.iu; org.eclipse.terminal.feature.feature.jar [1.0.200.v20260109-1019,1.0.200.v20260109-1019], filter=(org.eclipse.update.install.features=true)
+
+!ENTRY org.eclipse.equinox.p2.operations 4 0 2026-02-07 21:56:16.442
+!MESSAGE Operation details
+!SUBENTRY 1 org.eclipse.equinox.p2.director 4 10054 2026-02-07 21:56:16.442
+!MESSAGE Cannot complete the install because of a conflicting dependency.
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.442
+!MESSAGE Software being installed: Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.group 1.0.100.v20251015-0620)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.442
+!MESSAGE Software currently installed: Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.group 1.0.200.v20260109-1019)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:16.442
+!MESSAGE Only one of the following can be installed at once: 
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.442
+!MESSAGE Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.jar 1.0.100.v20251015-0620)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.442
+!MESSAGE Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.jar 1.0.200.v20260109-1019)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:16.442
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.442
+!MESSAGE From: Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.group 1.0.100.v20251015-0620)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.442
+!MESSAGE To: org.eclipse.equinox.p2.iu; org.eclipse.terminal.feature.feature.jar [1.0.100.v20251015-0620,1.0.100.v20251015-0620], filter=(org.eclipse.update.install.features=true)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:16.442
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.442
+!MESSAGE From: Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.group 1.0.200.v20260109-1019)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:16.442
+!MESSAGE To: org.eclipse.equinox.p2.iu; org.eclipse.terminal.feature.feature.jar [1.0.200.v20260109-1019,1.0.200.v20260109-1019], filter=(org.eclipse.update.install.features=true)
+
+!ENTRY org.eclipse.equinox.p2.operations 4 0 2026-02-07 21:56:18.338
+!MESSAGE Operation details
+!SUBENTRY 1 org.eclipse.equinox.p2.director 4 10054 2026-02-07 21:56:18.338
+!MESSAGE Cannot complete the install because of a conflicting dependency.
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.338
+!MESSAGE Software being installed: Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.group 1.0.100.v20251015-0620)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.338
+!MESSAGE Software currently installed: Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.group 1.0.200.v20260109-1019)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:18.338
+!MESSAGE Only one of the following can be installed at once: 
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.338
+!MESSAGE Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.jar 1.0.100.v20251015-0620)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.338
+!MESSAGE Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.jar 1.0.200.v20260109-1019)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:18.338
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.338
+!MESSAGE From: Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.group 1.0.100.v20251015-0620)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.338
+!MESSAGE To: org.eclipse.equinox.p2.iu; org.eclipse.terminal.feature.feature.jar [1.0.100.v20251015-0620,1.0.100.v20251015-0620], filter=(org.eclipse.update.install.features=true)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:18.338
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.338
+!MESSAGE From: Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.group 1.0.200.v20260109-1019)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.338
+!MESSAGE To: org.eclipse.equinox.p2.iu; org.eclipse.terminal.feature.feature.jar [1.0.200.v20260109-1019,1.0.200.v20260109-1019], filter=(org.eclipse.update.install.features=true)
+
+!ENTRY org.eclipse.equinox.p2.operations 4 0 2026-02-07 21:56:18.339
+!MESSAGE Operation details
+!SUBENTRY 1 org.eclipse.equinox.p2.director 4 10054 2026-02-07 21:56:18.339
+!MESSAGE Cannot complete the install because of a conflicting dependency.
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.339
+!MESSAGE Software being installed: Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.group 1.0.100.v20251015-0620)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.339
+!MESSAGE Software currently installed: Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.group 1.0.200.v20260109-1019)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:18.339
+!MESSAGE Only one of the following can be installed at once: 
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.339
+!MESSAGE Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.jar 1.0.100.v20251015-0620)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.339
+!MESSAGE Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.jar 1.0.200.v20260109-1019)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:18.339
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.339
+!MESSAGE From: Terminal Feature 1.0.100.v20251015-0620 (org.eclipse.terminal.feature.feature.group 1.0.100.v20251015-0620)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.339
+!MESSAGE To: org.eclipse.equinox.p2.iu; org.eclipse.terminal.feature.feature.jar [1.0.100.v20251015-0620,1.0.100.v20251015-0620], filter=(org.eclipse.update.install.features=true)
+!SUBENTRY 2 org.eclipse.equinox.p2.director 4 1 2026-02-07 21:56:18.339
+!MESSAGE Cannot satisfy dependency:
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.339
+!MESSAGE From: Terminal Feature 1.0.200.v20260109-1019 (org.eclipse.terminal.feature.feature.group 1.0.200.v20260109-1019)
+!SUBENTRY 3 org.eclipse.equinox.p2.director 4 0 2026-02-07 21:56:18.339
+!MESSAGE To: org.eclipse.equinox.p2.iu; org.eclipse.terminal.feature.feature.jar [1.0.200.v20260109-1019,1.0.200.v20260109-1019], filter=(org.eclipse.update.install.features=true)
+
+!ENTRY org.eclipse.equinox.p2.core 4 0 2026-02-07 21:56:39.182
+!MESSAGE Provisioning exception
+!STACK 1
+org.eclipse.equinox.p2.core.ProvisionException: No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.fail(AbstractRepositoryManager.java:437)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.fail(CachingRepositoryManager.java:387)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:278)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Artifact.loadRepository(CachingRepositoryManager.java:586)
+	at org.eclipse.equinox.internal.p2.artifact.repository.ArtifactRepositoryManager.loadRepository(ArtifactRepositoryManager.java:128)
+	at org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager.loadRepository(IArtifactRepositoryManager.java:136)
+	at org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository.load(CompositeArtifactRepository.java:495)
+	at org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository.addChild(CompositeArtifactRepository.java:158)
+	at org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository.<init>(CompositeArtifactRepository.java:79)
+	at org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepositoryFactory.load(CompositeArtifactRepositoryFactory.java:127)
+	at org.eclipse.equinox.internal.p2.artifact.repository.ArtifactRepositoryManager.factoryLoad(ArtifactRepositoryManager.java:94)
+	at org.eclipse.equinox.internal.p2.repository.helpers.AbstractRepositoryManager.loadRepository(AbstractRepositoryManager.java:853)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.eclipse.oomph.util.ReflectUtil.invokeMethod(ReflectUtil.java:126)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:447)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager.loadRepository(CachingRepositoryManager.java:230)
+	at org.eclipse.oomph.p2.internal.core.CachingRepositoryManager$Artifact.loadRepository(CachingRepositoryManager.java:586)
+	at org.eclipse.equinox.internal.p2.artifact.repository.ArtifactRepositoryManager.loadRepository(ArtifactRepositoryManager.java:128)
+	at org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager.loadRepository(IArtifactRepositoryManager.java:136)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.getLoadedRepository(ProvisioningContext.java:200)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.getLoadedArtifactRepositories(ProvisioningContext.java:176)
+	at org.eclipse.equinox.p2.engine.ProvisioningContext.getArtifactRepositories(ProvisioningContext.java:162)
+	at org.eclipse.equinox.internal.p2.engine.phases.Sizing.completePhase(Sizing.java:102)
+	at org.eclipse.equinox.internal.p2.engine.Phase.postPerform(Phase.java:272)
+	at org.eclipse.equinox.internal.p2.engine.Phase.perform(Phase.java:109)
+	at org.eclipse.equinox.internal.p2.engine.PhaseSet.perform(PhaseSet.java:65)
+	at org.eclipse.equinox.internal.p2.engine.Engine.perform(Engine.java:102)
+	at org.eclipse.equinox.internal.p2.engine.Engine.perform(Engine.java:52)
+	at org.eclipse.equinox.internal.p2.ui.ProvUI.getSize(ProvUI.java:275)
+	at org.eclipse.equinox.internal.p2.ui.dialogs.SizeComputingWizardPage$1.run(SizeComputingWizardPage.java:70)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.equinox.p2.artifact.repository 4 1000 2026-02-07 21:56:39.182
+!MESSAGE No repository found at https://download.eclipse.org/buildship/updates/e410/releases/3.x/3.1.10.v20250903-1508/.
+
+!ENTRY org.eclipse.equinox.p2.artifact.repository 2 0 2026-02-07 22:36:04.970
+!MESSAGE No digest algorithm is available to verify download of osgi.bundle,com.microsoft.copilot.eclipse.core.agent.macosx.aarch64,0.15.0.202601270459 from repository https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/.
+
+!ENTRY org.eclipse.equinox.p2.artifact.repository 2 0 2026-02-07 22:36:04.970
+!MESSAGE No digest algorithm is available to verify download of osgi.bundle,com.microsoft.copilot.eclipse.branding,0.15.0.202601270459 from repository https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/.
+
+!ENTRY org.eclipse.equinox.p2.engine 4 4 2026-02-07 22:38:05.281
+!MESSAGE An error occurred while collecting items to be installed
+!SUBENTRY 1 org.eclipse.equinox.p2.engine 4 0 2026-02-07 22:38:05.281
+!MESSAGE session context was:(profile=_Users_kriangkrai_java-latest_Eclipse.app_Contents_Eclipse, phase=org.eclipse.equinox.internal.p2.engine.phases.Collect, operand=, action=).
+!SUBENTRY 1 org.eclipse.equinox.p2.transport.ecf 4 1002 2026-02-07 22:38:05.281
+!MESSAGE Unable to read repository at https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/plugins/com.microsoft.copilot.eclipse.core.agent.macosx.aarch64_0.15.0.202601270459.jar.
+!STACK 0
+java.net.SocketTimeoutException: Read timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:278)
+	at java.base/sun.nio.ch.NioSocketImpl.implRead(NioSocketImpl.java:304)
+	at java.base/sun.nio.ch.NioSocketImpl.read(NioSocketImpl.java:346)
+	at java.base/sun.nio.ch.NioSocketImpl$1.read(NioSocketImpl.java:796)
+	at java.base/java.net.Socket$SocketInputStream.implRead(Socket.java:1116)
+	at java.base/java.net.Socket$SocketInputStream.read(Socket.java:1103)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.read(SSLSocketInputRecord.java:489)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.readHeader(SSLSocketInputRecord.java:483)
+	at java.base/sun.security.ssl.SSLSocketInputRecord.bytesInCompletePacket(SSLSocketInputRecord.java:70)
+	at java.base/sun.security.ssl.SSLSocketImpl.readApplicationRecord(SSLSocketImpl.java:1462)
+	at java.base/sun.security.ssl.SSLSocketImpl$AppInputStream.read(SSLSocketImpl.java:1068)
+	at org.apache.hc.core5.http.impl.io.SessionInputBufferImpl.fillBuffer(SessionInputBufferImpl.java:149)
+	at org.apache.hc.core5.http.impl.io.SessionInputBufferImpl.readLine(SessionInputBufferImpl.java:280)
+	at org.apache.hc.core5.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:250)
+	at org.apache.hc.core5.http.impl.io.AbstractMessageParser.parse(AbstractMessageParser.java:56)
+	at org.apache.hc.core5.http.impl.io.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:331)
+	at org.apache.hc.core5.http.impl.io.HttpRequestExecutor.execute(HttpRequestExecutor.java:197)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.lambda$execute$0(InternalExecRuntime.java:236)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$InternalConnectionEndpoint.execute(PoolingHttpClientConnectionManager.java:851)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.execute(InternalExecRuntime.java:233)
+	at org.apache.hc.client5.http.impl.classic.MainClientExec.execute(MainClientExec.java:120)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:195)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:138)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:112)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:185)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:106)
+	at org.eclipse.ecf.provider.filetransfer.httpclient5.HttpClientRetrieveFileTransfer.performConnect(HttpClientRetrieveFileTransfer.java:1009)
+	at org.eclipse.ecf.provider.filetransfer.httpclient5.HttpClientRetrieveFileTransfer$1.performFileTransfer(HttpClientRetrieveFileTransfer.java:997)
+	at org.eclipse.ecf.filetransfer.FileTransferJob.run(FileTransferJob.java:76)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.equinox.p2.engine 4 0 2026-02-07 22:38:05.281
+!MESSAGE Can't download artifact osgi.bundle,com.microsoft.copilot.eclipse.core.agent.macosx.aarch64,0.15.0.202601270459 required by com.microsoft.copilot.eclipse.core.agent.macosx.aarch64[0.15.0.202601270459], org.sonarlint.eclipse.ui[11.26.0.84482], com.genuitec.eclipse.tm4e.languageconfiguration[2025.4.1.202510061827], javax.websocket[1.0.0.v20140310-1603], org.springframework.ide.eclipse.buildship30[4.32.2.202511091838], com.genuitec.eclipse.codetogether.ui[2025.4.1.202510061827], org.springframework.ide.eclipse.boot.restart[4.32.2.202511091838], org.sonarsource.sonarlint.core.sonarlint-java-client-osgi[10.43.0.84255], org.springframework.tooling.gradle[4.32.1.202510250117], com.genuitec.eclipse.codetogether.webicons[2025.4.1.202510061827], net.sf.eclipsecs.core[12.0.1.202511121620], org.springsource.ide.eclipse.commons.frameworks.core[4.32.1.202510250117], org.springsource.ide.eclipse.commons.core[4.32.1.202510250117], org.sonarlint.eclipse.jdt[11.26.0.84482], org.springframework.tooling.boot.ls[1.64.1.202510250117], net.sf.eclipsecs.checkstyle[12.0.1.202511131535], org.springframework.ide.eclipse.boot.wizard[4.32.2.202511091838], net.sf.eclipsecs.branding[12.0.1.202511121620], org.springsource.ide.eclipse.commons.frameworks.ui[4.32.1.202510250117], com.genuitec.eclipse.codetogether.ui.client.tests[2025.4.1.202510061827], com.genuitec.eclipse.codetogether.core[2025.4.1.202510061827], com.microsoft.copilot.eclipse.feature.feature.group[0.15.0.202601270459], com.genuitec.eclipse.codetogether.api[2025.4.1.202510061827], org.sonarlint.eclipse.cdt[11.26.0.84482], org.springframework.ide.eclipse.beans.ui.live[4.32.2.202511091838], net.sourceforge.pmd.eclipse.plugin[7.21.0.v20260130-1017-r], org.springframework.tooling.ls.eclipse.commons[4.32.1.202510250117], org.springframework.tooling.concourse.ls[1.57.0.202510250117], org.springframework.ide.eclipse.boot.refactoring[4.32.2.202511091838], org.springframework.tooling.jdt.ls.commons[4.32.1.202510250117], org.springsource.ide.eclipse.commons.livexp[4.32.1.202510250117], org.springsource.ide.eclipse.commons.ui[4.32.1.202510250117], net.sf.eclipsecs.doc[12.0.1.202511121620], org.sonarlint.eclipse.core[11.26.0.84482], org.springframework.ide.eclipse.boot[4.32.2.202511091838], com.microsoft.copilot.eclipse.core[0.15.0.202601270459], com.genuitec.eclipse.codetogether.ui.client[2025.4.1.202510061827], org.sonarlint.eclipse.sloop.macosx.aarch64[11.26.0.84482], org.springframework.tooling.cloudfoundry.manifest.ls[1.57.0.202510250117], com.genuitec.eclipse.genericeditor[2025.4.1.202510061827], org.springframework.ide.eclipse.maven.pom[4.32.2.202511091838], org.springframework.ide.eclipse.boot.dash.docker[4.32.2.202511091838], org.springsource.ide.eclipse.commons.boot.ls[4.32.1.202510250117], com.microsoft.copilot.eclipse.terminal.api[0.15.0.202601270459], org.springsource.ide.eclipse.commons.jdk_tools[4.32.1.202510250117], com.codetogether.hq.eclipse[2025.4.1.202510061827], com.microsoft.copilot.eclipse.branding[0.15.0.202601270459], org.springframework.ide.eclipse.imports[4.32.2.202511091838], net.sf.eclipsecs.ui[12.0.1.202511121620], org.sonarlint.eclipse.m2e[11.26.0.84482], org.springframework.ide.eclipse.boot.dash[4.32.2.202511091838], com.microsoft.copilot.eclipse.ui.jobs[0.15.0.202601270459], org.springframework.ide.eclipse.editor.support[4.32.1.202510250117], com.genuitec.eclipse.lsp4e[2025.4.1.202510061827], com.genuitec.eclipse.codetogether.patches[2025.4.1.202510061827], org.springframework.tooling.ls.eclipse.gotosymbol[4.32.1.202510250117], org.springframework.ide.eclipse.docker.client[4.32.2.202511091838], org.springframework.ide.eclipse.boot.launch[4.32.2.202511091838], org.springframework.ide.eclipse.xml.namespaces[4.32.2.202511091838], com.genuitec.eclipse.codetogether.epl[2025.4.1.202510061827], com.codetogether.hq[2025.4.1.v20251006-1827], org.sonarlint.eclipse.buildship[11.26.0.84482], org.springframework.ide.eclipse.boot.validation[4.32.2.202511091838], com.microsoft.copilot.eclipse.ui[0.15.0.202601270459], com.microsoft.copilot.eclipse.core.agent.macosx.aarch64[0.15.0.202601270459] from any of the following repositories: 
+file:/Users/kriangkrai/.p2/pool/.eclipseextension
+file:/Users/kriangkrai/.p2/pool/
+file:/Users/kriangkrai/.eclipse/org.eclipse.platform_4.32.0_1231987628_macosx_cocoa_aarch64/
+file:/Users/kriangkrai/.p2/org.eclipse.equinox.p2.core/cache/
+file:/Applications/Eclipse.app/Contents/Eclipse/configuration/org.eclipse.osgi/2674/data/listener_1925729951/
+https://download.eclipse.org/jdt/updates/4.37-P-builds
+https://download.eclipse.org/eclipse/updates/4.36
+https://download.eclipse.org/eclipse/updates/4.39
+http://download.eclipse.org/usssdk/updates/release/latest
+https://checkstyle.org/eclipse-cs-update-site
+https://download.eclipse.org/egit/updates-7.3
+https://download.eclipse.org/technology/epp/packages/2025-12/202511271000
+https://download.eclipse.org/lsp4e/releases/0.27.4
+https://pmd.github.io/pmd-eclipse-plugin-p2-site/
+https://download.eclipse.org/releases/2026-03
+https://download.eclipse.org/releases/2025-12
+https://download.eclipse.org/technology/epp/packages/2025-12/
+https://azuredownloads-g3ahgwb5b8bkbxhd.b01.azurefd.net/github-copilot/
+https://download.eclipse.org/releases/milestone
+https://download.eclipse.org/technology/m2e/releases/latest
+https://download.eclipse.org/tm4e/releases/0.15.0
+https://download.eclipse.org/modeling/emf/emf/builds/release/2.42.0
+https://download.eclipse.org/technology/epp/packages/2026-03/202601291000
+https://download.eclipse.org/modeling/emf/emf/builds/release/2.43.0
+https://devstyle.codetogether.io
+https://download.eclipse.org/wildwebdeveloper/releases/1.3.10
+https://download.eclipse.org/webtools/downloads/drops/R3.37.0/R-3.37.0-20250303081219/repository
+https://download.eclipse.org/technology/epp/packages/2025-09/202507311000
+https://download.eclipse.org/releases/2026-03/202601301000
+https://cdn.spring.io/spring-tools/release/TOOLS/sts4/update/e4.37/
+https://cdn.spring.io/spring-tools/release/TOOLS/sts4/update/e4.36/
+https://download.eclipse.org/egit/updates-7.4
+https://download.eclipse.org/lsp4e/releases/0.27.9
+https://download.eclipse.org/releases/2025-09
+https://download.eclipse.org/lsp4e/releases/0.27.6
+https://eclipse-uc.sonarlint.org
+https://download.eclipse.org/technology/epp/packages/2025-09/202508281000
+https://download.eclipse.org/lsp4j/updates/releases/0.24.0
+https://download.eclipse.org/eclipse/updates/4.35
+https://www.codetogether.com/updates/ci/
+https://download.eclipse.org/technology/epp/packages/2025-09/202507101000
+https://download.eclipse.org/tm4e/releases/0.14.1
+https://download.eclipse.org/webtools/downloads/drops/R3.38.0/S-3.38RC1-20250601070120/repository
+https://download.eclipse.org/technology/epp/packages/2026-03/
+https://download.eclipse.org/technology/epp/packages/latest/
+https://download.eclipse.org/technology/epp/packages/2025-12/202510091000
+https://download.eclipse.org/releases/latest
+https://download.eclipse.org/technology/epp/packages/2025-09/
+https://download.eclipse.org/oomph/updates/milestone/latest
+https://download.eclipse.org/webtools/downloads/drops/R3.39.0/R-3.39.0-20250902093744/repository
