@@ -358,6 +358,7 @@ public class AdminController {
 	@PostMapping("/saveProduct")
 	public String saveProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile image,
 	        @RequestParam(value = "files", required = false) MultipartFile[] extraImages,
+	        @RequestParam(value = "gameFile", required = false) MultipartFile gameFile,
 	        HttpSession session, Principal p) throws IOException {
 
 	    UserDtls admin = commonUtil.getLoggedInUserDetails(p);
@@ -367,6 +368,31 @@ public class AdminController {
 	    product.setImage(imageUrl);
 	    product.setDiscount(0);
 	    product.setDiscountPrice(product.getPrice());
+	    
+	    // Handle game file upload for Secure Digital Delivery (AES-256)
+	    if (gameFile != null && !gameFile.isEmpty()) {
+	        String gameUploadDir = System.getProperty("user.dir") + "/uploads/game_files/";
+	        File gameFolder = new File(gameUploadDir);
+	        if (!gameFolder.exists()) { gameFolder.mkdirs(); }
+	        
+	        String originalName = gameFile.getOriginalFilename();
+	        String safeFileName = System.currentTimeMillis() + "_" + originalName;
+	        Path gameFilePath = Paths.get(gameUploadDir + safeFileName);
+	        Files.copy(gameFile.getInputStream(), gameFilePath, StandardCopyOption.REPLACE_EXISTING);
+	        product.setGameFilePath("uploads/game_files/" + safeFileName);
+	        
+	        // Auto-set file size if not provided
+	        if (product.getFileSize() == null || product.getFileSize().isEmpty()) {
+	            long bytes = gameFile.getSize();
+	            if (bytes >= 1_073_741_824) {
+	                product.setFileSize(String.format("%.2f GB", bytes / 1_073_741_824.0));
+	            } else if (bytes >= 1_048_576) {
+	                product.setFileSize(String.format("%.1f MB", bytes / 1_048_576.0));
+	            } else {
+	                product.setFileSize(String.format("%.0f KB", bytes / 1024.0));
+	            }
+	        }
+	    }
 	    
 	    // Handle multiple extra images
 	    if (extraImages != null && extraImages.length > 0) {
@@ -509,6 +535,7 @@ public class AdminController {
 	@PostMapping("/updateProduct")
 	public String updateProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile image,
 	        @RequestParam(value = "files", required = false) MultipartFile[] extraImages,
+	        @RequestParam(value = "gameFile", required = false) MultipartFile gameFile,
 	        HttpSession session, Model m, Principal p) {
 
 	    UserDtls admin = commonUtil.getLoggedInUserDetails(p);
@@ -522,6 +549,35 @@ public class AdminController {
 	                                "Failed to update product: " + product.getTitle() + " (invalid discount)", 
 	                                ipAddress);
 	    } else {
+	        // Handle game file upload for Secure Digital Delivery (AES-256)
+	        if (gameFile != null && !gameFile.isEmpty()) {
+	            try {
+	                String gameUploadDir = System.getProperty("user.dir") + "/uploads/game_files/";
+	                File gameFolder = new File(gameUploadDir);
+	                if (!gameFolder.exists()) { gameFolder.mkdirs(); }
+	                
+	                String originalName = gameFile.getOriginalFilename();
+	                String safeFileName = System.currentTimeMillis() + "_" + originalName;
+	                Path gameFilePath = Paths.get(gameUploadDir + safeFileName);
+	                Files.copy(gameFile.getInputStream(), gameFilePath, StandardCopyOption.REPLACE_EXISTING);
+	                product.setGameFilePath("uploads/game_files/" + safeFileName);
+	                
+	                // Auto-set file size if not provided
+	                if (product.getFileSize() == null || product.getFileSize().isEmpty()) {
+	                    long bytes = gameFile.getSize();
+	                    if (bytes >= 1_073_741_824) {
+	                        product.setFileSize(String.format("%.2f GB", bytes / 1_073_741_824.0));
+	                    } else if (bytes >= 1_048_576) {
+	                        product.setFileSize(String.format("%.1f MB", bytes / 1_048_576.0));
+	                    } else {
+	                        product.setFileSize(String.format("%.0f KB", bytes / 1024.0));
+	                    }
+	                }
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }
+	        
 	        // Handle extra images
 	        if (extraImages != null && extraImages.length > 0) {
 	            try {

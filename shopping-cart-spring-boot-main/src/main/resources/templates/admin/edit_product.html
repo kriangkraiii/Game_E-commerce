@@ -114,8 +114,30 @@
 									</th:block>
 								</div>
 
+								<!-- 🔐 Secure Digital Delivery - Game File Upload -->
 								<div class="mb-3">
-									<label>Download Link (URL)</label> <input type="url" name="downloadLink"
+									<label class="form-label">
+										<i class="fa-solid fa-file-zipper me-1"></i> Game File (for Secure Download)
+									</label>
+									<input type="file" name="gameFile" class="form-control">
+									<small class="text-muted">
+										<i class="fa-solid fa-shield-halved me-1"></i>
+										ไฟล์จะถูกเข้ารหัส AES-256 อัตโนมัติเมื่อผู้ใช้ดาวน์โหลด
+									</small>
+									<th:block th:if="${product.gameFilePath != null and !product.gameFilePath.isEmpty()}">
+										<div class="mt-2">
+											<span class="badge bg-success">
+												<i class="fa-solid fa-check-circle me-1"></i> มีไฟล์เกมแล้ว
+											</span>
+											<small class="text-muted ms-2" th:text="${product.gameFilePath}"></small>
+										</div>
+										<small class="text-warning">อัปโหลดใหม่จะแทนที่ไฟล์เดิม</small>
+									</th:block>
+								</div>
+
+								<div class="mb-3">
+									<label>Download Link (URL) <small class="text-muted">(Optional - ถ้าไม่อัปโหลดไฟล์)</small></label>
+									<input type="url" name="downloadLink"
 										th:value="${product.downloadLink}" class="form-control"
 										placeholder="https://example.com/game-file.zip">
 								</div>

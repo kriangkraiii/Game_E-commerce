@@ -40,7 +40,15 @@
 								<td>[[${o.price}]] <th:block th:utext="${@commnServiceImpl.bahtSign()}"></th:block></td>
 								<td>
 									<th:block th:if="${o.gameKey != null}">
-										<code class="text-success">[[${o.gameKey}]]</code>
+										<div class="d-flex align-items-center gap-1">
+											<code class="text-success">[[${o.gameKey}]]</code>
+											<span class="badge bg-dark" style="font-size: 0.6em;" title="ใช้เป็นรหัสผ่านแตกไฟล์ ZIP">
+												<i class="fa-solid fa-lock"></i> AES-256
+											</span>
+										</div>
+										<small class="text-muted" style="font-size: 0.7em;">
+											<i class="fa-solid fa-key me-1"></i>ใช้เป็นรหัสผ่านแตกไฟล์
+										</small>
 									</th:block>
 									<th:block th:unless="${o.gameKey != null}">
 										<span class="text-muted">-</span>

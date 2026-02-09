@@ -17,6 +17,22 @@
 				<p class="text-muted">All your purchased games in one place</p>
 			</div>
 
+			<!-- 🔐 AES-256 Security Info Banner -->
+			<div class="alert alert-info border-0 shadow-sm mb-4" style="border-radius: 12px;">
+				<div class="d-flex align-items-center">
+					<div class="me-3">
+						<i class="fa-solid fa-shield-halved fa-2x text-primary"></i>
+					</div>
+					<div>
+						<h6 class="mb-1 fw-bold"><i class="fa-solid fa-lock me-1"></i> Secure Digital Delivery (AES-256)</h6>
+						<small class="text-muted">
+							ไฟล์เกมทุกไฟล์ถูกเข้ารหัสด้วยมาตรฐาน AES-256 (ระดับธนาคาร) 
+							เพื่อปกป้องสิทธิ์ของคุณ เมื่อดาวน์โหลด ให้ใช้ <strong>License Key</strong> ของคุณเป็นรหัสผ่านแตกไฟล์
+						</small>
+					</div>
+				</div>
+			</div>
+
 			<!-- Success/Error Messages -->
 			<th:block th:if="${session.succMsg}">
 				<div class="alert alert-success text-center" role="alert">
@@ -65,6 +81,10 @@
 							<span class="badge bg-success position-absolute top-0 end-0 m-2">
 								<i class="fa-solid fa-check-circle me-1"></i> Owned
 							</span>
+							<!-- AES-256 Badge -->
+							<span class="badge bg-dark position-absolute top-0 start-0 m-2" style="opacity: 0.85;">
+								<i class="fa-solid fa-lock me-1"></i> AES-256
+							</span>
 						</div>
 
 						<!-- Game Info -->
@@ -76,20 +96,32 @@
 							<p class="card-text text-muted small mb-3" 
 								th:text="${#strings.abbreviate(game.product.description, 100)}"></p>
 
-							<!-- Purchase Info -->
-							<!-- Game Key -->
+							<!-- 🔑 License Key Section -->
 							<div class="mb-3" th:if="${game.gameKey != null}">
-								<label class="form-label small text-muted mb-1">
-									<i class="fa-solid fa-key me-1"></i> Game Key
+								<label class="form-label small fw-bold mb-1" style="color: #d4a017;">
+									<i class="fa-solid fa-key me-1"></i> License Key (รหัสผ่านแตกไฟล์)
 								</label>
 								<div class="input-group input-group-sm">
-									<input type="text" class="form-control font-monospace bg-light" 
-										th:value="${game.gameKey}" readonly>
+									<input type="password" class="form-control font-monospace bg-light" 
+										th:id="'key-' + ${game.id}"
+										th:value="${game.gameKey}" readonly
+										style="letter-spacing: 1px;">
+									<!-- Toggle visibility -->
+									<button class="btn btn-outline-warning" type="button"
+										th:onclick="'toggleKey(' + ${game.id} + ', this)'"
+										title="แสดง/ซ่อน Key">
+										<i class="fa-solid fa-eye"></i>
+									</button>
+									<!-- Copy button -->
 									<button class="btn btn-outline-secondary" type="button"
-										th:onclick="'navigator.clipboard.writeText(\'' + ${game.gameKey} + '\').then(() => { this.innerHTML = \'<i class=\\'fa-solid fa-check\\'></i>\'; setTimeout(() => { this.innerHTML = \'<i class=\\'fa-solid fa-copy\\'></i>\'; }, 1500); })'">
+										th:onclick="'copyKey(' + ${game.id} + ', this)'"
+										title="คัดลอก Key">
 										<i class="fa-solid fa-copy"></i>
 									</button>
 								</div>
+								<small class="text-muted mt-1 d-block">
+									<i class="fa-solid fa-info-circle me-1"></i> ใช้ Key นี้เป็นรหัสผ่านตอนแตกไฟล์ ZIP
+								</small>
 							</div>
 
 							<!-- Purchase Info -->
@@ -100,11 +132,26 @@
 								<div th:if="${game.product.fileSize}">
 									<i class="fa-solid fa-hard-drive me-1"></i> Size: [[${game.product.fileSize}]]
 								</div>
+								<div th:if="${game.isDownloaded}">
+									<span class="text-success"><i class="fa-solid fa-check me-1"></i> Downloaded</span>
+								</div>
 							</div>
 
-							<!-- Download Button -->
+							<!-- 🔐 Secure Download Button -->
 							<div class="mt-auto">
-								<th:block th:if="${game.product.downloadLink != null and game.product.downloadLink != ''}">
+								<!-- มีไฟล์เกม → Secure Download (AES-256 Encrypted ZIP) -->
+								<th:block th:if="${game.product.gameFilePath != null and game.product.downloadLink == 'SECURE_DOWNLOAD_AVAILABLE'}">
+									<a th:href="'/user/game-library/secure-download/' + ${game.id}" 
+										class="btn btn-primary w-100 mb-2"
+										onclick="showDownloadGuide(this)">
+										<i class="fa-solid fa-shield-halved me-2"></i>
+										<span th:if="${game.isDownloaded}">Download Again (Encrypted)</span>
+										<span th:unless="${game.isDownloaded}"><i class="fa-solid fa-download me-1"></i> Secure Download</span>
+									</a>
+								</th:block>
+
+								<!-- มี downloadLink ภายนอก (fallback) -->
+								<th:block th:if="${(game.product.gameFilePath == null or game.product.downloadLink != 'SECURE_DOWNLOAD_AVAILABLE') and game.product.downloadLink != null and game.product.downloadLink != '' and game.product.downloadLink != 'SECURE_DOWNLOAD_AVAILABLE'}">
 									<a th:href="${game.product.downloadLink}" 
 										class="btn btn-primary w-100"
 										target="_blank"
@@ -114,7 +161,9 @@
 										<span th:unless="${game.isDownloaded}">Download</span>
 									</a>
 								</th:block>
-								<th:block th:if="${game.product.downloadLink == null or game.product.downloadLink == ''}">
+
+								<!-- ไม่มีไฟล์ดาวน์โหลด -->
+								<th:block th:if="${(game.product.gameFilePath == null or game.product.downloadLink != 'SECURE_DOWNLOAD_AVAILABLE') and (game.product.downloadLink == null or game.product.downloadLink == '')}">
 									<button class="btn btn-secondary w-100" disabled>
 										<i class="fa-solid fa-clock me-2"></i> Download Coming Soon
 									</button>
@@ -125,13 +174,109 @@
 				</div>
 			</div>
 
+			<!-- 📖 How to Use Guide -->
+			<div class="card border-0 shadow-sm mt-5" th:if="${games != null and !games.isEmpty()}" style="border-radius: 12px;">
+				<div class="card-body p-4">
+					<h5 class="fw-bold mb-3"><i class="fa-solid fa-circle-question me-2 text-primary"></i>วิธีแตกไฟล์เกมที่ดาวน์โหลด</h5>
+					<div class="row g-3">
+						<div class="col-md-3 text-center">
+							<div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 56px; height: 56px;">
+								<span class="fw-bold text-primary fs-5">1</span>
+							</div>
+							<p class="small mb-0">กดปุ่ม <strong>Secure Download</strong></p>
+						</div>
+						<div class="col-md-3 text-center">
+							<div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 56px; height: 56px;">
+								<span class="fw-bold text-primary fs-5">2</span>
+							</div>
+							<p class="small mb-0">ได้รับไฟล์ <strong>*_Locked.zip</strong></p>
+						</div>
+						<div class="col-md-3 text-center">
+							<div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 56px; height: 56px;">
+								<span class="fw-bold text-primary fs-5">3</span>
+							</div>
+							<p class="small mb-0">เปิดด้วย <strong>WinRAR / 7-Zip</strong></p>
+						</div>
+						<div class="col-md-3 text-center">
+							<div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 56px; height: 56px;">
+								<span class="fw-bold text-primary fs-5">4</span>
+							</div>
+							<p class="small mb-0">กรอก <strong>License Key</strong> เป็นรหัสผ่าน</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<!-- Browse More -->
-			<div class="text-center mt-5" th:if="${games != null and !games.isEmpty()}">
+			<div class="text-center mt-4" th:if="${games != null and !games.isEmpty()}">
 				<a href="/products" class="btn btn-outline-primary btn-lg">
 					<i class="fa-solid fa-store me-2"></i> Browse More Games
 				</a>
 			</div>
 		</div>
+
+		<!-- Download Guide Modal -->
+		<div class="modal fade" id="downloadGuideModal" tabindex="-1">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content" style="border-radius: 16px;">
+					<div class="modal-header border-0 pb-0">
+						<h5 class="modal-title fw-bold">
+							<i class="fa-solid fa-shield-halved text-primary me-2"></i>Secure Download Started
+						</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+					</div>
+					<div class="modal-body">
+						<div class="alert alert-success mb-3">
+							<i class="fa-solid fa-check-circle me-2"></i>กำลังสร้างไฟล์เข้ารหัส AES-256...
+						</div>
+						<div class="bg-light p-3 rounded">
+							<p class="mb-2 small"><strong>เมื่อดาวน์โหลดเสร็จ:</strong></p>
+							<ol class="small mb-0">
+								<li>เปิดไฟล์ <code>*_Locked.zip</code> ด้วย WinRAR หรือ 7-Zip</li>
+								<li>จะถูกถามหารหัสผ่าน (Password)</li>
+								<li>กรอก <strong>License Key</strong> ของคุณ (คัดลอกจากหน้านี้)</li>
+								<li>แตกไฟล์แล้วเล่นเกมได้เลย!</li>
+							</ol>
+						</div>
+					</div>
+					<div class="modal-footer border-0">
+						<button type="button" class="btn btn-primary" data-bs-dismiss="modal">เข้าใจแล้ว!</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- JavaScript for Key management -->
+		<script th:inline="javascript">
+			// Toggle License Key visibility
+			function toggleKey(gameId, btn) {
+				var input = document.getElementById('key-' + gameId);
+				if (input.type === 'password') {
+					input.type = 'text';
+					btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+				} else {
+					input.type = 'password';
+					btn.innerHTML = '<i class="fa-solid fa-eye"></i>';
+				}
+			}
+
+			// Copy License Key to clipboard
+			function copyKey(gameId, btn) {
+				var input = document.getElementById('key-' + gameId);
+				navigator.clipboard.writeText(input.value).then(function() {
+					btn.innerHTML = '<i class="fa-solid fa-check text-success"></i>';
+					setTimeout(function() {
+						btn.innerHTML = '<i class="fa-solid fa-copy"></i>';
+					}, 2000);
+				});
+			}
+
+			// Show download guide modal
+			function showDownloadGuide(btn) {
+				var modal = new bootstrap.Modal(document.getElementById('downloadGuideModal'));
+				modal.show();
+			}
+		</script>
 	</section>
 </body>
 </html>

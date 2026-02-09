@@ -57,4 +57,9 @@ public class GameLibraryServiceImpl implements GameLibraryService {
 		}
 		return null;
 	}
+
+	@Override
+	public GameLibrary getGameLibraryById(Integer id) {
+		return gameLibraryRepository.findById(id).orElse(null);
+	}
 }

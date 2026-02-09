@@ -15,4 +15,6 @@ public interface GameLibraryService {
 	Boolean isGameOwned(Integer userId, Integer productId);
 
 	GameLibrary markAsDownloaded(Integer gameLibraryId);
+
+	GameLibrary getGameLibraryById(Integer id);
 }

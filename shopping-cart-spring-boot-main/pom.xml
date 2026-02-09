@@ -113,6 +113,13 @@
     <version>3.5.3</version>
 </dependency>
 
+<!-- Zip4j - AES-256 Encrypted ZIP support for Secure Digital Delivery -->
+<dependency>
+    <groupId>net.lingala.zip4j</groupId>
+    <artifactId>zip4j</artifactId>
+    <version>2.11.5</version>
+</dependency>
+
 	</dependencies>
 	<build>
     <plugins>
