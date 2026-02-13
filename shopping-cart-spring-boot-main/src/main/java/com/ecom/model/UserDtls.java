@@ -32,7 +32,12 @@ public class UserDtls {
 	private Integer failedAttempt;
 	private Date lockTime;
 	private String resetToken;
+	private String otp;
+	private LocalDateTime otpExpiryTime;
+	private boolean otpVerified;
+
 	
+
 	@Column(name = "created_date")
 	private Date createdDate;
 
@@ -43,7 +48,8 @@ public class UserDtls {
 	// All args constructor
 	public UserDtls(Integer id, String name, String mobileNumber, String email, String address, String city,
 			String state, String pincode, String password, String profileImage, String role, Boolean isEnable,
-			Boolean accountNonLocked, Integer failedAttempt, Date lockTime, String resetToken, Date createdDate) {
+			Boolean accountNonLocked, Integer failedAttempt, Date lockTime, String resetToken, String otp,
+			LocalDateTime otpExpiryTime, boolean otpVerified, Date createdDate) {
 		this.id = id;
 		this.name = name;
 		this.mobileNumber = mobileNumber;
@@ -60,6 +66,9 @@ public class UserDtls {
 		this.failedAttempt = failedAttempt;
 		this.lockTime = lockTime;
 		this.resetToken = resetToken;
+		this.otp = otp;
+		this.otpExpiryTime = otpExpiryTime;
+		this.otpVerified = otpVerified;
 		this.createdDate = createdDate;
 	}
 
@@ -71,6 +80,7 @@ public class UserDtls {
 	}
 
 	// Getters and Setters
+	
 	public Integer getId() {
 		return id;
 	}
@@ -206,4 +216,28 @@ public class UserDtls {
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
+		public String getOtp() {
+		return otp;
+	}
+
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
+
+	public LocalDateTime getOtpExpiryTime() {
+		return otpExpiryTime;
+	}
+
+	public void setOtpExpiryTime(LocalDateTime otpExpiryTime) {
+		this.otpExpiryTime = otpExpiryTime;
+	}
+
+	public boolean isOtpVerified() {
+		return otpVerified;
+	}
+
+	public void setOtpVerified(boolean otpVerified) {
+		this.otpVerified = otpVerified;
+	}
+
 }

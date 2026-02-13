@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Verify OTP</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff7a18, #ffb347);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .otp-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .otp-container h2 {
+            margin-bottom: 10px;
+            color: #e65100;
+        }
+
+        .otp-container p {
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .otp-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 3px;
+        }
+
+        .otp-input:focus {
+            border-color: #ff7a18;
+            outline: none;
+            box-shadow: 0 0 8px rgba(255, 122, 24, 0.3);
+        }
+
+        .verify-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(90deg, #ff7a18, #ff5722);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .verify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.4);
+        }
+
+        .timer {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #e65100;
+            font-weight: bold;
+        }
+
+        .error-msg {
+            color: red;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .game-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="otp-container">
+        <div class="game-icon">🎮</div>
+        <h2>Verify OTP</h2>
+        <p>Please enter the verification code sent to your email</p>
+
+        <form action="/verify-otp" method="post">
+            <input type="text" name="otp" class="otp-input" placeholder="Enter OTP" required />
+            <button type="submit" class="verify-btn">Verify</button>
+        </form>
+
+        <div class="timer">
+            OTP expires in <span id="timer">05:00</span>
+        </div>
+
+        <p th:if="${error}" th:text="${error}" class="error-msg"></p>
+    </div>
+
+    <script>
+        let timeLeft = 300;
+        let timerElement = document.getElementById("timer");
+
+        let timerInterval = setInterval(() => {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+
+            timerElement.textContent =
+                String(minutes).padStart(2, '0') + ":" +
+                String(seconds).padStart(2, '0');
+
+            timeLeft--;
+
+            if (timeLeft < 0) {
+                clearInterval(timerInterval);
+
+
+                window.location.href = "/signin";
+            }
+        }, 1000);
+    </script>
+
+</body>
+
+</html>
