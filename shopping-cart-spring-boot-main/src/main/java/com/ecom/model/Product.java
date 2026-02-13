@@ -21,7 +21,6 @@ public class Product {
 
 	private String category;
 	private Double price;
-	private int stock;
 	private String image;
 	private int discount;
 	private Double discountPrice;
@@ -32,25 +31,14 @@ public class Product {
 
 	private String fileSize;
 
+	@Column(length = 5000)
+	private String images; // comma-separated URLs for multiple screenshots
+
+	@Column(length = 1000)
+	private String gameFilePath; // path to uploaded game file
+
 	// Default constructor
 	public Product() {
-	}
-
-	// All args constructor
-	public Product(Integer id, String title, String description, String category, Double price, int stock, String image,
-			int discount, Double discountPrice, Boolean isActive, String downloadLink, String fileSize) {
-		this.id = id;
-		this.title = title;
-		this.description = description;
-		this.category = category;
-		this.price = price;
-		this.stock = stock;
-		this.image = image;
-		this.discount = discount;
-		this.discountPrice = discountPrice;
-		this.isActive = isActive;
-		this.downloadLink = downloadLink;
-		this.fileSize = fileSize;
 	}
 
 	// Getters and Setters
@@ -92,14 +80,6 @@ public class Product {
 
 	public void setPrice(Double price) {
 		this.price = price;
-	}
-
-	public int getStock() {
-		return stock;
-	}
-
-	public void setStock(int stock) {
-		this.stock = stock;
 	}
 
 	public String getImage() {
@@ -148,5 +128,29 @@ public class Product {
 
 	public void setFileSize(String fileSize) {
 		this.fileSize = fileSize;
+	}
+
+	public String getImages() {
+		return images;
+	}
+
+	public void setImages(String images) {
+		this.images = images;
+	}
+
+	public String getGameFilePath() {
+		return gameFilePath;
+	}
+
+	public void setGameFilePath(String gameFilePath) {
+		this.gameFilePath = gameFilePath;
+	}
+
+	// Helper to get image list
+	public java.util.List<String> getImageList() {
+		if (images == null || images.isEmpty()) {
+			return new java.util.ArrayList<>();
+		}
+		return java.util.Arrays.asList(images.split(","));
 	}
 }

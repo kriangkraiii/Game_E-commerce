@@ -27,6 +27,8 @@ public class GameLibrary {
 
 	private Boolean isDownloaded;
 
+	private String gameKey;
+
 	public GameLibrary() {
 	}
 
@@ -86,5 +88,13 @@ public class GameLibrary {
 
 	public void setIsDownloaded(Boolean isDownloaded) {
 		this.isDownloaded = isDownloaded;
+	}
+
+	public String getGameKey() {
+		return gameKey;
+	}
+
+	public void setGameKey(String gameKey) {
+		this.gameKey = gameKey;
 	}
 }

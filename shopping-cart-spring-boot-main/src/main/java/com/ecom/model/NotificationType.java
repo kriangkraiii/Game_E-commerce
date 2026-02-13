@@ -1,8 +1,10 @@
 package com.ecom.model;
 
 public enum NotificationType {
-    LIKE("liked your pet's post"),
-    COMMENT("commented on your pet's post");
+    LIKE("liked your post"),
+    COMMENT("commented on your post"),
+    ORDER("order update"),
+    SYSTEM("system notification");
 
     private final String defaultMessage;
 

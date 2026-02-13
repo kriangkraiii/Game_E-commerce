@@ -7,11 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ecom.model.Product;
-import com.ecom.model.ProductOrder;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 	Long countByIsActiveTrue();
-	Long countByStockLessThan(Integer stock);
 
 
 	List<Product> findByIsActiveTrue();

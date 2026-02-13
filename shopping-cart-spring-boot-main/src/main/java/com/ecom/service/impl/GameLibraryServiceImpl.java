@@ -20,7 +20,7 @@ public class GameLibraryServiceImpl implements GameLibraryService {
 	private GameLibraryRepository gameLibraryRepository;
 
 	@Override
-	public GameLibrary addToLibrary(UserDtls user, Product product, String orderId) {
+	public GameLibrary addToLibrary(UserDtls user, Product product, String orderId, String gameKey) {
 		// Check if user already owns this game
 		if (gameLibraryRepository.existsByUserIdAndProductId(user.getId(), product.getId())) {
 			return null; // Already owned
@@ -30,6 +30,7 @@ public class GameLibraryServiceImpl implements GameLibraryService {
 		gameLibrary.setUser(user);
 		gameLibrary.setProduct(product);
 		gameLibrary.setOrderId(orderId);
+		gameLibrary.setGameKey(gameKey);
 		gameLibrary.setPurchaseDate(LocalDateTime.now());
 		gameLibrary.setIsDownloaded(false);
 
@@ -55,5 +56,10 @@ public class GameLibraryServiceImpl implements GameLibraryService {
 			return gameLibraryRepository.save(game);
 		}
 		return null;
+	}
+
+	@Override
+	public GameLibrary getGameLibraryById(Integer id) {
+		return gameLibraryRepository.findById(id).orElse(null);
 	}
 }

@@ -8,11 +8,13 @@ import com.ecom.model.UserDtls;
 
 public interface GameLibraryService {
 
-	GameLibrary addToLibrary(UserDtls user, Product product, String orderId);
+	GameLibrary addToLibrary(UserDtls user, Product product, String orderId, String gameKey);
 
 	List<GameLibrary> getGamesByUser(Integer userId);
 
 	Boolean isGameOwned(Integer userId, Integer productId);
 
 	GameLibrary markAsDownloaded(Integer gameLibraryId);
+
+	GameLibrary getGameLibraryById(Integer id);
 }

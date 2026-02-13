@@ -3,7 +3,6 @@ package com.ecom.service.impl;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,9 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ecom.model.Cart;
-import com.ecom.model.OrderAddress;
 import com.ecom.model.OrderRequest;
 import com.ecom.model.ProductOrder;
 import com.ecom.model.UserDtls;
@@ -25,9 +24,9 @@ import com.ecom.repository.CartRepository;
 import com.ecom.repository.ProductOrderRepository;
 import com.ecom.service.GameLibraryService;
 import com.ecom.service.OrderService;
+import com.ecom.service.WalletService;
 import com.ecom.util.CommonUtil;
 import com.ecom.util.OrderStatus;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -43,6 +42,9 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	private GameLibraryService gameLibraryService;
+
+	@Autowired
+	private WalletService walletService;
 
 	@Override
 	public Map<String, Long> getOrderStatusCounts() {
@@ -87,46 +89,65 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	@Transactional
 	public void saveOrder(Integer userid, OrderRequest orderRequest) throws Exception {
 
 		List<Cart> carts = cartRepository.findByUserId(userid);
+		if (carts.isEmpty()) {
+			throw new Exception("ตะกร้าว่าง");
+		}
+
+		// Calculate total price
+		double totalPrice = carts.stream()
+				.mapToDouble(cart -> cart.getProduct().getDiscountPrice())
+				.sum();
+
+		// Get user from first cart
+		UserDtls user = carts.get(0).getUser();
+
+		// Process wallet payment
+		WalletService.PurchaseResult purchaseResult = walletService.purchaseWithWallet(
+				user, totalPrice, "ซื้อเกม " + carts.size() + " รายการ");
+
+		if (!purchaseResult.isSuccess()) {
+			throw new Exception(purchaseResult.getMessage());
+		}
 
 		for (Cart cart : carts) {
-
 			ProductOrder order = new ProductOrder();
-
 			order.setOrderId(UUID.randomUUID().toString());
 			order.setOrderDate(LocalDate.now());
-
 			order.setProduct(cart.getProduct());
 			order.setPrice(cart.getProduct().getDiscountPrice());
-
-			order.setQuantity(cart.getQuantity());
+			order.setQuantity(1);
 			order.setUser(cart.getUser());
+			order.setStatus(OrderStatus.PAID.getName());
+			order.setPaymentType("WALLET");
 
-			order.setStatus(OrderStatus.IN_PROGRESS.getName());
-			order.setPaymentType(orderRequest.getPaymentType());
-
-			OrderAddress address = new OrderAddress();
-			address.setFirstName(orderRequest.getFirstName());
-			address.setLastName(orderRequest.getLastName());
-			address.setEmail(orderRequest.getEmail());
-			address.setMobileNo(orderRequest.getMobileNo());
-			address.setAddress(orderRequest.getAddress());
-			address.setCity(orderRequest.getCity());
-			address.setState(orderRequest.getState());
-			address.setPincode(orderRequest.getPincode());
-
-			order.setOrderAddress(address);
+			// Generate game activation key
+			String gameKey = generateGameKey();
+			order.setGameKey(gameKey);
 
 			ProductOrder saveOrder = orderRepository.save(order);
 
 			// Add game to user's game library
-			gameLibraryService.addToLibrary(cart.getUser(), cart.getProduct(), saveOrder.getOrderId());
-
-			resetCart(cart.getUser());
-			commonUtil.sendMailForProductOrder(saveOrder, "success");
+			gameLibraryService.addToLibrary(cart.getUser(), cart.getProduct(), saveOrder.getOrderId(), gameKey);
 		}
+
+		resetCart(user);
+	}
+
+	private String generateGameKey() {
+		String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		StringBuilder key = new StringBuilder();
+		java.util.Random random = new java.util.Random();
+		for (int i = 0; i < 4; i++) {
+			if (i > 0) key.append("-");
+			for (int j = 0; j < 4; j++) {
+				key.append(chars.charAt(random.nextInt(chars.length())));
+			}
+		}
+		return key.toString();
 	}
 
 	private void resetCart(UserDtls user) {

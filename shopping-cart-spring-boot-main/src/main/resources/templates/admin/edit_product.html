@@ -90,13 +90,8 @@
 								<div class="row">
 
 									<div class="mb-3 col">
-										<label>Enter Stock</label> <input type="text" name="stock"
-											th:value="${product.stock}" class="form-control">
-									</div>
-
-									<div class="mb-3 col">
-										<label>Upload Image</label> <input type="file" name="file"
-											class="form-control">
+										<label>Cover Image</label> <input type="file" name="file"
+											class="form-control" accept="image/*">
 									</div>
 
 									<div class="mt-1">
@@ -107,7 +102,42 @@
 								</div>
 
 								<div class="mb-3">
-									<label>Download Link (URL)</label> <input type="url" name="downloadLink"
+									<label>Additional Images (Optional)</label>
+									<input type="file" name="files" class="form-control" accept="image/*" multiple>
+									<small class="text-muted">Select multiple images for game gallery (will replace existing extra images)</small>
+									<th:block th:if="${product.images != null and !product.images.isEmpty()}">
+										<div class="d-flex flex-wrap gap-2 mt-2">
+											<th:block th:each="imgUrl : ${product.getImageList()}">
+												<img th:src="${imgUrl}" width="80px" height="80px" class="rounded" style="object-fit: cover;">
+											</th:block>
+										</div>
+									</th:block>
+								</div>
+
+								<!-- 🔐 Secure Digital Delivery - Game File Upload -->
+								<div class="mb-3">
+									<label class="form-label">
+										<i class="fa-solid fa-file-zipper me-1"></i> Game File (for Secure Download)
+									</label>
+									<input type="file" name="gameFile" class="form-control">
+									<small class="text-muted">
+										<i class="fa-solid fa-shield-halved me-1"></i>
+										ไฟล์จะถูกเข้ารหัส AES-256 อัตโนมัติเมื่อผู้ใช้ดาวน์โหลด
+									</small>
+									<th:block th:if="${product.gameFilePath != null and !product.gameFilePath.isEmpty()}">
+										<div class="mt-2">
+											<span class="badge bg-success">
+												<i class="fa-solid fa-check-circle me-1"></i> มีไฟล์เกมแล้ว
+											</span>
+											<small class="text-muted ms-2" th:text="${product.gameFilePath}"></small>
+										</div>
+										<small class="text-warning">อัปโหลดใหม่จะแทนที่ไฟล์เดิม</small>
+									</th:block>
+								</div>
+
+								<div class="mb-3">
+									<label>Download Link (URL) <small class="text-muted">(Optional - ถ้าไม่อัปโหลดไฟล์)</small></label>
+									<input type="url" name="downloadLink"
 										th:value="${product.downloadLink}" class="form-control"
 										placeholder="https://example.com/game-file.zip">
 								</div>

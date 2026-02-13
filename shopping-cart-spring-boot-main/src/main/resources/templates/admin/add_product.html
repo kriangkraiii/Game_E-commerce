@@ -77,18 +77,32 @@
 								<div class="row">
 
 									<div class="mb-3 col">
-										<label>Enter Stock</label> <input type="number" name="stock"
-											class="form-control" required min="0">
-									</div>
-
-									<div class="mb-3 col">
-										<label>Upload Image</label> <input type="file" name="file"
+										<label>Cover Image (Main)</label> <input type="file" name="file"
 											class="form-control" required accept="image/*">
 									</div>
 								</div>
 
 								<div class="mb-3">
-									<label>Download Link (URL)</label> <input type="url" name="downloadLink"
+									<label>Additional Images (Optional)</label>
+									<input type="file" name="files" class="form-control" accept="image/*" multiple>
+									<small class="text-muted">You can select multiple images for the game gallery</small>
+								</div>
+
+								<!-- 🔐 Secure Digital Delivery - Game File Upload -->
+								<div class="mb-3">
+									<label class="form-label">
+										<i class="fa-solid fa-file-zipper me-1"></i> Game File (for Secure Download)
+									</label>
+									<input type="file" name="gameFile" class="form-control">
+									<small class="text-muted">
+										<i class="fa-solid fa-shield-halved me-1"></i>
+										ไฟล์จะถูกเข้ารหัส AES-256 อัตโนมัติเมื่อผู้ใช้ดาวน์โหลด (รองรับทุกนามสกุล เช่น .zip, .exe, .rar)
+									</small>
+								</div>
+
+								<div class="mb-3">
+									<label>Download Link (URL) <small class="text-muted">(Optional - ถ้าไม่อัปโหลดไฟล์)</small></label>
+									<input type="url" name="downloadLink"
 										class="form-control" placeholder="https://example.com/game-file.zip">
 								</div>
 

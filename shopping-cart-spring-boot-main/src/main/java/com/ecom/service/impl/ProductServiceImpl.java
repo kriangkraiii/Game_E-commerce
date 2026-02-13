@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -115,11 +114,16 @@ public class ProductServiceImpl implements ProductService {
 	    dbProduct.setDescription(product.getDescription());
 	    dbProduct.setCategory(product.getCategory());
 	    dbProduct.setPrice(product.getPrice());
-	    dbProduct.setStock(product.getStock());
 	    dbProduct.setIsActive(product.getIsActive());
 	    dbProduct.setDiscount(product.getDiscount());
 	    dbProduct.setDownloadLink(product.getDownloadLink());
 	    dbProduct.setFileSize(product.getFileSize());
+	    if (product.getGameFilePath() != null) {
+	        dbProduct.setGameFilePath(product.getGameFilePath());
+	    }
+	    if (product.getImages() != null) {
+	        dbProduct.setImages(product.getImages());
+	    }
 
 	    // Calculate discount price
 	    Double discount = product.getPrice() * (product.getDiscount() / 100.0);
@@ -208,6 +212,6 @@ public class ProductServiceImpl implements ProductService {
 
 	@Override
 	public Long getTotalLowStockProductsCount() {
-		return productRepository.countByStockLessThan(10);
+		return 0L;
 	}
 }

@@ -56,9 +56,7 @@ body {
     var BUCKETS = {
         category:   '[[${awsCategoryBucket}]]',
         product:    '[[${awsProductBucket}]]',
-        profile:    '[[${awsProfileBucket}]]',
-        petprofile: '[[${awsPetprofileBucket}]]',
-        petpost:    '[[${awsPetpostBucket}]]'
+        profile:    '[[${awsProfileBucket}]]'
     };
 
     // Map: bucket name → local path prefix
@@ -66,8 +64,6 @@ body {
     LOCAL_PATHS[BUCKETS.category]   = '/img/category_img/';
     LOCAL_PATHS[BUCKETS.product]    = '/img/product_img/';
     LOCAL_PATHS[BUCKETS.profile]    = '/img/profile_img/';
-    LOCAL_PATHS[BUCKETS.petprofile] = '/img/pet_img/';
-    LOCAL_PATHS[BUCKETS.petpost]    = '/upload/posts/';
 
     // Convert an AWS S3 URL to a local path
     function awsToLocal(src) {
@@ -88,9 +84,6 @@ body {
         if (src.includes('/category_img/'))  return 'https://' + BUCKETS.category + '.s3.amazonaws.com/' + filename;
         if (src.includes('/product_img/'))   return 'https://' + BUCKETS.product + '.s3.amazonaws.com/' + filename;
         if (src.includes('/profile_img/'))   return 'https://' + BUCKETS.profile + '.s3.amazonaws.com/' + filename;
-        if (src.includes('/pet_img/'))       return 'https://' + BUCKETS.petprofile + '.s3.amazonaws.com/' + filename;
-        if (src.includes('/posts/') || src.includes('/upload/posts/'))
-            return 'https://' + BUCKETS.petpost + '.s3.amazonaws.com/' + filename;
         return null;
     }
 
@@ -181,116 +174,71 @@ body {
 
 <body>
 	<!-- Start Navbar  -->
-	<nav
-		class="navbar navbar-expand-lg  bg-primary fixed-top navbar-dark py-3">
-		<div class="container-fluid">
-			<a class="navbar-brand" href="/"><i class="fa-solid fa-gamepad"></i> GAME
-				STORE</a>
+	<nav class="navbar navbar-expand-lg bg-primary fixed-top navbar-dark py-3">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/"><i class="fa-solid fa-gamepad"></i> GAME STORE</a>
 
-			<button class="navbar-toggler" type="button"
-				data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-				aria-controls="navbarSupportedContent" aria-expanded="false"
-				aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-					<th:block th:if="${user==null}">
-						<li class="nav-item"><a class="nav-link active"
-							aria-current="page" href="/"><i class="fa-solid fa-house"></i>
-								Home</a></li>
-					</th:block>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-					<th:block th:unless="${user==null}">
-						<li class="nav-item" th:if="${user.role=='ROLE_ADMIN'}"><a
-							class="nav-link active" aria-current="page" href="/admin/"><i
-								class="fa-solid fa-house"></i> Home</a></li>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <th:block th:if="${user==null}">
+                    <li class="nav-item"><a class="nav-link active" href="/"><i class="fa-solid fa-house"></i> Home</a></li>
+                </th:block>
+                <th:block th:unless="${user==null}">
+                    <li class="nav-item" th:if="${user.role=='ROLE_ADMIN'}"><a class="nav-link active" href="/admin/"><i class="fa-solid fa-house"></i> Home</a></li>
+                    <li class="nav-item" th:if="${user.role=='ROLE_USER'}"><a class="nav-link active" href="/"><i class="fa-solid fa-house"></i> Home</a></li>
+                </th:block>
 
-						<li class="nav-item" th:if="${user.role=='ROLE_USER'}"><a
-							class="nav-link active" aria-current="page" href="/"><i
-								class="fa-solid fa-house"></i> Home</a></li>
-					</th:block>
+                <li class="nav-item"><a class="nav-link active" href="/products"><i class="fa-solid fa-store"></i> Game Store</a></li>
 
-					<li class="nav-item"><a class="nav-link active"
-						aria-current="page" href="/products"><i
-							class="fa-solid fa-store"></i> Game Store</a></li>
+                <th:block th:if="${user!=null and user.role!='ROLE_ADMIN'}">
+                    <li class="nav-item"><a class="nav-link active" href="/user/game-library"><i class="fa-solid fa-gamepad"></i> Game Library</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/user/wallet"><i class="fa-solid fa-wallet"></i> <span id="wallet-balance-nav">฿...</span></a></li>
+                </th:block>
+            </ul>
 
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <th:block th:if="${user==null}">
+                    <li class="nav-item"><a class="nav-link active" href="/signin"><i class="fa-solid fa-right-to-bracket"></i> LOGIN</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/register"><i class="fa-solid fa-user-plus"></i> REGISTER</a></li>
+                </th:block>
 
+                <th:block th:if="${user!=null}">
+                    <th:block th:if="${user.role=='ROLE_USER'}">
+                        <li class="nav-item"><a class="nav-link active" href="/user/cart"><i class="fa-solid fa-cart-shopping"></i> [[${countCart}]] </a></li>
+                    </th:block>
 
-					<!-- Game Library link for users -->
-					<th:block th:if="${user!=null and user.role!='ROLE_ADMIN'}">
-						<li class="nav-item"><a class="nav-link active"
-							aria-current="page" href="/user/game-library"> <i
-								class="fa-solid fa-gamepad"></i> Game Library
-						</a></li>
-					</th:block>
+                    <th:block th:if="${user.role != 'ROLE_ADMIN'}">
+                        <li class="nav-item">
+                            <a href="/notifications" class="nav-link active position-relative notification-bell">
+                                <i class="fas fa-bell"></i>
+                                <span id="notification-badge" class="notification-badge hidden">0</span>
+                            </a>
+                        </li>
+                    </th:block>
 
-					<th:block th:if="${user!=null and user.role!='ROLE_ADMIN'}">
-						<li class="nav-item"><a class="nav-link active"
-							aria-current="page" href="/user/wallet"> <i
-								class="fa-solid fa-wallet"></i> Wallet
-						</a></li>
-					</th:block>
-
-					<th:block th:if="${user != null and user.role != 'ROLE_ADMIN'}">
-						<li class="nav-item"><a class="nav-link active"
-							aria-current="page" href="/community"> <i
-								class="fa-solid fa-people-group"></i> Community
-						</a></li>
-					</th:block>
-
-					<th:block th:if="${user==null}">
-						<li class="nav-item"><a class="nav-link active"
-							aria-current="page" href="/signin"><i
-								class="fa-solid fa-right-to-bracket"></i> LOGIN</a></li>
-						<li class="nav-item"><a class="nav-link active"
-    aria-current="page" href="/register"><i class="fa-solid fa-user-plus"></i> REGISTER</a></li>
-
-					</th:block>
-
-					<th:block th:if="${user!=null}">
-						<th:block th:if="${user.role=='ROLE_USER'}">
-							<li class="nav-item"><a class="nav-link active"
-								aria-current="page" href="/user/cart"><i
-									class="fa-solid fa-cart-shopping"></i> [[${countCart}]] </a></li>
-						</th:block>
-						<th:block th:if="${user != null and user.role != 'ROLE_ADMIN'}">
-							<li class="nav-item"><a href="/notifications"
-								class="nav-link active position-relative notification-bell"
-								aria-label="Notifications"> <i class="fas fa-bell"></i> <span
-									id="notification-badge" class="notification-badge hidden">0</span>
-							</a></li>
-						</th:block>
-
-
-						<li class="nav-item dropdown"><a
-							class="nav-link dropdown-toggle active" href="#" role="button"
-							data-bs-toggle="dropdown" aria-expanded="false"> <i
-								class="fa-solid fa-user"></i> [[${user.name}]]
-						</a>
-							<ul class="dropdown-menu">
-								<li th:if="${user.role=='ROLE_USER'}"><a
-									class="dropdown-item" href="/user/profile">Profile</a></li>
-
-								<li th:if="${user.role=='ROLE_ADMIN'}"><a
-									class="dropdown-item" href="/admin/profile">Profile</a></li>
-
-								<li th:if="${user.role=='ROLE_USER'}"><a
-
-									class="dropdown-item" href="/user/user-orders">My Purchases</a></li>								<li th:if="${user.role=='ROLE_USER'}"><a
-								class="dropdown-item" href="/user/wallet"><i class="fa-solid fa-wallet"></i> Wallet</a></li>								<li><a class="dropdown-item" href="/logout">Logout</a></li>
-
-									
-								
-								<li>
-									<hr class="dropdown-divider">
-								</li>
-							</ul></li>
-					</th:block>
-				</ul>
-			</div>
-		</div>
-	</nav>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-user"></i> [[${user.name}]]
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end"> <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/profile">Profile</a></li>
+                            <li th:if="${user.role=='ROLE_ADMIN'}"><a class="dropdown-item" href="/admin/profile">Profile</a></li>
+                            <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/user-orders">My Purchases</a></li>
+                            <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/wallet"><i class="fa-solid fa-wallet"></i> Wallet</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                        </ul>
+                    </li>
+                </th:block>
+            </ul>
+        </div>
+    </div>
+</nav>
 	<!-- End Navbar -->
 
 	<div class="content-wrapper" th:replace="${content}"></div>
@@ -327,13 +275,28 @@ body {
 					.catch(error => console.error('Error fetching notification count:', error));
 			}
 
+			// ฟังก์ชันอัพเดตยอดเงิน wallet แบบ real-time
+			function updateWalletBalance() {
+				fetch('/user/wallet/balance')
+					.then(response => response.json())
+					.then(data => {
+						const walletEl = document.getElementById('wallet-balance-nav');
+						if (walletEl && data.success) {
+							walletEl.textContent = '฿' + Number(data.balance).toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+						}
+					})
+					.catch(error => console.error('Error fetching wallet balance:', error));
+			}
+
 			// อัพเดตทันทีเมื่อโหลดหน้า
 			document.addEventListener('DOMContentLoaded', function() {
 				updateNotificationCount();
+				updateWalletBalance();
 			});
 
-			// อัพเดตทุก 30 วินาที
-			setInterval(updateNotificationCount, 100);
+			// อัพเดตทุก 10 วินาที
+			setInterval(updateNotificationCount, 10000);
+			setInterval(updateWalletBalance, 10000);
 			
 		</script>
 

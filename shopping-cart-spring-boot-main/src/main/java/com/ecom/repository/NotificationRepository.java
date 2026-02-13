@@ -1,13 +1,15 @@
 package com.ecom.repository;
 
-import com.ecom.model.CommunityPost;
-import com.ecom.model.Notification;
-import com.ecom.model.UserDtls;
-import org.springframework.data.jpa.repository.*;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.ecom.model.Notification;
+import com.ecom.model.UserDtls;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
@@ -24,19 +26,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Modifying
     @Query("UPDATE Notification n SET n.isRead = true WHERE n.id = :id")
     void markAsRead(@Param("id") Long id);
-
-    // Hard delete by postId
-    @Modifying
-    @Query("DELETE FROM Notification n WHERE n.post.id = :postId")
-    void deleteByPostId(@Param("postId") Long postId);
-
-    // Hard delete by petId
-    @Modifying
-    @Query("DELETE FROM Notification n WHERE n.pet.id = :petId")
-    void deleteByPetId(@Param("petId") Integer petId);
-    
-    @Modifying
-    @Query("DELETE FROM Notification n WHERE n.post = :post")
-    void deleteByPost(@Param("post") CommunityPost post);
 
 }

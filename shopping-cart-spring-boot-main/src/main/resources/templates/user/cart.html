@@ -30,8 +30,7 @@
 								<th scope="col">Image</th>
 								<th scope="col">Game</th>
 								<th scope="col">Price</th>
-								<th scope="col" class="text-center">Quantity</th>
-								<th scope="col">Total Price</th>
+								<th scope="col" class="text-center">Action</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -41,25 +40,23 @@
 									th:src="${cart.product.image}"
 									width="75px" height="75px"></td>
 								<td>[[${cart.product.title}]]</td>
-								<td>[[${cart.product.discountPrice}]]</td>
-								<td class="text-center"><a
-									th:href="@{'/user/cartQuantityUpdate?sy=de&cid='+${cart.id}}">
-										<i class="fa-solid fa-minus"></i>
-								</a> [ [[${cart.quantity}]] ] <a
-									th:href="@{'/user/cartQuantityUpdate?sy=in&cid='+${cart.id}}">
-										<i class="fa-solid fa-plus"></i>
-								</a></td>
-								<td>[[${cart.totalPrice}]]</td>
+								<td>[[${cart.product.discountPrice}]] <th:block th:utext="${@commnServiceImpl.bahtSign()}"></th:block></td>
+								<td class="text-center">
+									<a th:href="@{'/user/cartQuantityUpdate?sy=de&cid='+${cart.id}}"
+									   class="btn btn-sm btn-outline-danger">
+										<i class="fa-solid fa-trash"></i> Remove
+									</a>
+								</td>
 							</tr>
 							<tr>
-								<td colspan="4"></td>
+								<td colspan="3"></td>
 								<td class="fw-bold">Total Price</td>
 								<td class="fw-bold">[[${totalOrderPrice}]]<th:block th:utext="${@commnServiceImpl.bahtSign()}"></th:block></td>
 							</tr>
 						</tbody>
 					</table>
 
-					<!-- Order Summary Section - Updated to match original style -->
+					<!-- Order Summary Section -->
 					<div class="mt-4">
 						<div class="card bg-light">
 							<div class="card-header">
@@ -78,8 +75,11 @@
 											</td>
 										</tr>
 										<tr>
-											<td class="text-muted">Shipping:</td>
-											<td class="text-end text-success fw-semibold">FREE</td>
+											<td class="text-muted"><i class="fa-solid fa-wallet me-1"></i>Wallet Balance:</td>
+											<td class="text-end fw-bold" th:classappend="${walletBalance >= totalOrderPrice} ? 'text-success' : 'text-danger'">
+												<span th:text="${#numbers.formatDecimal(walletBalance, 1, 2)}">0.00</span>
+												<th:block th:utext="${@commnServiceImpl.bahtSign()}"></th:block>
+											</td>
 										</tr>
 										<tr class="table-light">
 											<td class="fw-bold fs-5">Total:</td>
@@ -90,6 +90,12 @@
 										</tr>
 									</tbody>
 								</table>
+								<th:block th:if="${walletBalance < totalOrderPrice}">
+									<div class="alert alert-warning text-center mb-0 mt-2">
+										<i class="fa-solid fa-triangle-exclamation me-1"></i>
+										Insufficient wallet balance. Please <a href="/user/wallet" class="fw-bold">top up</a> your wallet first.
+									</div>
+								</th:block>
 							</div>
 						</div>
 					</div>

@@ -2,8 +2,7 @@ package com.ecom.util;
 
 public enum BucketType {
 	
-	CATEGORY(1, ""), PRODUCT(2, ""), PROFILE(3, ""),
-	PETPROFILE(4, ""), PETPOST(5, "");
+	CATEGORY(1, ""), PRODUCT(2, ""), PROFILE(3, "");
 
 	private Integer id;
 

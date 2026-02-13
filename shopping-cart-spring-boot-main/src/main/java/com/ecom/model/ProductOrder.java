@@ -3,6 +3,7 @@ package com.ecom.model;
 import java.time.LocalDate;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,24 +36,11 @@ public class ProductOrder {
 	@OneToOne(cascade = CascadeType.ALL)
 	private OrderAddress orderAddress;
 
+	@Column(length = 100)
+	private String gameKey; // Generated activation key for the game
+
 	// Default constructor
 	public ProductOrder() {}
-
-	// All args constructor
-	public ProductOrder(Integer id, String orderId, LocalDate orderDate, Product product, 
-			Double price, Integer quantity, UserDtls user, String status, String paymentType, 
-			OrderAddress orderAddress) {
-		this.id = id;
-		this.orderId = orderId;
-		this.orderDate = orderDate;
-		this.product = product;
-		this.price = price;
-		this.quantity = quantity;
-		this.user = user;
-		this.status = status;
-		this.paymentType = paymentType;
-		this.orderAddress = orderAddress;
-	}
 
 	// Getters and Setters
 	public Integer getId() { return id; }
@@ -84,4 +72,7 @@ public class ProductOrder {
 
 	public OrderAddress getOrderAddress() { return orderAddress; }
 	public void setOrderAddress(OrderAddress orderAddress) { this.orderAddress = orderAddress; }
+
+	public String getGameKey() { return gameKey; }
+	public void setGameKey(String gameKey) { this.gameKey = gameKey; }
 }

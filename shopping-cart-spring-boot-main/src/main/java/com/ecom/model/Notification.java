@@ -1,7 +1,18 @@
 package com.ecom.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "notifications")
@@ -13,19 +24,11 @@ public class Notification {
 
 	@ManyToOne
 	@JoinColumn(name = "recipient_id", nullable = false)
-	private UserDtls recipient; // ผู้รับการแจ้งเตือน
+	private UserDtls recipient;
 
 	@ManyToOne
 	@JoinColumn(name = "actor_id", nullable = false)
-	private UserDtls actor; // ผู้ที่ทำการกระทำ
-
-	@ManyToOne
-	@JoinColumn(name = "post_id")
-	private CommunityPost post; // โพสต์ที่เกี่ยวข้อง
-
-	@ManyToOne
-	@JoinColumn(name = "pet_id")
-	private Pet pet; // สัตว์เลี้ยงที่เกี่ยวข้อง
+	private UserDtls actor;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -51,12 +54,9 @@ public class Notification {
 	public Notification() {
 	}
 
-	public Notification(UserDtls recipient, UserDtls actor, CommunityPost post, Pet pet, NotificationType type,
-			String message) {
+	public Notification(UserDtls recipient, UserDtls actor, NotificationType type, String message) {
 		this.recipient = recipient;
 		this.actor = actor;
-		this.post = post;
-		this.pet = pet;
 		this.type = type;
 		this.message = message;
 		this.isRead = false;
@@ -86,22 +86,6 @@ public class Notification {
 
 	public void setActor(UserDtls actor) {
 		this.actor = actor;
-	}
-
-	public CommunityPost getPost() {
-		return post;
-	}
-
-	public void setPost(CommunityPost post) {
-		this.post = post;
-	}
-
-	public Pet getPet() {
-		return pet;
-	}
-
-	public void setPet(Pet pet) {
-		this.pet = pet;
 	}
 
 	public NotificationType getType() {

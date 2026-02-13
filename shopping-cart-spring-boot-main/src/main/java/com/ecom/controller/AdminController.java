@@ -1,6 +1,4 @@
 package com.ecom.controller;
-import com.ecom.service.AdminLogService;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,19 +6,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -36,26 +27,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ecom.model.AdminLog;
 import com.ecom.model.Category;
-import com.ecom.model.Pet;
 import com.ecom.model.Product;
 import com.ecom.model.ProductOrder;
 import com.ecom.model.UserDtls;
+import com.ecom.service.AdminLogService;
 import com.ecom.service.CartService;
 import com.ecom.service.CategoryService;
 import com.ecom.service.FileService;
 import com.ecom.service.OrderService;
-import com.ecom.service.PetService;
 import com.ecom.service.ProductService;
 import com.ecom.service.SiteSettingService;
 import com.ecom.service.UserService;
+import com.ecom.service.WalletService;
 import com.ecom.util.BucketType;
 import com.ecom.util.CommonUtil;
 import com.ecom.util.OrderStatus;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -88,13 +79,13 @@ public class AdminController {
 	private AdminLogService adminLogService;
 	
 	@Autowired
-	private PetService petService;
-
-	@Autowired
 	private FileService fileService;
 
 	@Autowired
 	private SiteSettingService siteSettingService;
+
+	@Autowired
+	private WalletService walletService;
 
 
 
@@ -366,17 +357,63 @@ public class AdminController {
 
 	@PostMapping("/saveProduct")
 	public String saveProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile image,
+	        @RequestParam(value = "files", required = false) MultipartFile[] extraImages,
+	        @RequestParam(value = "gameFile", required = false) MultipartFile gameFile,
 	        HttpSession session, Principal p) throws IOException {
 
 	    UserDtls admin = commonUtil.getLoggedInUserDetails(p);
 	    String ipAddress = getClientIpAddress(request);
 
-	    //String imageName = image.isEmpty() ? "default.jpg" : image.getOriginalFilename();
 	    String imageUrl = commonUtil.getImageUrl(image, BucketType.PRODUCT.getId());
 	    product.setImage(imageUrl);
-//	    product.setImage(imageName);
 	    product.setDiscount(0);
 	    product.setDiscountPrice(product.getPrice());
+	    
+	    // Handle game file upload for Secure Digital Delivery (AES-256)
+	    if (gameFile != null && !gameFile.isEmpty()) {
+	        String gameUploadDir = System.getProperty("user.dir") + "/uploads/game_files/";
+	        File gameFolder = new File(gameUploadDir);
+	        if (!gameFolder.exists()) { gameFolder.mkdirs(); }
+	        
+	        String originalName = gameFile.getOriginalFilename();
+	        String safeFileName = System.currentTimeMillis() + "_" + originalName;
+	        Path gameFilePath = Paths.get(gameUploadDir + safeFileName);
+	        Files.copy(gameFile.getInputStream(), gameFilePath, StandardCopyOption.REPLACE_EXISTING);
+	        product.setGameFilePath("uploads/game_files/" + safeFileName);
+	        
+	        // Auto-set file size if not provided
+	        if (product.getFileSize() == null || product.getFileSize().isEmpty()) {
+	            long bytes = gameFile.getSize();
+	            if (bytes >= 1_073_741_824) {
+	                product.setFileSize(String.format("%.2f GB", bytes / 1_073_741_824.0));
+	            } else if (bytes >= 1_048_576) {
+	                product.setFileSize(String.format("%.1f MB", bytes / 1_048_576.0));
+	            } else {
+	                product.setFileSize(String.format("%.0f KB", bytes / 1024.0));
+	            }
+	        }
+	    }
+	    
+	    // Handle multiple extra images
+	    if (extraImages != null && extraImages.length > 0) {
+	        StringBuilder imagesList = new StringBuilder();
+	        String extraUploadDir = System.getProperty("user.dir") + "/uploads/product_img/";
+	        File extraFolder = new File(extraUploadDir);
+	        if (!extraFolder.exists()) { extraFolder.mkdirs(); }
+	        
+	        for (MultipartFile extraImg : extraImages) {
+	            if (!extraImg.isEmpty()) {
+	                String extraUrl = commonUtil.getImageUrl(extraImg, BucketType.PRODUCT.getId());
+	                if (imagesList.length() > 0) imagesList.append(",");
+	                imagesList.append(extraUrl);
+	                Path extraPath = Paths.get(extraUploadDir + extraImg.getOriginalFilename());
+	                Files.copy(extraImg.getInputStream(), extraPath, StandardCopyOption.REPLACE_EXISTING);
+	                fileService.uploadFileS3(extraImg, 2);
+	            }
+	        }
+	        product.setImages(imagesList.toString());
+	    }
+	    
 	    Product saveProduct = productService.saveProduct(product);
 
 	    if (!ObjectUtils.isEmpty(saveProduct)) {
@@ -393,7 +430,7 @@ public class AdminController {
 	                                "CREATE_PRODUCT", 
 	                                "Created new product: " + product.getTitle(), 
 	                                ipAddress);
-	        fileService.uploadFileS3(image	, 2); // Upload to S3 bucket type 2 for product images
+	        fileService.uploadFileS3(image, 2);
 	    } else {
 	        session.setAttribute("errorMsg", "something wrong on server");
 	        adminLogService.logAction(admin.getEmail(), admin.getName(), 
@@ -425,7 +462,6 @@ public class AdminController {
 	    // Calculate statistics efficiently
 	    List<Product> products = page.getContent();
 	    long activeProductsCount = products.stream().filter(Product::getIsActive).count();
-	    long lowStockCount = products.stream().filter(p -> p.getStock() < 10).count();
 
 
 	    // Check if each product has orders and create a map for the template
@@ -453,7 +489,6 @@ public class AdminController {
 	    m.addAttribute("products", products);
 	    m.addAttribute("productOrdersMap", productOrdersMap);
 	    m.addAttribute("activeProductsCount", activeProductsCount);
-	    m.addAttribute("lowStockCount", lowStockCount);
 	    m.addAttribute("pageNo", page.getNumber());
 	    m.addAttribute("pageSize", pageSize);
 	    m.addAttribute("totalElements", page.getTotalElements());
@@ -499,6 +534,8 @@ public class AdminController {
 
 	@PostMapping("/updateProduct")
 	public String updateProduct(@ModelAttribute Product product, @RequestParam("file") MultipartFile image,
+	        @RequestParam(value = "files", required = false) MultipartFile[] extraImages,
+	        @RequestParam(value = "gameFile", required = false) MultipartFile gameFile,
 	        HttpSession session, Model m, Principal p) {
 
 	    UserDtls admin = commonUtil.getLoggedInUserDetails(p);
@@ -512,6 +549,61 @@ public class AdminController {
 	                                "Failed to update product: " + product.getTitle() + " (invalid discount)", 
 	                                ipAddress);
 	    } else {
+	        // Handle game file upload for Secure Digital Delivery (AES-256)
+	        if (gameFile != null && !gameFile.isEmpty()) {
+	            try {
+	                String gameUploadDir = System.getProperty("user.dir") + "/uploads/game_files/";
+	                File gameFolder = new File(gameUploadDir);
+	                if (!gameFolder.exists()) { gameFolder.mkdirs(); }
+	                
+	                String originalName = gameFile.getOriginalFilename();
+	                String safeFileName = System.currentTimeMillis() + "_" + originalName;
+	                Path gameFilePath = Paths.get(gameUploadDir + safeFileName);
+	                Files.copy(gameFile.getInputStream(), gameFilePath, StandardCopyOption.REPLACE_EXISTING);
+	                product.setGameFilePath("uploads/game_files/" + safeFileName);
+	                
+	                // Auto-set file size if not provided
+	                if (product.getFileSize() == null || product.getFileSize().isEmpty()) {
+	                    long bytes = gameFile.getSize();
+	                    if (bytes >= 1_073_741_824) {
+	                        product.setFileSize(String.format("%.2f GB", bytes / 1_073_741_824.0));
+	                    } else if (bytes >= 1_048_576) {
+	                        product.setFileSize(String.format("%.1f MB", bytes / 1_048_576.0));
+	                    } else {
+	                        product.setFileSize(String.format("%.0f KB", bytes / 1024.0));
+	                    }
+	                }
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }
+	        
+	        // Handle extra images
+	        if (extraImages != null && extraImages.length > 0) {
+	            try {
+	                StringBuilder imagesList = new StringBuilder();
+	                String uploadDir = System.getProperty("user.dir") + "/uploads/product_img/";
+	                File uploadFolder = new File(uploadDir);
+	                if (!uploadFolder.exists()) { uploadFolder.mkdirs(); }
+	                
+	                for (MultipartFile extraImg : extraImages) {
+	                    if (!extraImg.isEmpty()) {
+	                        String extraUrl = commonUtil.getImageUrl(extraImg, BucketType.PRODUCT.getId());
+	                        if (imagesList.length() > 0) imagesList.append(",");
+	                        imagesList.append(extraUrl);
+	                        Path extraPath = Paths.get(uploadDir + extraImg.getOriginalFilename());
+	                        Files.copy(extraImg.getInputStream(), extraPath, StandardCopyOption.REPLACE_EXISTING);
+	                        fileService.uploadFileS3(extraImg, 2);
+	                    }
+	                }
+	                if (imagesList.length() > 0) {
+	                    product.setImages(imagesList.toString());
+	                }
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	            }
+	        }
+	        
 	        Product updateProduct = productService.updateProduct(product, image);
 	        if (!ObjectUtils.isEmpty(updateProduct)) {
 	            session.setAttribute("succMsg", "Product update success");
@@ -756,45 +848,35 @@ public class AdminController {
 	@GetMapping("/")
 	public String index(Model m) {
 	    try {
-	        // Dashboard metrics - using existing methods or providing alternatives
 	        List<UserDtls> allUsers = userService.getUsers("ROLE_USER");
 	        m.addAttribute("totalUsers", allUsers.size());
-	        
-	        // Get all products count (you'll need to implement this or use existing method)
 	        m.addAttribute("totalProduct", productService.getAllProducts().size());
 	        m.addAttribute("totalOrders", orderService.getCountOrders());
-	        
-	        // Get all categories count
 	        m.addAttribute("totalCategory", categoryService.getAllActiveCategory().size());
 	        
-	        // Revenue metrics using existing methods
+	        // Revenue metrics
 	        Double totalRevenue = orderService.getTotalRevenue();
 	        Double todayRevenue = orderService.getTodayRevenue();
-	        
 	        m.addAttribute("totalRevenue", "฿" + (totalRevenue != null ? String.format("%.2f", totalRevenue) : "0.00"));
 	        m.addAttribute("todayRevenue", "฿" + (todayRevenue != null ? String.format("%.2f", todayRevenue) : "0.00"));
 	        m.addAttribute("todayOrders", orderService.getTodayOrdersCount());
 	        m.addAttribute("newUsersToday", userService.getNewUsersToday());
 	        
-	        // Recent users using existing method
+	        // Wallet/Transaction metrics
+	        Double purchaseRevenue = walletService.getTotalPurchaseRevenue();
+	        Long purchaseCount = walletService.getTotalPurchaseCount();
+	        Double topupAmount = walletService.getTotalTopupAmount();
+	        m.addAttribute("purchaseRevenue", purchaseRevenue != null ? purchaseRevenue : 0.0);
+	        m.addAttribute("purchaseCount", purchaseCount != null ? purchaseCount : 0L);
+	        m.addAttribute("topupAmount", topupAmount != null ? topupAmount : 0.0);
+	        
+	        // Recent transactions
+	        m.addAttribute("recentTransactions", walletService.getAllTransactions(20));
+	        
 	        List<UserDtls> recentUsers = userService.getRecentUsers(5);
 	        m.addAttribute("recentUsers", recentUsers);
 	        
-	        // Chart data using existing methods
-	        m.addAttribute("dailyRevenueData", orderService.getDailyRevenueData(7));
-	        m.addAttribute("dailyRevenueLabels", orderService.getDailyRevenueLabels(7));
-	        m.addAttribute("dailyOrdersData", orderService.getDailyOrdersData(7));
-	        m.addAttribute("dailyOrdersLabels", orderService.getDailyOrdersLabels(7));
-	        
-	        // For now, provide empty lists for top categories and products
-	        // You can implement these methods later
-	        m.addAttribute("topCategoriesData", new ArrayList<>());
-	        m.addAttribute("topCategoriesLabels", new ArrayList<>());
-	        m.addAttribute("topProductsData", new ArrayList<>());
-	        m.addAttribute("topProductsLabels", new ArrayList<>());
-	        
-	        
-	        // Add chart data
+	        // Chart data
 	        m.addAttribute("dailyRevenueData", orderService.getDailyRevenueData(7));
 	        m.addAttribute("dailyRevenueLabels", orderService.getDailyRevenueLabels(7));
 	        m.addAttribute("dailyOrdersData", orderService.getDailyOrdersData(7));
@@ -804,10 +886,8 @@ public class AdminController {
 	        m.addAttribute("topProductsData", productService.getTopProductsData());
 	        m.addAttribute("topProductsLabels", productService.getTopProductsLabels());
 	        
-	        
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	        // Set default values in case of error
 	        m.addAttribute("totalUsers", 0);
 	        m.addAttribute("totalProduct", 0);
 	        m.addAttribute("totalOrders", 0);
@@ -816,6 +896,10 @@ public class AdminController {
 	        m.addAttribute("todayRevenue", "฿0.00");
 	        m.addAttribute("todayOrders", 0);
 	        m.addAttribute("newUsersToday", 0);
+	        m.addAttribute("purchaseRevenue", 0.0);
+	        m.addAttribute("purchaseCount", 0L);
+	        m.addAttribute("topupAmount", 0.0);
+	        m.addAttribute("recentTransactions", new ArrayList<>());
 	        m.addAttribute("recentUsers", new ArrayList<>());
 	        m.addAttribute("dailyRevenueData", new ArrayList<>());
 	        m.addAttribute("dailyRevenueLabels", new ArrayList<>());
@@ -829,174 +913,6 @@ public class AdminController {
 	    
 	    return "admin/index";
 	}
-
-	@GetMapping("/pet")
-	public String adminShowPets(Model model, Principal principal) {
-	    if (principal == null) {
-	        return "redirect:/login";
-	    }
-
-	    List<Pet> pets = petService.getAllPets(); // Use the injected instance
-	    model.addAttribute("pets", pets);
-
-	    if (pets == null || pets.isEmpty()) {
-	        model.addAttribute("adminnoPetsMessage", "There's no pets added.");
-	    }
-
-	    return "admin/pet"; 
-	}
-
-	@PostMapping("/pet/delete/{id}")
-	public String deletePet(@PathVariable("id") int petId, HttpSession session, Principal principal) {
-	    try {
-	        if (principal == null) {
-	            return "redirect:/signin";
-	        }
-
-	        String email = principal.getName();
-	        UserDtls user = userService.getUserByEmail(email);
-
-	        if (user == null) {
-	            return "redirect:/signin";
-	        }
-
-	        Pet pet = petService.getPetById(petId);
-	        if (pet == null) {
-	            session.setAttribute("adminErrorNotPMsg",
-	                    "Pet not found or you don't have permission to delete this pet");
-	            return "redirect:/admin/pet";
-	        }
-
-	        // Delete image file if not default
-	        if (pet.getImagePet() != null && !pet.getImagePet().equals("/img/pet_img/default.jpg")) {
-	            try {
-	                String imagePath = "src/main/resources/static" + pet.getImagePet();
-	                Files.deleteIfExists(Paths.get(imagePath));
-	            } catch (Exception e) {
-	                System.err.println("Failed to delete image file: " + e.getMessage());
-	            }
-	        }
-
-	        petService.deletePet(petId);
-	        
-	        // Add admin logging
-	        String ipAddress = getClientIpAddress(request);
-	        adminLogService.logAction(
-	            user.getEmail(),
-	            user.getName(),
-	            "DELETE_PET",
-	            "Deleted pet ID: " + petId + " (Name: " + pet.getName() + ")",
-	            ipAddress
-	        );
-	        
-	        session.setAttribute("adminSuccDPMsg", "Pet deleted successfully!");
-
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        session.setAttribute("adminErrorDPMsg", "Pet deletion failed: " + e.getMessage());
-	    }
-
-	    return "redirect:/admin/pet";
-	}
-
-
-
-	// Edit pet - show form
-	@GetMapping("/pet/edit/{id}")
-	public String showEditPetForm(@PathVariable("id") int petId, Model model, HttpSession session,
-	        Principal principal) {
-	    if (principal == null) {
-	        return "redirect:/login";
-	    }
-
-	    Pet pet = petService.getPetById(petId); // Use injected instance
-	    if (pet == null) {
-	        session.setAttribute("adminErrorNoPetMsg", "not found or you don't have permission to edit this pet");
-	        return "redirect:/admin/pet";
-	    }
-
-	    List<UserDtls> owners = userService.getAllUsers()
-	                                       .stream()
-	                                       .filter(u -> !"ROLE_ADMIN".equals(u.getRole()))
-	                                       .collect(Collectors.toList());
-
-	    model.addAttribute("pet", pet);
-	    model.addAttribute("owners", owners);
-	    return "admin/edit_pet";
-	}
-
-
-	// Edit pet - handle form submission
-	@PostMapping("/pet/edit/{id}")
-	public String updatePet(@RequestParam String name,
-	                        @RequestParam String type,
-	                        @RequestParam String breed,
-	                        @RequestParam String description,
-	                        @RequestParam("owner.id") int ownerId,
-	                        @RequestParam("imagePet") MultipartFile imageFile,
-	                        @PathVariable("id") int petId,
-	                        HttpSession session,
-	                        Principal principal) {
-	    if (principal == null) {
-	        return "redirect:/login";
-	    }
-
-	    Pet existingPet = petService.getPetById(petId);
-	    if (existingPet == null) {
-	        session.setAttribute("adminErrorNoPetMsg", "Not found or you don't have permission to edit this pet");
-	        return "redirect:/admin/pet";
-	    }
-
-	    try {
-	        existingPet.setName(name);
-	        existingPet.setType(type);
-	        existingPet.setBreed(breed);
-	        existingPet.setDescription(description);
-
-	        if (ownerId > 0) {
-	            UserDtls owner = userService.getUserById(ownerId);
-	            if (owner != null) {
-	                existingPet.setOwner(owner);
-	            }
-	        }
-
-	        if (!imageFile.isEmpty()) {
-	            String imageUrl = commonUtil.getImageUrl(imageFile, BucketType.PETPROFILE.getId());
-	            existingPet.setImagePet(imageUrl);
-	            String uploadDir = System.getProperty("user.dir") + "/uploads/pet_img/";
-	            File uploadFolder = new File(uploadDir);
-	            if (!uploadFolder.exists()) { uploadFolder.mkdirs(); }
-	            Path path = Paths.get(uploadDir + imageFile.getOriginalFilename());
-	            Files.copy(imageFile.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-	            fileService.uploadFileS3(imageFile, 4);
-	        }
-
-	        petService.updatePet(existingPet);
-	        
-	        // Add admin logging
-	        String email = principal.getName();
-	        UserDtls user = userService.getUserByEmail(email);
-	        String ipAddress = getClientIpAddress(request);
-	        adminLogService.logAction(
-	            user.getEmail(),
-	            user.getName(),
-	            "UPDATE_PET",
-	            "Updated pet ID: " + petId + " (Name: " + name + ")",
-	            ipAddress
-	        );
-	        
-	        session.setAttribute("succUPMsg", "updated successfully!");
-	        
-	    } catch (Exception e) {  // Changed from IOException to Exception
-	        e.printStackTrace();
-	        session.setAttribute("errorUPMsg", "update failed: " + e.getMessage());
-	    }
-
-	    return "redirect:/admin/pet";
-	}
-
-
-
 
 
 }

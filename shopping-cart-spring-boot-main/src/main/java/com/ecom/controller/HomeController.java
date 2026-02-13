@@ -1,20 +1,11 @@
 package com.ecom.controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
-import java.util.stream.Collector;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -25,13 +16,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ecom.model.Category;
 import com.ecom.model.Product;
 import com.ecom.model.UserDtls;
 import com.ecom.service.CartService;
 import com.ecom.service.CategoryService;
+import com.ecom.service.GameLibraryService;
 import com.ecom.service.ProductService;
 import com.ecom.service.UserService;
 import com.ecom.util.CommonUtil;
@@ -61,6 +52,9 @@ public class HomeController {
 
 	@Autowired
 	private CartService cartService;
+
+	@Autowired
+	private GameLibraryService gameLibraryService;
 
 	@ModelAttribute
 	public void getUserDetails(Principal p, Model m) {
@@ -131,9 +125,17 @@ public class HomeController {
 	}
 
 	@GetMapping("/product/{id}")
-	public String product(@PathVariable int id, Model m) {
+	public String product(@PathVariable int id, Model m, Principal p) {
 		Product productById = productService.getProductById(id);
 		m.addAttribute("product", productById);
+		// Check if logged-in user already owns this game
+		if (p != null) {
+			UserDtls user = userService.getUserByEmail(p.getName());
+			if (user != null) {
+				Boolean owned = gameLibraryService.isGameOwned(user.getId(), id);
+				m.addAttribute("alreadyOwned", owned);
+			}
+		}
 		return "guest/view_product";
 	}
 

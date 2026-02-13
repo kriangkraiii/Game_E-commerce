@@ -21,12 +21,13 @@ import com.ecom.model.Category;
 import com.ecom.model.OrderRequest;
 import com.ecom.model.ProductOrder;
 import com.ecom.model.UserDtls;
-import com.ecom.repository.UserRepository;
 import com.ecom.service.CartService;
 import com.ecom.service.CategoryService;
 import com.ecom.service.FileService;
+import com.ecom.service.GameLibraryService;
 import com.ecom.service.OrderService;
 import com.ecom.service.UserService;
+import com.ecom.service.WalletService;
 import com.ecom.util.BucketType;
 import com.ecom.util.CommonUtil;
 import com.ecom.util.OrderStatus;
@@ -55,6 +56,12 @@ public class UserController {
 
 	@Autowired
 	private FileService fileService;
+
+	@Autowired
+	private WalletService walletService;
+
+	@Autowired
+	private GameLibraryService gameLibraryService;
 
 	@GetMapping("/")
 	public String home() {
@@ -93,6 +100,11 @@ public class UserController {
 	@GetMapping("/addCart")
 	public String addToCart(@RequestParam Integer pid, @RequestParam Integer uid, HttpSession session) {
 	    try {
+	        // Check if user already owns this game
+	        if (gameLibraryService.isGameOwned(uid, pid)) {
+	            session.setAttribute("errorMsg", "You already own this game!");
+	            return "redirect:/product/" + pid;
+	        }
 	        Cart saveCart = cartService.saveCart(pid, uid);
 	        if (ObjectUtils.isEmpty(saveCart)) {
 	            session.setAttribute("errorMsg", "Product add to cart failed");
@@ -110,20 +122,21 @@ public class UserController {
 	@GetMapping("/cart")
 	public String loadCartPage(Principal p, Model m) {
 	    UserDtls user = getLoggedInUserDetails(p);
-
-	    
 	    List<Cart> carts = cartService.getCartsByUser(user.getId());
 	    m.addAttribute("carts", carts);
 	    
 	    if (carts != null && !carts.isEmpty()) {
-	        // Calculate total from all cart items instead of relying on last item
 	        Double totalOrderPrice = carts.stream()
-	            .mapToDouble(cart -> cart.getProduct().getDiscountPrice() * cart.getQuantity())
+	            .mapToDouble(cart -> cart.getProduct().getDiscountPrice())
 	            .sum();
 	        m.addAttribute("totalOrderPrice", totalOrderPrice);
 	    } else {
 	        m.addAttribute("totalOrderPrice", 0.0);
 	    }
+	    
+	    // Add wallet balance
+	    double walletBalance = walletService.getBalance(user);
+	    m.addAttribute("walletBalance", walletBalance);
 	    
 	    return "user/cart";
 	}
@@ -148,14 +161,12 @@ public class UserController {
 	@GetMapping("/orders")
 	public String orderPage(Principal p, Model m) {
 	    UserDtls user = getLoggedInUserDetails(p);
-
 	    List<Cart> carts = cartService.getCartsByUser(user.getId());
 	    m.addAttribute("carts", carts);
 	    
 	    if (carts != null && !carts.isEmpty()) {
-	        // Calculate total properly
 	        Double totalOrderPrice = carts.stream()
-	            .mapToDouble(cart -> cart.getProduct().getDiscountPrice() * cart.getQuantity())
+	            .mapToDouble(cart -> cart.getProduct().getDiscountPrice())
 	            .sum();
 	        m.addAttribute("orderPrice", totalOrderPrice);
 	        m.addAttribute("totalOrderPrice", totalOrderPrice);
@@ -163,17 +174,24 @@ public class UserController {
 	        m.addAttribute("orderPrice", 0.0);
 	        m.addAttribute("totalOrderPrice", 0.0);
 	    }
+	    
+	    double walletBalance = walletService.getBalance(user);
+	    m.addAttribute("walletBalance", walletBalance);
+	    
 	    return "user/order";
 	}
 
 
 	@PostMapping("/save-order")
-	public String saveOrder(@ModelAttribute OrderRequest request, Principal p) throws Exception {
-		// System.out.println(request);
-		UserDtls user = getLoggedInUserDetails(p);
-		orderService.saveOrder(user.getId(), request);
-
-		return "redirect:/user/success";
+	public String saveOrder(@ModelAttribute OrderRequest request, Principal p, HttpSession session) {
+		try {
+			UserDtls user = getLoggedInUserDetails(p);
+			orderService.saveOrder(user.getId(), request);
+			return "redirect:/user/success";
+		} catch (Exception e) {
+			session.setAttribute("errorMsg", e.getMessage());
+			return "redirect:/user/orders";
+		}
 	}
 
 	@GetMapping("/success")

@@ -21,6 +21,10 @@ public class Transaction {
         PENDING, SUCCESS, FAILED
     }
 
+    public enum Type {
+        TOPUP, PURCHASE
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,6 +39,10 @@ public class Transaction {
     @Column(nullable = false)
     private Status status;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_type")
+    private Type type = Type.TOPUP;
+
     @Column(name = "ref_transaction_id")
     private String refTransactionId;
 
@@ -46,6 +54,9 @@ public class Transaction {
 
     @Column(name = "failure_reason")
     private String failureReason;
+
+    @Column(length = 500)
+    private String description;
 
     @ManyToOne
     private UserDtls user;
@@ -157,5 +168,21 @@ public class Transaction {
 
     public void setVerifiedAt(LocalDateTime verifiedAt) {
         this.verifiedAt = verifiedAt;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

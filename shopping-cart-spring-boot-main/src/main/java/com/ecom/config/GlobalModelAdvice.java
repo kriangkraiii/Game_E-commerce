@@ -22,12 +22,6 @@ public class GlobalModelAdvice {
     @Value("${aws.s3.bucket.profile}")
     private String profileBucket;
 
-    @Value("${aws.s3.bucket.petprofile}")
-    private String petprofileBucket;
-
-    @Value("${aws.s3.bucket.petpost}")
-    private String petpostBucket;
-
     /**
      * Exposes imageMode ("AWS" or "LOCAL") to all Thymeleaf templates
      */
@@ -52,15 +46,5 @@ public class GlobalModelAdvice {
     @ModelAttribute("awsProfileBucket")
     public String awsProfileBucket() {
         return profileBucket;
-    }
-
-    @ModelAttribute("awsPetprofileBucket")
-    public String awsPetprofileBucket() {
-        return petprofileBucket;
-    }
-
-    @ModelAttribute("awsPetpostBucket")
-    public String awsPetpostBucket() {
-        return petpostBucket;
     }
 }

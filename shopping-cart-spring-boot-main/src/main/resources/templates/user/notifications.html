@@ -179,8 +179,7 @@
 					headers: authHeaders(),
 					credentials: 'same-origin'
 				}).finally(() => {
-					// เปลี่ยนเส้นทางให้ตรงกับ mapping ที่มีอยู่
-					window.location.href = `/community/post/${postId}/comments#comments`;
+					window.location.href = '/';
 				});
 			}
 

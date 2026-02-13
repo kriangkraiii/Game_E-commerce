@@ -1,12 +1,11 @@
 package com.ecom.service;
 
-import com.ecom.model.*;
 import java.util.List;
 
-public interface NotificationService {
-	void createLikeNotification(UserDtls actor, Pet pet, CommunityPost post);
+import com.ecom.model.Notification;
+import com.ecom.model.UserDtls;
 
-	void createCommentNotification(UserDtls actor, Pet pet, CommunityPost post, String commentContent);
+public interface NotificationService {
 
 	List<Notification> getUserNotifications(UserDtls user);
 

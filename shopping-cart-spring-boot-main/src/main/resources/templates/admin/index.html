@@ -149,8 +149,8 @@
 			</div>
 
 			<!-- Charts Section -->
-			<!-- <div class="row mb-5">
-				Daily Revenue Chart
+			<div class="row mb-5">
+				<!-- Daily Revenue Chart -->
 				<div class="col-lg-6 mb-4">
 					<div class="card card-sh">
 						<div class="card-header bg-primary text-white">
@@ -164,7 +164,7 @@
 					</div>
 				</div>
 
-				Daily Orders Chart
+				<!-- Daily Orders Chart -->
 				<div class="col-lg-6 mb-4">
 					<div class="card card-sh">
 						<div class="card-header bg-success text-white">
@@ -178,7 +178,7 @@
 					</div>
 				</div>
 
-				Top Categories Chart
+				<!-- Top Categories Chart -->
 				<div class="col-lg-6 mb-4">
 					<div class="card card-sh">
 						<div class="card-header bg-warning text-white">
@@ -192,7 +192,7 @@
 					</div>
 				</div>
 
-				Top Products Chart
+				<!-- Top Products Chart -->
 				<div class="col-lg-6 mb-4">
 					<div class="card card-sh">
 						<div class="card-header bg-info text-white">
@@ -205,7 +205,112 @@
 						</div>
 					</div>
 				</div>
-			</div> -->
+			</div>
+
+			<!-- Wallet & Transaction Metrics -->
+			<div class="row mb-5">
+				<div class="col-12">
+					<h3 class="text-center mb-4">
+						<i class="fa-solid fa-wallet me-2"></i>Wallet & Transactions
+					</h3>
+				</div>
+				<div class="col-lg-4 col-md-6 mb-4">
+					<div class="card card-sh" style="background: linear-gradient(135deg, #6f42c1 0%, #5a2d91 100%); color: white;">
+						<div class="card-body">
+							<div class="d-flex justify-content-between">
+								<div>
+									<h4 class="mb-0">฿<span th:text="${#numbers.formatDecimal(purchaseRevenue, 1, 2)}">0.00</span></h4>
+									<p class="mb-0">Total Purchase Revenue</p>
+								</div>
+								<div class="align-self-center">
+									<i class="fa-solid fa-coins fa-2x opacity-75"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6 mb-4">
+					<div class="card card-sh" style="background: linear-gradient(135deg, #20c997 0%, #12a87b 100%); color: white;">
+						<div class="card-body">
+							<div class="d-flex justify-content-between">
+								<div>
+									<h4 class="mb-0">฿<span th:text="${#numbers.formatDecimal(topupAmount, 1, 2)}">0.00</span></h4>
+									<p class="mb-0">Total Top-up Amount</p>
+								</div>
+								<div class="align-self-center">
+									<i class="fa-solid fa-money-bill-wave fa-2x opacity-75"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6 mb-4">
+					<div class="card card-sh" style="background: linear-gradient(135deg, #fd7e14 0%, #dc6502 100%); color: white;">
+						<div class="card-body">
+							<div class="d-flex justify-content-between">
+								<div>
+									<h4 class="mb-0" th:text="${purchaseCount}">0</h4>
+									<p class="mb-0">Total Purchases</p>
+								</div>
+								<div class="align-self-center">
+									<i class="fa-solid fa-bag-shopping fa-2x opacity-75"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Recent Transactions Table -->
+			<div class="row mb-5">
+				<div class="col-12">
+					<div class="card card-sh">
+						<div class="card-header bg-dark text-white">
+							<h5 class="mb-0">
+								<i class="fa-solid fa-clock-rotate-left me-2"></i>Recent Transactions
+							</h5>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table table-hover">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Type</th>
+											<th>User</th>
+											<th>Amount</th>
+											<th>Status</th>
+											<th>Description</th>
+											<th>Date</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="tx,i : ${recentTransactions}" th:if="${recentTransactions}">
+											<td th:text="${i.count}">1</td>
+											<td>
+												<span th:if="${tx.type != null and tx.type.name() == 'PURCHASE'}" class="badge bg-danger">PURCHASE</span>
+												<span th:if="${tx.type == null or tx.type.name() == 'TOPUP'}" class="badge bg-success">TOPUP</span>
+											</td>
+											<td th:text="${tx.senderName != null ? tx.senderName : '-'}">User</td>
+											<td class="fw-bold">฿<span th:text="${#numbers.formatDecimal(tx.amount, 1, 2)}">0.00</span></td>
+											<td>
+												<span th:if="${tx.status.name() == 'SUCCESS'}" class="badge bg-success">Success</span>
+												<span th:if="${tx.status.name() == 'PENDING'}" class="badge bg-warning">Pending</span>
+												<span th:if="${tx.status.name() == 'FAILED'}" class="badge bg-danger">Failed</span>
+											</td>
+											<td th:text="${tx.description != null ? tx.description : '-'}">-</td>
+											<td th:text="${tx.createdAt != null ? #temporals.format(tx.createdAt, 'dd/MM/yyyy HH:mm') : '-'}">-</td>
+										</tr>
+										<tr th:if="${recentTransactions == null or #lists.isEmpty(recentTransactions)}">
+											<td colspan="7" class="text-center text-muted">No transactions found</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
 			<!-- Recent Users Section -->
 			<div class="row mb-5">
@@ -329,27 +434,6 @@
 							<div class="card-body text-center text-primary">
 								<i class="fa-solid fa-circle-user fa-3x"></i>
 								<h4>Admin</h4>
-							</div>
-						</div>
-					</a>
-				</div>
-								<div class="col-md-4 mt-4">
-					<a href="/admin/pet" class="text-decoration-none">
-						<div class="card card-sh">
-							<div class="card-body text-center text-primary">
-								<i class="fa-solid fa-paw fa-3x"></i>
-								<h4>Pet</h4>
-							</div>
-						</div>
-					</a>
-				</div>
-
-				<div class="col-md-4 mt-4">
-					<a href="/admin/community" class="text-decoration-none">
-						<div class="card card-sh">
-							<div class="card-body text-center text-primary">
-								<i class="fa-solid fa-people-group fa-3x"></i>
-								<h4>Community</h4>
 							</div>
 						</div>
 					</a>

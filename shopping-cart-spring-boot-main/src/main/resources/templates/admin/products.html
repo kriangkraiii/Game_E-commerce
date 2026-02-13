@@ -51,21 +51,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-xl-3 col-md-6">
-					<div class="card bg-warning text-white mb-4">
-						<div class="card-body">
-							<div class="d-flex justify-content-between">
-								<div>
-									<h4 class="mb-0">[[${lowStockCount}]]</h4>
-									<p class="mb-0">Low Stock (Current Page)</p>
-								</div>
-								<div class="align-self-center">
-									<i class="fa-solid fa-exclamation-triangle fa-2x"></i>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+	
 				<div class="col-xl-3 col-md-6">
 					<div class="card bg-info text-white mb-4">
 						<div class="card-body">
@@ -144,7 +130,6 @@
 									<th scope="col" class="text-center">Discount</th>
 									<th scope="col" class="text-center">Final Price</th>
 									<th scope="col" class="text-center">Status</th>
-									<th scope="col" class="text-center">Stock</th>
 									<th scope="col" class="text-center">Actions</th>
 								</tr>
 							</thead>
@@ -175,12 +160,7 @@
 									</span> <span th:unless="${p.isActive}" class="badge bg-danger">
 											<i class="fa-solid fa-times me-1"></i>Inactive
 									</span></td>
-									<td class="text-center"><span th:if="${p.stock > 10}"
-										class="badge bg-success"> [[${p.stock}]] </span> <span
-										th:if="${p.stock <= 10 and p.stock > 0}"
-										class="badge bg-warning"> [[${p.stock}]] </span> <span
-										th:if="${p.stock == 0}" class="badge bg-danger"> Out of
-											Stock </span></td>
+
 									<td class="text-center">
 										<div class="btn-group" role="group">
 											<a th:href="@{'/admin/editProduct/'+${p.id}}"

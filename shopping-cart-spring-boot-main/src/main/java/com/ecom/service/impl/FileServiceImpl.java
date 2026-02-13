@@ -29,12 +29,6 @@ public class FileServiceImpl implements FileService {
 	@Value("${aws.s3.bucket.profile}")
 	private String profileBucket;
 
-	@Value("${aws.s3.bucket.petprofile}")
-	private String petprofileBucket;
-
-	@Value("${aws.s3.bucket.petpost}")
-	private String petpostBucket;
-
 	@Override
 	public Boolean uploadFileS3(MultipartFile file, Integer bucketType) {
 
@@ -49,10 +43,6 @@ public class FileServiceImpl implements FileService {
 				bucketName = productBucket;
 			} else if (bucketType == 3) {
 				bucketName = profileBucket;
-			} else if (bucketType == 4) {
-				bucketName = petprofileBucket;
-			} else {
-				bucketName = petpostBucket;
 			}
 
 			String fileName = file.getOriginalFilename();

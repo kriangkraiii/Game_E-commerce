@@ -23,11 +23,6 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addResourceHandler("/js/**").addResourceLocations("classpath:/static/js/");
 		registry.addResourceHandler("/img/**").addResourceLocations("classpath:/static/img/").setCachePeriod(3600);
 
-		// Pet images from external uploads directory
-		String petUploadPath = System.getProperty("user.dir") + "/uploads/pet_img/";
-		registry.addResourceHandler("/img/pet_img/**").addResourceLocations("file:" + petUploadPath)
-				.setCachePeriod(3600);
-
 		// Profile images - serve from both external uploads and static directory
 		String profileUploadPath = System.getProperty("user.dir") + "/uploads/profile_img/";
 		registry.addResourceHandler("/img/profile_img/**")
@@ -46,13 +41,6 @@ public class WebConfig implements WebMvcConfigurer {
 				.addResourceLocations("file:" + productUploadPath, "classpath:/static/img/product_img/")
 				.setCachePeriod(3600);
 
-		// Post images from external uploads directory
-		String postUploadPath = System.getProperty("user.dir") + "/uploads/posts/";
-		registry.addResourceHandler("/uploads/posts/**").addResourceLocations("file:" + postUploadPath)
-				.setCachePeriod(3600);
-		registry.addResourceHandler("/upload/posts/**").addResourceLocations("file:" + postUploadPath,
-				"classpath:/static/upload/posts/")
-				.setCachePeriod(3600);
 		// Serve uploaded files from external directory
 		String uploadDir = System.getProperty("user.dir") + "/uploads/";
 

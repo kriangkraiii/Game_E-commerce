@@ -179,6 +179,85 @@ public class WalletService {
         return transactionRepository.findByUserAndStatusOrderByCreatedAtDesc(user, status);
     }
 
+    // ==================== PURCHASE PAYMENT ====================
+
+    @Transactional
+    public PurchaseResult purchaseWithWallet(UserDtls user, double amount, String description) {
+        Wallet wallet = getOrCreateWallet(user);
+
+        if (wallet.getBalance() < amount) {
+            return PurchaseResult.failed(String.format("ยอดเงินไม่เพียงพอ (คงเหลือ: ฿%.2f, ต้องการ: ฿%.2f)", wallet.getBalance(), amount));
+        }
+
+        try {
+            wallet.setBalance(wallet.getBalance() - amount);
+            wallet.setUpdatedAt(LocalDateTime.now());
+            walletRepository.save(wallet);
+
+            Transaction transaction = new Transaction();
+            transaction.setUser(user);
+            transaction.setAmount(amount);
+            transaction.setStatus(Transaction.Status.SUCCESS);
+            transaction.setType(Transaction.Type.PURCHASE);
+            transaction.setDescription(description);
+            transaction.setVerifiedAt(LocalDateTime.now());
+            transactionRepository.save(transaction);
+
+            return PurchaseResult.success(transaction, wallet.getBalance());
+        } catch (Exception e) {
+            return PurchaseResult.failed("เกิดข้อผิดพลาด: " + e.getMessage());
+        }
+    }
+
+    // ==================== ADMIN QUERIES ====================
+
+    public Double getTotalPurchaseRevenue() {
+        return transactionRepository.getTotalPurchaseRevenue();
+    }
+
+    public Long getTotalPurchaseCount() {
+        return transactionRepository.getTotalPurchaseCount();
+    }
+
+    public Double getTotalTopupAmount() {
+        return transactionRepository.getTotalTopupAmount();
+    }
+
+    public List<Transaction> getAllTransactions(int limit) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(0, limit);
+        return transactionRepository.findAllByOrderByCreatedAtDesc(pageable).getContent();
+    }
+
+    // ==================== PURCHASE RESULT CLASS ====================
+
+    public static class PurchaseResult {
+        private boolean success;
+        private String message;
+        private Transaction transaction;
+        private double newBalance;
+
+        public static PurchaseResult success(Transaction transaction, double newBalance) {
+            PurchaseResult r = new PurchaseResult();
+            r.success = true;
+            r.message = "ชำระเงินสำเร็จ";
+            r.transaction = transaction;
+            r.newBalance = newBalance;
+            return r;
+        }
+
+        public static PurchaseResult failed(String reason) {
+            PurchaseResult r = new PurchaseResult();
+            r.success = false;
+            r.message = reason;
+            return r;
+        }
+
+        public boolean isSuccess() { return success; }
+        public String getMessage() { return message; }
+        public Transaction getTransaction() { return transaction; }
+        public double getNewBalance() { return newBalance; }
+    }
+
     // ==================== FILE HELPER ====================
 
     /**

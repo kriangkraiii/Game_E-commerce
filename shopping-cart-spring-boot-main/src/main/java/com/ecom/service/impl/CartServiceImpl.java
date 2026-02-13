@@ -11,6 +11,7 @@ import com.ecom.model.Cart;
 import com.ecom.model.Product;
 import com.ecom.model.UserDtls;
 import com.ecom.repository.CartRepository;
+import com.ecom.repository.GameLibraryRepository;
 import com.ecom.repository.ProductRepository;
 import com.ecom.repository.UserRepository;
 import com.ecom.service.CartService;
@@ -28,6 +29,9 @@ public class CartServiceImpl implements CartService {
 
 	@Autowired
 	private ProductRepository productRepository;
+
+	@Autowired
+	private GameLibraryRepository gameLibraryRepository;
 
 	private static final Double DELIVERY_FEE = 0.0; // You can make this configurable
     private static final Double TAX_RATE = 0.07; // 7% tax rate - make this configurable
@@ -58,6 +62,11 @@ public class CartServiceImpl implements CartService {
 		UserDtls userDtls = userRepository.findById(userId).get();
 		Product product = productRepository.findById(productId).get();
 
+		// Block: user already owns this game
+		if (gameLibraryRepository.existsByUserIdAndProductId(userId, productId)) {
+			return null; // Already owned - cannot add to cart
+		}
+
 		Cart cartStatus = cartRepository.findByProductIdAndUserId(productId, userId);
 
 		Cart cart = null;
@@ -69,9 +78,8 @@ public class CartServiceImpl implements CartService {
 			cart.setQuantity(1);
 			cart.setTotalPrice(1 * product.getDiscountPrice());
 		} else {
-			cart = cartStatus;
-			cart.setQuantity(cart.getQuantity() + 1);
-			cart.setTotalPrice(cart.getQuantity() * cart.getProduct().getDiscountPrice());
+			// Game already in cart - don't increase quantity (1 copy only)
+			return cartStatus;
 		}
 		Cart saveCart = cartRepository.save(cart);
 
