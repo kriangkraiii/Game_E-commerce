@@ -62,6 +62,7 @@ public class SecurityConfig {
                                 "/game_library").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/user/**").hasRole("USER")
+                .requestMatchers("/verify-otp").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -71,7 +72,7 @@ public class SecurityConfig {
                 .passwordParameter("password")
                 .successHandler(authenticationSuccessHandler())
                 .failureHandler(authenticationFailureHandler)
-                .defaultSuccessUrl("/", true)
+                //.defaultSuccessUrl("/", true)
                 .permitAll()
             )
             .logout(logout -> logout
@@ -88,6 +89,7 @@ public class SecurityConfig {
             );
         return http.build();
     }
+
 
 
 }
