@@ -137,11 +137,15 @@
 			<div class="notification-item" th:each="notification : ${notifications}"
 				th:classappend="${!notification.read} ? ' unread' : ''"
 				th:attr="data-notification-id=${notification.id}"
-				th:onclick="'openPost(' + ${notification.post.id} + ', ' + ${notification.id} + ')'">
+				th:onclick="${notification.post != null} ? 'openPost(' + ${notification.post.id} + ', ' + ${notification.id} + ')' : 'markAsRead(' + ${notification.id} + ')'">
 
 				<div class="notification-content">
 
-
+					<!-- Actor Avatar -->
+					<img th:if="${notification.actor != null}" 
+						 th:src="@{'/static/img/profile_img/' + ${notification.actor.profileImage}}"
+						 class="notification-avatar"
+						 alt="User avatar">
 
 					<div class="notification-details">
 						<div class="notification-message" th:text="${notification.message}">Notification message</div>
@@ -151,8 +155,8 @@
 					</div>
 
 					<div class="notification-icon"
-						th:classappend="${notification.type.name() == 'LIKE'} ? ' like' : ' comment'">
-						<i th:class="${notification.type.name() == 'LIKE'} ? 'fas fa-heart' : 'fas fa-comment'"></i>
+						th:classappend="${notification.type.name() == 'POST_LIKE' || notification.type.name() == 'LIKE'} ? ' like' : ' comment'">
+						<i th:class="${notification.type.name() == 'POST_LIKE' || notification.type.name() == 'LIKE'} ? 'fas fa-heart' : 'fas fa-comment'"></i>
 					</div>
 				</div>
 
@@ -179,7 +183,17 @@
 					headers: authHeaders(),
 					credentials: 'same-origin'
 				}).finally(() => {
-					window.location.href = '/';
+					window.location.href = '/user/community#post-' + postId;
+				});
+			}
+
+			function markAsRead(notificationId) {
+				fetch(`/notifications/${notificationId}/read`, {
+					method: 'POST',
+					headers: authHeaders(),
+					credentials: 'same-origin'
+				}).finally(() => {
+					location.reload();
 				});
 			}
 

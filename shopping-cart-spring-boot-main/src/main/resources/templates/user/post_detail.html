@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>Post Detail</title>
+</head>
+<body>
+	<section>
+		<style>
+			.post-detail-container {
+				max-width: 700px;
+				margin: 90px auto 40px;
+				padding: 0 16px;
+			}
+			.back-bar { margin-bottom: 20px; }
+			.detail-card {
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+				border: none;
+				overflow: hidden;
+			}
+			.avatar-img {
+				width: 45px;
+				height: 45px;
+				border-radius: 50%;
+				object-fit: cover;
+			}
+			.avatar-sm {
+				width: 35px;
+				height: 35px;
+			}
+			.comment-bubble {
+				background-color: #f0f2f5;
+				border-radius: 18px;
+				padding: 8px 15px;
+				display: inline-block;
+				max-width: 100%;
+			}
+			.reply-bubble {
+				background-color: #e4e6eb;
+			}
+			.detail-content { padding: 15px 24px 24px; font-size: 1.25rem; line-height: 1.5; color: #1c1e21; }
+		</style>
+
+		<div class="post-detail-container">
+			<!-- Back Bar -->
+			<div class="back-bar">
+				<a href="/user/community" class="btn btn-light btn-sm rounded-pill text-primary fw-bold px-3 border">
+					<i class="fa-solid fa-arrow-left me-1"></i> Back to Community
+				</a>
+			</div>
+
+			<!-- Post Detail Card -->
+			<div class="detail-card">
+				<div class="px-4 pt-4 pb-2">
+					<div class="d-flex justify-content-between align-items-center">
+						<div class="d-flex align-items-center gap-2">
+							<img th:src="${post.author.profileImage != null && #strings.startsWith(post.author.profileImage, 'http') ? post.author.profileImage : '/img/profile_img/' + post.author.profileImage}" 
+												 class="avatar-img" alt="Profile" onerror="this.src='/img/profile_img/default.png'">
+							<div>
+								<h6 class="mb-0 fw-bold" th:text="${post.author.name}">Author Name</h6>
+								<small class="text-muted" th:text="${#temporals.format(post.createdAt, 'dd MMMM yyyy, HH:mm')}">Date</small>
+							</div>
+						</div>
+						<!-- Edit/Delete (only for post owner) -->
+						<div class="dropdown" th:if="${user.id == post.author.id}">
+							<button class="btn btn-sm btn-light border-0 dropdown-toggle no-caret" type="button" data-bs-toggle="dropdown">
+								<i class="fa-solid fa-ellipsis"></i>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-end">
+								<li><a class="dropdown-item" th:href="@{'/user/community/post/' + ${post.id} + '/edit'}"><i class="fa-solid fa-pen me-2"></i> Edit Post</a></li>
+								<li>
+									<form th:action="@{'/user/community/post/' + ${post.id} + '/delete'}" method="post" onsubmit="return confirm('Are you sure?');">
+										<button type="submit" class="dropdown-item text-danger"><i class="fa-solid fa-trash me-2"></i> Delete Post</button>
+									</form>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<div class="detail-content" th:text="${post.content}">Post content</div>
+
+				<div class="px-4 pb-2">
+					<div class="d-flex justify-content-between align-items-center mb-2">
+						<small class="text-muted">
+							<i class="fa-solid fa-thumbs-up text-primary"></i> 
+							<span class="like-count" th:text="${post.likes.size()}">0</span>
+						</small>
+						<small class="text-muted">
+							<span th:text="${post.comments.size()}">0</span> Comments
+						</small>
+					</div>
+					<hr class="my-1">
+					<div class="d-flex gap-1 py-1">
+						<button class="btn btn-light flex-grow-1 like-btn border-0" 
+								th:classappend="${post.likes.?[user.id == #vars.user.id].size() > 0 ? 'text-primary' : ''}"
+								th:data-post-id="${post.id}"
+								onclick="toggleLike(this)">
+							<i class="fa-thumbs-up" th:classappend="${post.likes.?[user.id == #vars.user.id].size() > 0 ? 'fa-solid' : 'fa-regular'}"></i> 
+							<span class="fw-bold">Like</span>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- Comments Section -->
+			<div class="comments-section mt-4">
+				<h5 class="px-2 mb-3"><i class="fa-solid fa-comments me-2"></i> Comments</h5>
+
+				<div class="px-1 py-2">
+					<th:block th:each="comment : ${post.comments}">
+						<!-- Top Level Comment -->
+						<div th:if="${comment.parentComment == null}" class="d-flex gap-2 mb-3">
+							<img th:src="${comment.author.profileImage != null && #strings.startsWith(comment.author.profileImage, 'http') ? comment.author.profileImage : '/img/profile_img/' + comment.author.profileImage}" 
+											 class="avatar-img avatar-sm mt-1" alt="Profile" onerror="this.src='/img/profile_img/default.png'">
+							<div class="flex-grow-1">
+								<div class="comment-bubble">
+									<div class="d-flex justify-content-between align-items-center gap-3">
+										<strong class="small" th:text="${comment.author.name}">User</strong>
+										<div class="dropdown" th:if="${user.id == comment.author.id}">
+											<button class="btn btn-sm btn-link text-muted p-0 no-caret" type="button" data-bs-toggle="dropdown">
+												<i class="fa-solid fa-ellipsis-vertical small"></i>
+											</button>
+											<ul class="dropdown-menu dropdown-menu-end small">
+												<li><a class="dropdown-item" href="#" th:onclick="'editComment(' + ${comment.id} + ')'" th:data-content="${comment.content}">Edit</a></li>
+												<li>
+													<form th:action="@{'/user/community/comment/' + ${comment.id} + '/delete'}" method="post" onsubmit="return confirm('Delete this comment?');">
+														<input type="hidden" name="postId" th:value="${post.id}">
+														<button type="submit" class="dropdown-item text-danger">Delete</button>
+													</form>
+												</li>
+											</ul>
+										</div>
+									</div>
+									<p class="mb-0 small" th:id="'comment-text-' + ${comment.id}" th:text="${comment.content}">Comment</p>
+									<div class="d-none mt-1" th:id="'comment-edit-' + ${comment.id}">
+										<form th:action="@{'/user/community/comment/' + ${comment.id} + '/edit'}" method="post" class="d-flex">
+											<input type="hidden" name="postId" th:value="${post.id}">
+											<input type="text" name="content" class="form-control form-control-sm me-2 rounded-pill" th:value="${comment.content}" required>
+											<button type="submit" class="btn btn-sm btn-primary rounded-pill">Save</button>
+										</form>
+									</div>
+								</div>
+								<div class="ms-2">
+									<small class="text-muted pointer reply-btn me-2" data-bs-toggle="collapse" th:data-bs-target="'#reply-form-' + ${comment.id}">Reply</small>
+									<small class="text-muted" th:text="${#temporals.format(comment.createdAt, 'dd-MM-yyyy HH:mm')}">Date</small>
+								</div>
+
+								<!-- Reply Form -->
+								<div class="collapse mt-2 ms-2" th:id="'reply-form-' + ${comment.id}">
+									<div class="d-flex gap-2">
+										<img th:src="${user.profileImage != null && #strings.startsWith(user.profileImage, 'http') ? user.profileImage : '/img/profile_img/' + user.profileImage}" 
+															 class="avatar-img avatar-sm" alt="My Profile" onerror="this.src='/img/profile_img/default.png'">
+										<form action="/user/community/reply" method="post" class="flex-grow-1 d-flex">
+											<input type="hidden" name="parentCommentId" th:value="${comment.id}">
+											<input type="hidden" name="postId" th:value="${post.id}">
+											<input type="text" name="content" class="form-control form-control-sm me-2 rounded-pill bg-white border" th:placeholder="'Reply to ' + ${comment.author.name} + '...'" required>
+											<button type="submit" class="btn btn-sm btn-primary rounded-pill"><i class="fa-solid fa-paper-plane"></i></button>
+										</form>
+									</div>
+								</div>
+
+								<!-- Nested Replies -->
+								<div th:if="${!comment.replies.isEmpty()}" class="mt-2 ms-2">
+									<div th:each="reply : ${comment.replies}" class="d-flex gap-2 mb-2">
+										<img th:src="${reply.author.profileImage != null && #strings.startsWith(reply.author.profileImage, 'http') ? reply.author.profileImage : '/img/profile_img/' + reply.author.profileImage}" 
+															 class="avatar-img avatar-sm" alt="Profile" onerror="this.src='/img/profile_img/default.png'">
+										<div class="flex-grow-1">
+											<div class="comment-bubble reply-bubble">
+												<div class="d-flex justify-content-between align-items-center gap-3">
+													<strong class="small" th:text="${reply.author.name}">User</strong>
+													<div class="dropdown" th:if="${user.id == reply.author.id}">
+														<button class="btn btn-sm btn-link text-muted p-0 no-caret" type="button" data-bs-toggle="dropdown">
+															<i class="fa-solid fa-ellipsis-vertical small"></i>
+														</button>
+														<ul class="dropdown-menu dropdown-menu-end small">
+															<li><a class="dropdown-item" href="#" th:onclick="'editComment(' + ${reply.id} + ')'" th:data-content="${reply.content}">Edit</a></li>
+															<li>
+																<form th:action="@{'/user/community/comment/' + ${reply.id} + '/delete'}" method="post" onsubmit="return confirm('Delete this reply?');">
+																	<input type="hidden" name="postId" th:value="${post.id}">
+																	<button type="submit" class="dropdown-item text-danger">Delete</button>
+																</form>
+															</li>
+														</ul>
+													</div>
+												</div>
+												<p class="mb-0 small" th:id="'comment-text-' + ${reply.id}" th:text="${reply.content}">Reply</p>
+												<div class="d-none mt-1" th:id="'comment-edit-' + ${reply.id}">
+													<form th:action="@{'/user/community/comment/' + ${reply.id} + '/edit'}" method="post" class="d-flex">
+														<input type="hidden" name="postId" th:value="${post.id}">
+														<input type="text" name="content" class="form-control form-control-sm me-2 rounded-pill" th:value="${reply.content}" required>
+														<button type="submit" class="btn btn-sm btn-primary rounded-pill">Save</button>
+													</form>
+												</div>
+											</div>
+											<div class="ms-2">
+												<small class="text-muted" th:text="${#temporals.format(reply.createdAt, 'dd-MM-yyyy HH:mm')}">Date</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</th:block>
+
+					<!-- Add Primary Comment Form -->
+					<div class="d-flex gap-2 mt-4 pt-3 border-top">
+						<img th:src="${user.profileImage != null && #strings.startsWith(user.profileImage, 'http') ? user.profileImage : '/img/profile_img/' + user.profileImage}" 
+											 class="avatar-img avatar-sm" alt="My Profile" onerror="this.src='/img/profile_img/default.png'">
+						<form action="/user/community/comment" method="post" class="flex-grow-1 d-flex">
+							<input type="hidden" name="postId" th:value="${post.id}">
+							<input type="text" name="content" class="form-control me-2 rounded-pill bg-white border" placeholder="Write a comment..." required>
+							<button type="submit" class="btn btn-sm btn-primary rounded-circle" style="width: 32px; height: 32px; padding: 0;">
+								<i class="fa-solid fa-paper-plane"></i>
+							</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			function toggleLike(btn) {
+				const postId = btn.getAttribute('data-post-id');
+				btn.disabled = true;
+				fetch('/user/community/like?postId=' + postId, {
+					method: 'POST', credentials: 'include',
+					headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+				})
+				.then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+				.then(data => {
+					document.querySelector('.like-count').textContent = data.likeCount;
+					const icon = btn.querySelector('i');
+					if (data.liked) {
+						btn.classList.add('text-primary');
+						icon.classList.replace('fa-regular', 'fa-solid');
+					} else {
+						btn.classList.remove('text-primary');
+						icon.classList.replace('fa-solid', 'fa-regular');
+					}
+				})
+				.catch(e => { console.error(e); alert('Error'); })
+				.finally(() => { btn.disabled = false; });
+			}
+
+			function editComment(commentId) {
+				document.getElementById('comment-text-' + commentId).classList.add('d-none');
+				document.getElementById('comment-edit-' + commentId).classList.remove('d-none');
+			}
+			function cancelEditComment(commentId) {
+				document.getElementById('comment-text-' + commentId).classList.remove('d-none');
+				document.getElementById('comment-edit-' + commentId).classList.add('d-none');
+			}
+		</script>
+	</section>
+</body>
+</html>

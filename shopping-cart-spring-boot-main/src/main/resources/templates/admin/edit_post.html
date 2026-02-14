@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>Edit Post (Admin)</title>
+</head>
+<body>
+	<section>
+		<style>
+			.edit-header {
+				background: linear-gradient(135deg, #dc3545, #a71d2a);
+				border-radius: 20px;
+				padding: 28px;
+				margin-bottom: 24px;
+				color: white;
+			}
+			.edit-header h2 { margin: 0; font-weight: 700; }
+			.edit-header p { margin: 8px 0 0; opacity: 0.9; }
+		</style>
+
+		<div class="container mt-5" style="max-width: 700px;">
+			<!-- Back -->
+			<div class="mb-3">
+				<a href="/admin/community" class="btn btn-outline-secondary btn-sm">
+					<i class="fa-solid fa-arrow-left me-1"></i> Back to Admin Community
+				</a>
+			</div>
+
+			<!-- Header -->
+			<div class="edit-header">
+				<h2><i class="fa-solid fa-user-shield me-2"></i> Admin Edit Post</h2>
+				<p>Editing post by <strong th:text="${post.author.name}">User</strong></p>
+			</div>
+
+			<!-- Edit Form -->
+			<div class="card shadow-sm p-4">
+				<form th:action="@{'/admin/community/post/' + ${post.id} + '/edit'}" method="post">
+					<div class="mb-3">
+						<label class="form-label text-muted">Post Content</label>
+						<textarea name="content" class="form-control" rows="6" required
+								  th:text="${post.content}"></textarea>
+					</div>
+					<div class="d-flex justify-content-end gap-2">
+						<a href="/admin/community" class="btn btn-outline-secondary">Cancel</a>
+						<button type="submit" class="btn btn-danger">
+							<i class="fa-solid fa-check me-1"></i> Save Changes (Admin)
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</section>
+</body>
+</html>
