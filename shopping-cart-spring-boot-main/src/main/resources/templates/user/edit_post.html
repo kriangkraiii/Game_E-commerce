@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>Edit Post</title>
+</head>
+<body>
+	<section>
+		<style>
+			.edit-post-container {
+				max-width: 700px;
+				margin: 90px auto 40px;
+				padding: 0 16px;
+			}
+			.edit-header {
+				background: linear-gradient(135deg, #1a1a2e, #16213e);
+				border-radius: 20px;
+				padding: 28px;
+				margin-bottom: 24px;
+				color: white;
+			}
+			.edit-header h2 {
+				margin: 0;
+				font-weight: 700;
+			}
+			.edit-header p {
+				margin: 8px 0 0;
+				opacity: 0.7;
+			}
+			.edit-card {
+				background: #fff;
+				border-radius: 16px;
+				box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+				padding: 24px;
+				border: 1px solid #e3e7ed;
+			}
+			.edit-card textarea {
+				border: 2px solid #e3e7ed;
+				border-radius: 12px;
+				padding: 16px;
+				font-size: 1.05rem;
+				line-height: 1.6;
+				resize: vertical;
+				min-height: 150px;
+				transition: border-color 0.3s;
+			}
+			.edit-card textarea:focus {
+				border-color: #3b82f6;
+				box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+			}
+			.edit-meta {
+				color: #64748b;
+				font-size: 0.85rem;
+				margin-bottom: 16px;
+			}
+		</style>
+
+		<div class="edit-post-container">
+			<!-- Back -->
+			<div class="mb-3">
+				<a th:href="@{'/user/community/post/' + ${post.id}}" class="btn btn-outline-secondary btn-sm">
+					<i class="fa-solid fa-arrow-left me-1"></i> Back to Post
+				</a>
+			</div>
+
+			<!-- Header -->
+			<div class="edit-header">
+				<h2><i class="fa-solid fa-pen-to-square me-2"></i> Edit Post</h2>
+				<p>Modify your post content below</p>
+			</div>
+
+			<!-- Edit Form -->
+			<div class="edit-card">
+				<div class="edit-meta">
+					<i class="fa-regular fa-clock me-1"></i>
+					Originally posted: <span th:text="${#temporals.format(post.createdAt, 'dd MMM yyyy, HH:mm')}">Date</span>
+				</div>
+
+				<form th:action="@{'/user/community/post/' + ${post.id} + '/edit'}" method="post">
+					<div class="mb-3">
+						<textarea name="content" class="form-control" rows="6" required
+								  th:text="${post.content}">Post content</textarea>
+					</div>
+					<div class="d-flex justify-content-end gap-2">
+						<a th:href="@{'/user/community/post/' + ${post.id}}" class="btn btn-outline-secondary">
+							Cancel
+						</a>
+						<button type="submit" class="btn btn-primary">
+							<i class="fa-solid fa-check me-1"></i> Save Changes
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

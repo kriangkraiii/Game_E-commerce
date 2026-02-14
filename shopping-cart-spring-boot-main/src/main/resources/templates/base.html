@@ -195,8 +195,9 @@ body {
                 </th:block>
 
                 <li class="nav-item"><a class="nav-link active" href="/products"><i class="fa-solid fa-store"></i> Game Store</a></li>
-
                 <th:block th:if="${user!=null and user.role!='ROLE_ADMIN'}">
+                    <li class="nav-item"><a class="nav-link active" href="/user/community"><i class="fa-solid fa-users"></i> Community</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/user/community/my-posts"><i class="fa-solid fa-file-pen"></i> My Posts</a></li>
                     <li class="nav-item"><a class="nav-link active" href="/user/game-library"><i class="fa-solid fa-gamepad"></i> Game Library</a></li>
                     <li class="nav-item"><a class="nav-link active" href="/user/wallet"><i class="fa-solid fa-wallet"></i> <span id="wallet-balance-nav">฿...</span></a></li>
                 </th:block>
@@ -226,10 +227,12 @@ body {
                         <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa-solid fa-user"></i> [[${user.name}]]
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end"> <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/profile">Profile</a></li>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/profile">Profile</a></li>
                             <li th:if="${user.role=='ROLE_ADMIN'}"><a class="dropdown-item" href="/admin/profile">Profile</a></li>
                             <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/user-orders">My Purchases</a></li>
                             <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/wallet"><i class="fa-solid fa-wallet"></i> Wallet</a></li>
+                            <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/login-history">Login History</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="/logout">Logout</a></li>
                         </ul>
@@ -252,6 +255,8 @@ body {
 	<script
 		src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
 	<script type="text/javascript" src="/js/script.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
 
 
@@ -296,7 +301,64 @@ body {
 
 			// อัพเดตทุก 10 วินาที
 			setInterval(updateNotificationCount, 10000);
+			setInterval(updateNotificationCount, 10000);
 			setInterval(updateWalletBalance, 10000);
+
+			// WebSocket Real-time Notifications
+			var stompClient = null;
+
+			function connectWebSocket() {
+				var socket = new SockJS('/ws');
+				stompClient = Stomp.over(socket);
+				stompClient.debug = null; // Disable debug logs
+				stompClient.connect({}, function (frame) {
+					console.log('Connected: ' + frame);
+					stompClient.subscribe('/user/queue/notifications', function (notification) {
+						showNotification(JSON.parse(notification.body));
+						updateNotificationCount(); // Refresh badge
+					});
+				});
+			}
+
+			function showNotification(notification) {
+				// Show toast or alert
+				// For now, let's just log it and maybe show a browser notification if supported/allowed
+				console.log("Received notification: ", notification);
+				
+				// Create a simple toast if Bootstrap Toasts are available, otherwise alert
+				// Or just update the badge which is already done.
+				// Let's create a custom toast element on the fly
+				var toastContainer = document.getElementById('toast-container');
+				if (!toastContainer) {
+					toastContainer = document.createElement('div');
+					toastContainer.id = 'toast-container';
+					toastContainer.style.position = 'fixed';
+					toastContainer.style.bottom = '20px';
+					toastContainer.style.right = '20px';
+					toastContainer.style.zIndex = '1055';
+					document.body.appendChild(toastContainer);
+				}
+				
+				var toast = document.createElement('div');
+				toast.className = 'toast show';
+				toast.role = 'alert';
+				toast.innerHTML = `
+					<div class="toast-header">
+						<strong class="me-auto">Notification</strong>
+						<button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+					</div>
+					<div class="toast-body">
+						${notification.message}
+					</div>
+				`;
+				toastContainer.appendChild(toast);
+				
+				setTimeout(() => {
+					toast.remove();
+				}, 5000);
+			}
+
+			connectWebSocket();
 			
 		</script>
 

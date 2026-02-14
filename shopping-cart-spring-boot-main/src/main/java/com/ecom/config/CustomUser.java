@@ -56,4 +56,8 @@ public class CustomUser implements UserDetails {
 		return user != null ? user.getIsEnable() : false;
 	}
 
+	public UserDtls getUser() {
+		return user;
+	}
+
 }

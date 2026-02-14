@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>My Posts</title>
+</head>
+<body>
+	<section>
+		<style>
+			.my-posts-container {
+				max-width: 700px;
+				margin: 90px auto 40px;
+				padding: 0 16px;
+			}
+			.my-posts-header {
+				background: linear-gradient(135deg, #1a1a2e, #16213e);
+				border-radius: 20px;
+				padding: 28px;
+				margin-bottom: 24px;
+				color: white;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.my-posts-header h2 {
+				margin: 0;
+				font-weight: 700;
+			}
+			.avatar-img {
+				width: 45px;
+				height: 45px;
+				border-radius: 50%;
+				object-fit: cover;
+			}
+			.post-card {
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+				margin-bottom: 20px;
+				border: none;
+				transition: all 0.3s ease;
+				overflow: hidden;
+			}
+			.post-card:hover {
+				box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+			}
+			.post-card-body {
+				padding: 20px;
+			}
+			.post-content {
+				font-size: 1.1rem;
+				color: #1c1e21;
+				line-height: 1.5;
+				margin-bottom: 12px;
+				cursor: pointer;
+			}
+			.empty-state {
+				text-align: center;
+				padding: 80px 20px;
+				color: #64748b;
+			}
+			.empty-state i {
+				font-size: 4rem;
+				margin-bottom: 20px;
+				color: #cbd5e0;
+			}
+		</style>
+
+		<div class="my-posts-container">
+			<!-- Header -->
+			<div class="my-posts-header">
+				<h2>
+					<i class="fa-solid fa-file-pen me-2"></i> My Posts
+				</h2>
+				<a href="/user/community" class="btn btn-outline-light btn-sm rounded-pill">
+					<i class="fa-solid fa-arrow-left me-1"></i> Back to Community
+				</a>
+			</div>
+
+			<!-- Empty State -->
+			<div th:if="${posts.isEmpty()}" class="empty-state">
+				<i class="fa-solid fa-pen-to-square"></i>
+				<h4>No posts yet</h4>
+				<p>You haven't created any posts. Share something with the community!</p>
+				<a href="/user/community" class="btn btn-primary mt-2 rounded-pill">
+					<i class="fa-solid fa-plus me-1"></i> Create Post
+				</a>
+			</div>
+
+			<!-- Post Cards -->
+			<div th:each="post : ${posts}" class="post-card">
+				<div class="post-card-body">
+					<!-- Header: avatar + info + actions -->
+					<div class="d-flex justify-content-between align-items-center mb-3">
+						<div class="d-flex align-items-center gap-2">
+							<img th:src="${user.profileImage != null && #strings.startsWith(user.profileImage, 'http') ? user.profileImage : '/img/profile_img/' + user.profileImage}" 
+												 class="avatar-img" alt="My Profile" onerror="this.src='/img/profile_img/default.png'">
+							<div>
+								<h6 class="mb-0 fw-bold" th:text="${user.name}">My Name</h6>
+								<small class="text-muted" th:text="${#temporals.format(post.createdAt, 'dd MMMM yyyy, HH:mm')}">Date</small>
+							</div>
+						</div>
+						<!-- Edit / Delete Dropdown -->
+						<div class="dropdown">
+							<button class="btn btn-sm btn-light border-0 dropdown-toggle no-caret" type="button"
+								data-bs-toggle="dropdown">
+								<i class="fa-solid fa-ellipsis"></i>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-end">
+								<li>
+									<a class="dropdown-item" th:href="@{'/user/community/post/' + ${post.id} + '/edit'}">
+										<i class="fa-solid fa-pen me-2"></i> Edit Post
+									</a>
+								</li>
+								<li>
+									<form th:action="@{'/user/community/post/' + ${post.id} + '/delete'}" method="post"
+										  onsubmit="return confirm('Are you sure you want to delete this post?');">
+										<button type="submit" class="dropdown-item text-danger">
+											<i class="fa-solid fa-trash me-2"></i> Delete Post
+										</button>
+									</form>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+					<!-- Post Content (clickable to detail) -->
+					<div class="post-content"
+						 th:onclick="'window.location.href=\'/user/community/post/' + ${post.id} + '\''">
+						<p th:text="${post.content}" class="mb-0">Post content here</p>
+					</div>
+
+					<div class="d-flex justify-content-between align-items-center mt-3 pt-2 px-1" style="border-top: 1px solid #f0f2f5;">
+						<div class="small text-muted">
+							<span class="me-3"><i class="fa-solid fa-thumbs-up text-primary me-1"></i> <span th:text="${post.likes.size()}">0</span></span>
+							<span><i class="fa-solid fa-comment text-secondary me-1"></i> <span th:text="${post.comments.size()}">0</span></span>
+						</div>
+						<a th:href="@{'/user/community/post/' + ${post.id}}" class="btn btn-sm btn-light border-0 rounded-pill text-primary fw-bold">
+							View Detail <i class="fa-solid fa-chevron-right ms-1"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</section>
+</body>
+</html>

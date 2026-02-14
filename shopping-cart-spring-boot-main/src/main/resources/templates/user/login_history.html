@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{base::layout(~{::section})}">
+<head>
+<meta charset="UTF-8">
+<title>Login History</title>
+</head>
+<body>
+	<section>
+		<div class="container-fluid mt-5 p-5">
+			<div class="card card-sh">
+				<div class="card-header text-center">
+					<p class="fs-4">Login History</p>
+					<th:block th:if="${session.succMsg}">
+						<p class="text-success fw-bold">[[${session.succMsg}]]</p>
+						<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+					</th:block>
+
+					<th:block th:if="${session.errorMsg}">
+						<p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+						<th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
+					</th:block>
+				</div>
+				<div class="card-body">
+					<table class="table table-bordered table-hover">
+						<thead class="bg-primary text-white">
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Login Time</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="log,c:${loginLogs}">
+								<th scope="row">[[${c.count}]]</th>
+								<td>[[${#temporals.format(log.loginTime, 'dd-MM-yyyy HH:mm:ss')}]]</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

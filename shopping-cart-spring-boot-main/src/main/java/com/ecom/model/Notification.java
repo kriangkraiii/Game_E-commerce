@@ -31,7 +31,7 @@ public class Notification {
 	private UserDtls actor;
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+	@Column(nullable = false, length = 50)
 	private NotificationType type;
 
 	@Column(nullable = false, length = 500)
@@ -42,6 +42,11 @@ public class Notification {
 
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
+
+	// Reference to the related post (for community notifications)
+	@ManyToOne
+	@JoinColumn(name = "post_id")
+	private Post post;
 
 	@PrePersist
 	public void prePersist() {
@@ -61,6 +66,16 @@ public class Notification {
 		this.message = message;
 		this.isRead = false;
 		this.createdAt = LocalDateTime.now();
+	}
+
+	public Notification(UserDtls recipient, UserDtls actor, NotificationType type, String message, Post post) {
+		this.recipient = recipient;
+		this.actor = actor;
+		this.type = type;
+		this.message = message;
+		this.isRead = false;
+		this.createdAt = LocalDateTime.now();
+		this.post = post;
 	}
 
 	// Getters and Setters
@@ -118,5 +133,13 @@ public class Notification {
 
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public Post getPost() {
+		return post;
+	}
+
+	public void setPost(Post post) {
+		this.post = post;
 	}
 }
