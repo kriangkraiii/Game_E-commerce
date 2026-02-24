@@ -545,10 +545,20 @@
                             <div class="step-line"></div>
                             <div class="step-dot inactive">3</div>
                         </div>
-                        <p class="text-center text-muted mb-3" style="font-size: 0.9rem;">Scan QR Code to transfer</p>
-                        <div class="text-center mb-3">
-                            <div class="qr-container">
-                                <img id="qrCodeImage" src="" alt="PromptPay QR" style="max-width: 250px; width: 100%;">
+                        <div class="text-center mb-4">
+                            <p class="text-muted mb-2">Scan QR Code to pay</p>
+                            <div class="qr-wrapper shadow-sm rounded border d-inline-block overflow-hidden"
+                                style="max-width: 250px;">
+                                <!-- THAI QR PAYMENT Banner -->
+                                <div>
+                                    <img src="/img/thai-qr.png" alt="Thai QR Payment" class="img-fluid"
+                                        style="width: 100%; display: block;">
+                                </div>
+                                <!-- QR Code Image -->
+                                <div class="bg-white p-3">
+                                    <img src="" id="qrCodeImage" alt="PromptPay QR Code" class="img-fluid"
+                                        style="width: 100%;">
+                                </div>
                             </div>
                         </div>
                         <div class="text-center mb-3">
