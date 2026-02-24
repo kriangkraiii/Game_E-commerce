@@ -1,5 +1,6 @@
 package com.ecom.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -24,11 +25,11 @@ public class Wallet {
     @JoinColumn(name = "user_id", unique = true, nullable = false)
     private UserDtls user;
 
-    @Column(nullable = false)
-    private Double balance = 0.0;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal balance = BigDecimal.ZERO;
 
-    @Column(name = "total_topup")
-    private Double totalTopup = 0.0;
+    @Column(name = "total_topup", precision = 10, scale = 2)
+    private BigDecimal totalTopup = BigDecimal.ZERO;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
@@ -65,19 +66,19 @@ public class Wallet {
         this.user = user;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 
-    public Double getTotalTopup() {
+    public BigDecimal getTotalTopup() {
         return totalTopup;
     }
 
-    public void setTotalTopup(Double totalTopup) {
+    public void setTotalTopup(BigDecimal totalTopup) {
         this.totalTopup = totalTopup;
     }
 

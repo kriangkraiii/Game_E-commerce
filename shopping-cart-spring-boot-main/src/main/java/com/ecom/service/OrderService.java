@@ -2,6 +2,7 @@ package com.ecom.service;
 
 import java.util.List;
 import java.util.Map;
+import java.math.BigDecimal;
 
 import org.springframework.data.domain.Page;
 
@@ -25,17 +26,25 @@ public interface OrderService {
 	public Boolean deleteOrder(Integer orderId);
 
 	public ProductOrder getOrderById(Integer id);
+
 	public List<ProductOrder> getOrdersByProduct(Integer productId);
 
-	
 	public Map<String, Long> getOrderStatusCounts();
-	public Double getTotalRevenue();
-	public Double getTodayRevenue();
+
+	public BigDecimal getTotalRevenue();
+
+	public BigDecimal getTodayRevenue();
+
 	public Integer getTodayOrdersCount();
+
 	public Integer getCountOrders();
-	public List<Double> getDailyRevenueData(int days);
+
+	public List<BigDecimal> getDailyRevenueData(int days);
+
 	public List<String> getDailyRevenueLabels(int days);
+
 	public List<Integer> getDailyOrdersData(int days);
+
 	public List<String> getDailyOrdersLabels(int days);
 
 }

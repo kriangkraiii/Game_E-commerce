@@ -1,10 +1,15 @@
 package com.ecom.controller;
 
+import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.Instant;
+import java.time.Duration;
+
+import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +40,14 @@ import com.ecom.service.WalletService.TransferResult;
  * Controller สำหรับ Digital Wallet
  * 
  * Endpoints:
- * - GET  /user/wallet                   → หน้า Wallet หลัก (Thymeleaf)
- * - GET  /user/wallet/topup/qr          → สร้าง QR Code (PNG image)
- * - POST /user/wallet/topup/verify      → ตรวจสอบสลิปและเติมเงิน
- * - GET  /user/wallet/balance           → ดึงยอดเงินคงเหลือ (JSON)
- * - GET  /user/wallet/transactions      → ดึงประวัติธุรกรรม (JSON)
- * - GET  /user/wallet/transfer/search   → ค้นหาผู้รับจากอีเมล
- * - POST /user/wallet/transfer          → โอนเงินให้ User อื่น
- * - GET  /user/wallet/transfers         → ดึงประวัติการโอนเงิน (JSON)
+ * - GET /user/wallet → หน้า Wallet หลัก (Thymeleaf)
+ * - GET /user/wallet/topup/qr → สร้าง QR Code (PNG image)
+ * - POST /user/wallet/topup/verify → ตรวจสอบสลิปและเติมเงิน
+ * - GET /user/wallet/balance → ดึงยอดเงินคงเหลือ (JSON)
+ * - GET /user/wallet/transactions → ดึงประวัติธุรกรรม (JSON)
+ * - GET /user/wallet/transfer/search → ค้นหาผู้รับจากอีเมล
+ * - POST /user/wallet/transfer → โอนเงินให้ User อื่น
+ * - GET /user/wallet/transfers → ดึงประวัติการโอนเงิน (JSON)
  */
 @Controller
 @RequestMapping("/user/wallet")
@@ -117,9 +122,10 @@ public class WalletController {
      */
     @GetMapping("/topup/qr")
     @ResponseBody
-    public ResponseEntity<Map<String, Object>> generateQrCode(@RequestParam("amount") double amount) {
+    public ResponseEntity<Map<String, Object>> generateQrCode(@RequestParam("amount") BigDecimal amount,
+            HttpSession session) {
         Map<String, Object> response = new HashMap<>();
-        if (amount <= 0 || amount > 100000) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0 || amount.compareTo(BigDecimal.valueOf(100000)) > 0) {
             response.put("success", false);
             response.put("message", "จำนวนเงินไม่ถูกต้อง (ต้อง 0.01 - 100,000 บาท)");
             return ResponseEntity.badRequest().body(response);
@@ -127,6 +133,10 @@ public class WalletController {
 
         String qrImageUrl = walletService.generateQrImageUrl(amount);
         String pageUrl = walletService.generatePromptPayPageUrl(amount);
+
+        // Store timestamp and amount in Session
+        session.setAttribute("qrTimestamp", Instant.now());
+        session.setAttribute("qrAmount", amount);
 
         response.put("success", true);
         response.put("amount", amount);
@@ -150,7 +160,8 @@ public class WalletController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> verifyTopUp(
             @RequestParam("file") MultipartFile file,
-            @RequestParam("amount") double amount,
+            @RequestParam("amount") BigDecimal amount,
+            HttpSession session,
             Principal principal) {
 
         Map<String, Object> response = new HashMap<>();
@@ -163,9 +174,33 @@ public class WalletController {
                 return ResponseEntity.badRequest().body(response);
             }
 
-            if (amount <= 0 || amount > 100000) {
+            if (amount.compareTo(BigDecimal.ZERO) <= 0 || amount.compareTo(BigDecimal.valueOf(100000)) > 0) {
                 response.put("success", false);
                 response.put("message", "จำนวนเงินไม่ถูกต้อง");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            Instant qrTimestamp = (Instant) session.getAttribute("qrTimestamp");
+            BigDecimal qrAmount = (BigDecimal) session.getAttribute("qrAmount");
+
+            if (qrTimestamp == null || qrAmount == null) {
+                response.put("success", false);
+                response.put("message", "ไม่มีรายการสร้าง QR Code หรือหมดอายุ กรุณาสร้างใหม่");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            long minutesElapsed = Duration.between(qrTimestamp, Instant.now()).toMinutes();
+            if (minutesElapsed > 5) {
+                session.removeAttribute("qrTimestamp");
+                session.removeAttribute("qrAmount");
+                response.put("success", false);
+                response.put("message", "QR Code หมดอายุ (เกิน 5 นาที) กรุณาสร้างใหม่");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            if (qrAmount.compareTo(amount) != 0) {
+                response.put("success", false);
+                response.put("message", "จำนวนเงินไม่ตรงกับ QR Code ที่ระบุ");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -180,7 +215,11 @@ public class WalletController {
             UserDtls user = getLoggedInUser(principal);
 
             // เรียก Service เพื่อตรวจสอบและเติมเงิน
-            TopUpResult result = walletService.processTopUp(user, file, amount);
+            TopUpResult result = walletService.processTopUp(user, file, amount, qrTimestamp);
+
+            // Clear session data after processing
+            session.removeAttribute("qrTimestamp");
+            session.removeAttribute("qrAmount");
 
             if (result.isSuccess()) {
                 response.put("success", true);
@@ -306,7 +345,7 @@ public class WalletController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> transferMoney(
             @RequestParam("receiverEmail") String receiverEmail,
-            @RequestParam("amount") double amount,
+            @RequestParam("amount") BigDecimal amount,
             @RequestParam(value = "note", required = false) String note,
             Principal principal) {
 

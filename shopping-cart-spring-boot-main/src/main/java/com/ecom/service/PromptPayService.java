@@ -1,5 +1,7 @@
 package com.ecom.service;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +26,8 @@ public class PromptPayService {
      * สร้าง URL สำหรับ QR Code รูปภาพ (.png) จาก promptpay.io
      * URL: https://promptpay.io/{id}/{amount}.png
      */
-    public String generateQrImageUrl(double amount) {
-        String amountStr = String.format("%.2f", amount);
+    public String generateQrImageUrl(BigDecimal amount) {
+        String amountStr = String.format("%.2f", amount.doubleValue());
         return PROMPTPAY_IO_BASE_URL + "/" + promptPayId + "/" + amountStr + ".png";
     }
 
@@ -33,8 +35,8 @@ public class PromptPayService {
      * สร้าง URL สำหรับหน้า promptpay.io (มี QR + ข้อมูล)
      * URL: https://promptpay.io/{id}/{amount}
      */
-    public String generatePromptPayPageUrl(double amount) {
-        String amountStr = String.format("%.2f", amount);
+    public String generatePromptPayPageUrl(BigDecimal amount) {
+        String amountStr = String.format("%.2f", amount.doubleValue());
         return PROMPTPAY_IO_BASE_URL + "/" + promptPayId + "/" + amountStr;
     }
 

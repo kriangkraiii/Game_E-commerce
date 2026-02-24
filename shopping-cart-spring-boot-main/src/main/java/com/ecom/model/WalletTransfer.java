@@ -1,5 +1,6 @@
 package com.ecom.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -38,7 +39,7 @@ public class WalletTransfer {
     private UserDtls receiver;
 
     @Column(nullable = false)
-    private Double amount;
+    private BigDecimal amount;
 
     @Column(length = 500)
     private String note;
@@ -51,10 +52,10 @@ public class WalletTransfer {
     private String failureReason;
 
     @Column(name = "sender_balance_after")
-    private Double senderBalanceAfter;
+    private BigDecimal senderBalanceAfter;
 
     @Column(name = "receiver_balance_after")
-    private Double receiverBalanceAfter;
+    private BigDecimal receiverBalanceAfter;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -98,11 +99,11 @@ public class WalletTransfer {
         this.receiver = receiver;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -130,19 +131,19 @@ public class WalletTransfer {
         this.failureReason = failureReason;
     }
 
-    public Double getSenderBalanceAfter() {
+    public BigDecimal getSenderBalanceAfter() {
         return senderBalanceAfter;
     }
 
-    public void setSenderBalanceAfter(Double senderBalanceAfter) {
+    public void setSenderBalanceAfter(BigDecimal senderBalanceAfter) {
         this.senderBalanceAfter = senderBalanceAfter;
     }
 
-    public Double getReceiverBalanceAfter() {
+    public BigDecimal getReceiverBalanceAfter() {
         return receiverBalanceAfter;
     }
 
-    public void setReceiverBalanceAfter(Double receiverBalanceAfter) {
+    public void setReceiverBalanceAfter(BigDecimal receiverBalanceAfter) {
         this.receiverBalanceAfter = receiverBalanceAfter;
     }
 

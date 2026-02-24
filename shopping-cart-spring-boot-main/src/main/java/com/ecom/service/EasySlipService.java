@@ -27,20 +27,20 @@ import org.springframework.web.multipart.MultipartFile;
  * 
  * Response JSON structure (เมื่อสำเร็จ):
  * {
- *   "status": 200,
- *   "data": {
- *     "transRef": "...",
- *     "date": "...",
- *     "amount": { "amount": 100.00 },
- *     "sender": {
- *       "bank": { "id": "...", "name": "..." },
- *       "account": { "name": { "th": "...", "en": "..." } }
- *     },
- *     "receiver": {
- *       "bank": { "id": "...", "name": "..." },
- *       "account": { "name": { "th": "...", "en": "..." } }
- *     }
- *   }
+ * "status": 200,
+ * "data": {
+ * "transRef": "...",
+ * "date": "...",
+ * "amount": { "amount": 100.00 },
+ * "sender": {
+ * "bank": { "id": "...", "name": "..." },
+ * "account": { "name": { "th": "...", "en": "..." } }
+ * },
+ * "receiver": {
+ * "bank": { "id": "...", "name": "..." },
+ * "account": { "name": { "th": "...", "en": "..." } }
+ * }
+ * }
  * }
  */
 @Service
@@ -96,8 +96,7 @@ public class EasySlipService {
                     apiUrl,
                     HttpMethod.POST,
                     requestEntity,
-                    Map.class
-            );
+                    Map.class);
 
             Map<String, Object> responseBody = response.getBody();
             if (responseBody == null) {
@@ -143,6 +142,9 @@ public class EasySlipService {
 
             // Parse transRef
             String transRef = data.get("transRef") != null ? data.get("transRef").toString() : "";
+
+            // Parse transDate
+            String transDate = data.get("date") != null ? data.get("date").toString() : "";
 
             // Parse sender
             String senderName = "";
@@ -218,10 +220,13 @@ public class EasySlipService {
                 log.warn("Receiver data is null");
             }
 
-            log.info("Parsed => amount={}, transRef={}, senderName={}, receiverName={}, receiverBankId={}, receiverBankName={}, receiverProxyAccount={}",
-                    slipAmount, transRef, senderName, receiverName, receiverBankId, receiverBankName, receiverProxyAccount);
+            log.info(
+                    "Parsed => amount={}, transRef={}, transDate={}, senderName={}, receiverName={}, receiverBankId={}, receiverBankName={}, receiverProxyAccount={}",
+                    slipAmount, transRef, transDate, senderName, receiverName, receiverBankId, receiverBankName,
+                    receiverProxyAccount);
 
-            return EasySlipResponse.success(slipAmount, transRef, senderName, receiverName, receiverBankId, receiverBankName, receiverProxyAccount);
+            return EasySlipResponse.success(slipAmount, transRef, transDate, senderName, receiverName, receiverBankId,
+                    receiverBankName, receiverProxyAccount);
 
         } catch (Exception e) {
             return EasySlipResponse.failed("เกิดข้อผิดพลาดในการเรียก EasySlip API: " + e.getMessage());
@@ -276,7 +281,8 @@ public class EasySlipService {
                     // เช็คว่าตัวเลข 4 หลักสุดท้ายตรงกัน (ถ้ามี)
                     if (visibleDigits.length() >= 4) {
                         String lastDigits = visibleDigits.substring(Math.max(0, visibleDigits.length() - 4));
-                        String expectedLast = expectedNormalized.substring(Math.max(0, expectedNormalized.length() - 4));
+                        String expectedLast = expectedNormalized
+                                .substring(Math.max(0, expectedNormalized.length() - 4));
                         if (lastDigits.equals(expectedLast)) {
                             proxyMatch = true;
                         }
@@ -288,7 +294,8 @@ public class EasySlipService {
             }
 
             if (proxyMatch) {
-                log.info("✓ PromptPay ID matched: slip='{}' (masked), expected='{}'", proxyAccount, expectedPromptPayId);
+                log.info("✓ PromptPay ID matched: slip='{}' (masked), expected='{}'", proxyAccount,
+                        expectedPromptPayId);
                 return SlipValidationResult.success(slipData);
             } else {
                 return SlipValidationResult.failed(
@@ -305,8 +312,10 @@ public class EasySlipService {
 
             // ตรวจว่ามีคำซ้ำกันบางส่วน
             if (normalizedRecvName.contains(normalizedExpected.substring(0, Math.min(5, normalizedExpected.length())))
-                    || normalizedExpected.contains(normalizedRecvName.substring(0, Math.min(5, normalizedRecvName.length())))) {
-                log.info("✓ Receiver name matched (fallback): slip='{}', expected='{}'", recvName, expectedReceiverName);
+                    || normalizedExpected
+                            .contains(normalizedRecvName.substring(0, Math.min(5, normalizedRecvName.length())))) {
+                log.info("✓ Receiver name matched (fallback): slip='{}', expected='{}'", recvName,
+                        expectedReceiverName);
                 return SlipValidationResult.success(slipData);
             }
 
@@ -318,7 +327,6 @@ public class EasySlipService {
         log.warn("No receiver info available — validation passed (amount + transRef only)");
         return SlipValidationResult.success(slipData);
     }
-
 
     /**
      * Safe string — ป้องกัน null
@@ -337,19 +345,21 @@ public class EasySlipService {
         private String errorMessage;
         private double amount;
         private String transRef;
+        private String transDate;
         private String senderName;
         private String receiverName;
         private String receiverBankId;
         private String receiverBankName;
         private String receiverProxyAccount; // เลขพร้อมเพย์ผู้รับ (masked)
 
-        public static EasySlipResponse success(double amount, String transRef,
-                String senderName, String receiverName, String receiverBankId, 
+        public static EasySlipResponse success(double amount, String transRef, String transDate,
+                String senderName, String receiverName, String receiverBankId,
                 String receiverBankName, String receiverProxyAccount) {
             EasySlipResponse r = new EasySlipResponse();
             r.success = true;
             r.amount = amount;
             r.transRef = transRef;
+            r.transDate = transDate;
             r.senderName = senderName;
             r.receiverName = receiverName;
             r.receiverBankId = receiverBankId;
@@ -365,15 +375,45 @@ public class EasySlipService {
             return r;
         }
 
-        public boolean isSuccess() { return success; }
-        public String getErrorMessage() { return errorMessage; }
-        public double getAmount() { return amount; }
-        public String getTransRef() { return transRef; }
-        public String getSenderName() { return senderName; }
-        public String getReceiverName() { return receiverName; }
-        public String getReceiverBankId() { return receiverBankId; }
-        public String getReceiverBankName() { return receiverBankName; }
-        public String getReceiverProxyAccount() { return receiverProxyAccount; }
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public double getAmount() {
+            return amount;
+        }
+
+        public String getTransRef() {
+            return transRef;
+        }
+
+        public String getTransDate() {
+            return transDate;
+        }
+
+        public String getSenderName() {
+            return senderName;
+        }
+
+        public String getReceiverName() {
+            return receiverName;
+        }
+
+        public String getReceiverBankId() {
+            return receiverBankId;
+        }
+
+        public String getReceiverBankName() {
+            return receiverBankName;
+        }
+
+        public String getReceiverProxyAccount() {
+            return receiverProxyAccount;
+        }
     }
 
     /**
@@ -398,8 +438,16 @@ public class EasySlipService {
             return r;
         }
 
-        public boolean isValid() { return valid; }
-        public String getErrorMessage() { return errorMessage; }
-        public EasySlipResponse getSlipData() { return slipData; }
+        public boolean isValid() {
+            return valid;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+
+        public EasySlipResponse getSlipData() {
+            return slipData;
+        }
     }
 }

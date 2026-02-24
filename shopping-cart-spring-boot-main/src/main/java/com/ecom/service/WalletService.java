@@ -1,11 +1,14 @@
 package com.ecom.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,8 +63,8 @@ public class WalletService {
         return walletRepository.findByUser(user).orElseGet(() -> {
             Wallet wallet = new Wallet();
             wallet.setUser(user);
-            wallet.setBalance(0.0);
-            wallet.setTotalTopup(0.0);
+            wallet.setBalance(BigDecimal.ZERO);
+            wallet.setTotalTopup(BigDecimal.ZERO);
             return walletRepository.save(wallet);
         });
     }
@@ -69,7 +72,7 @@ public class WalletService {
     /**
      * ดึงยอดคงเหลือ
      */
-    public double getBalance(UserDtls user) {
+    public BigDecimal getBalance(UserDtls user) {
         Wallet wallet = getOrCreateWallet(user);
         return wallet.getBalance();
     }
@@ -79,14 +82,14 @@ public class WalletService {
     /**
      * สร้าง URL สำหรับ QR Code รูปภาพ (.png) จาก promptpay.io
      */
-    public String generateQrImageUrl(double amount) {
+    public String generateQrImageUrl(BigDecimal amount) {
         return promptPayService.generateQrImageUrl(amount);
     }
 
     /**
      * สร้าง URL สำหรับหน้า promptpay.io
      */
-    public String generatePromptPayPageUrl(double amount) {
+    public String generatePromptPayPageUrl(BigDecimal amount) {
         return promptPayService.generatePromptPayPageUrl(amount);
     }
 
@@ -103,7 +106,7 @@ public class WalletService {
      * 5. ถ้าไม่ผ่าน → Transaction status = FAILED พร้อมเหตุผล
      */
     @Transactional
-    public TopUpResult processTopUp(UserDtls user, MultipartFile slipFile, double amount) {
+    public TopUpResult processTopUp(UserDtls user, MultipartFile slipFile, BigDecimal amount, Instant qrTimestamp) {
         // 1. สร้าง Transaction (PENDING)
         Transaction transaction = new Transaction();
         transaction.setUser(user);
@@ -118,7 +121,7 @@ public class WalletService {
             transactionRepository.save(transaction);
 
             // 3. ส่งสลิปไปตรวจสอบ
-            SlipValidationResult result = easySlipService.validateSlip(slipFile, amount);
+            SlipValidationResult result = easySlipService.validateSlip(slipFile, amount.doubleValue());
 
             if (!result.isValid()) {
                 // ไม่ผ่าน
@@ -126,6 +129,34 @@ public class WalletService {
                 transaction.setFailureReason(result.getErrorMessage());
                 transactionRepository.save(transaction);
                 return TopUpResult.failed(transaction, result.getErrorMessage());
+            }
+
+            // Time Validation
+            String transDateStr = result.getSlipData().getTransDate();
+            if (qrTimestamp != null && transDateStr != null && !transDateStr.isEmpty()) {
+                try {
+                    String normalizedDate = transDateStr.replace(" ", "T");
+                    if (!normalizedDate.contains("+") && !normalizedDate.contains("Z")) {
+                        normalizedDate += "+07:00"; // Assume Thailand time if no offset
+                    }
+                    Instant slipTime = OffsetDateTime.parse(normalizedDate).toInstant();
+
+                    if (slipTime.isBefore(qrTimestamp.minusSeconds(120))) {
+                        transaction.setStatus(Transaction.Status.FAILED);
+                        transaction.setFailureReason("เวลาในสลิปเกิดก่อนการสร้าง QR Code");
+                        transactionRepository.save(transaction);
+                        return TopUpResult.failed(transaction, "เวลาในสลิปไม่สอดคล้อง (เกิดก่อนสร้าง QR)");
+                    }
+
+                    if (slipTime.isAfter(qrTimestamp.plusSeconds(300))) {
+                        transaction.setStatus(Transaction.Status.FAILED);
+                        transaction.setFailureReason("เวลาในสลิปเกิน 5 นาทีหลังสร้าง QR Code");
+                        transactionRepository.save(transaction);
+                        return TopUpResult.failed(transaction, "สลิปหมดอายุ (เกิน 5 นาที)");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             // 4. ตรวจสอบว่าสลิปซ้ำหรือไม่ (ป้องกัน double spending)
@@ -148,8 +179,8 @@ public class WalletService {
 
             // 6. อัพเดท Wallet
             Wallet wallet = getOrCreateWallet(user);
-            wallet.setBalance(wallet.getBalance() + amount);
-            wallet.setTotalTopup(wallet.getTotalTopup() + amount);
+            wallet.setBalance(wallet.getBalance().add(amount));
+            wallet.setTotalTopup(wallet.getTotalTopup().add(amount));
             wallet.setUpdatedAt(LocalDateTime.now());
             walletRepository.save(wallet);
 
@@ -182,15 +213,16 @@ public class WalletService {
     // ==================== PURCHASE PAYMENT ====================
 
     @Transactional
-    public PurchaseResult purchaseWithWallet(UserDtls user, double amount, String description) {
+    public PurchaseResult purchaseWithWallet(UserDtls user, BigDecimal amount, String description) {
         Wallet wallet = getOrCreateWallet(user);
 
-        if (wallet.getBalance() < amount) {
-            return PurchaseResult.failed(String.format("ยอดเงินไม่เพียงพอ (คงเหลือ: ฿%.2f, ต้องการ: ฿%.2f)", wallet.getBalance(), amount));
+        if (wallet.getBalance().compareTo(amount) < 0) {
+            return PurchaseResult.failed(
+                    String.format("ยอดเงินไม่เพียงพอ (คงเหลือ: ฿%.2f, ต้องการ: ฿%.2f)", wallet.getBalance(), amount));
         }
 
         try {
-            wallet.setBalance(wallet.getBalance() - amount);
+            wallet.setBalance(wallet.getBalance().subtract(amount));
             wallet.setUpdatedAt(LocalDateTime.now());
             walletRepository.save(wallet);
 
@@ -211,7 +243,7 @@ public class WalletService {
 
     // ==================== ADMIN QUERIES ====================
 
-    public Double getTotalPurchaseRevenue() {
+    public BigDecimal getTotalPurchaseRevenue() {
         return transactionRepository.getTotalPurchaseRevenue();
     }
 
@@ -219,7 +251,7 @@ public class WalletService {
         return transactionRepository.getTotalPurchaseCount();
     }
 
-    public Double getTotalTopupAmount() {
+    public BigDecimal getTotalTopupAmount() {
         return transactionRepository.getTotalTopupAmount();
     }
 
@@ -234,9 +266,9 @@ public class WalletService {
         private boolean success;
         private String message;
         private Transaction transaction;
-        private double newBalance;
+        private BigDecimal newBalance;
 
-        public static PurchaseResult success(Transaction transaction, double newBalance) {
+        public static PurchaseResult success(Transaction transaction, BigDecimal newBalance) {
             PurchaseResult r = new PurchaseResult();
             r.success = true;
             r.message = "ชำระเงินสำเร็จ";
@@ -252,10 +284,21 @@ public class WalletService {
             return r;
         }
 
-        public boolean isSuccess() { return success; }
-        public String getMessage() { return message; }
-        public Transaction getTransaction() { return transaction; }
-        public double getNewBalance() { return newBalance; }
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public Transaction getTransaction() {
+            return transaction;
+        }
+
+        public BigDecimal getNewBalance() {
+            return newBalance;
+        }
     }
 
     // ==================== FILE HELPER ====================
@@ -291,9 +334,9 @@ public class WalletService {
         private boolean success;
         private String message;
         private Transaction transaction;
-        private double newBalance;
+        private BigDecimal newBalance;
 
-        public static TopUpResult success(Transaction transaction, double newBalance) {
+        public static TopUpResult success(Transaction transaction, BigDecimal newBalance) {
             TopUpResult r = new TopUpResult();
             r.success = true;
             r.message = "เติมเงินสำเร็จ";
@@ -310,10 +353,21 @@ public class WalletService {
             return r;
         }
 
-        public boolean isSuccess() { return success; }
-        public String getMessage() { return message; }
-        public Transaction getTransaction() { return transaction; }
-        public double getNewBalance() { return newBalance; }
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public Transaction getTransaction() {
+            return transaction;
+        }
+
+        public BigDecimal getNewBalance() {
+            return newBalance;
+        }
     }
 
     // ==================== WALLET TRANSFER ====================
@@ -329,12 +383,12 @@ public class WalletService {
      * 5. บันทึก WalletTransfer record
      */
     @Transactional
-    public TransferResult transferToUser(UserDtls sender, String receiverEmail, double amount, String note) {
+    public TransferResult transferToUser(UserDtls sender, String receiverEmail, BigDecimal amount, String note) {
         // 1. ตรวจสอบจำนวนเงิน
-        if (amount <= 0) {
+        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
             return TransferResult.failed("จำนวนเงินต้องมากกว่า 0");
         }
-        if (amount > 100000) {
+        if (amount.compareTo(BigDecimal.valueOf(100000)) > 0) {
             return TransferResult.failed("โอนได้สูงสุด 100,000 บาทต่อครั้ง");
         }
 
@@ -351,19 +405,20 @@ public class WalletService {
 
         // 4. ตรวจสอบยอดเงินเพียงพอ
         Wallet senderWallet = getOrCreateWallet(sender);
-        if (senderWallet.getBalance() < amount) {
-            return TransferResult.failed(String.format("ยอดเงินไม่เพียงพอ (คงเหลือ: ฿%.2f)", senderWallet.getBalance()));
+        if (senderWallet.getBalance().compareTo(amount) < 0) {
+            return TransferResult
+                    .failed(String.format("ยอดเงินไม่เพียงพอ (คงเหลือ: ฿%.2f)", senderWallet.getBalance()));
         }
 
         try {
             // 5. หักเงินผู้ส่ง
-            senderWallet.setBalance(senderWallet.getBalance() - amount);
+            senderWallet.setBalance(senderWallet.getBalance().subtract(amount));
             senderWallet.setUpdatedAt(LocalDateTime.now());
             walletRepository.save(senderWallet);
 
             // 6. เพิ่มเงินผู้รับ
             Wallet receiverWallet = getOrCreateWallet(receiver);
-            receiverWallet.setBalance(receiverWallet.getBalance() + amount);
+            receiverWallet.setBalance(receiverWallet.getBalance().add(amount));
             receiverWallet.setUpdatedAt(LocalDateTime.now());
             walletRepository.save(receiverWallet);
 
@@ -432,16 +487,15 @@ public class WalletService {
         private boolean success;
         private String message;
         private WalletTransfer transfer;
-        private double newBalance;
+        private BigDecimal newBalance;
         private String receiverName;
 
-        public static TransferResult success(WalletTransfer transfer, double newBalance, String receiverName) {
+        public static TransferResult success(WalletTransfer transfer, BigDecimal newBalance, String receiverName) {
             TransferResult r = new TransferResult();
             r.success = true;
             r.message = "โอนเงินสำเร็จ";
             r.transfer = transfer;
             r.newBalance = newBalance;
-            r.receiverName = receiverName;
             return r;
         }
 
@@ -452,10 +506,24 @@ public class WalletService {
             return r;
         }
 
-        public boolean isSuccess() { return success; }
-        public String getMessage() { return message; }
-        public WalletTransfer getTransfer() { return transfer; }
-        public double getNewBalance() { return newBalance; }
-        public String getReceiverName() { return receiverName; }
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public WalletTransfer getTransfer() {
+            return transfer;
+        }
+
+        public BigDecimal getNewBalance() {
+            return newBalance;
+        }
+
+        public String getReceiverName() {
+            return receiverName;
+        }
     }
 }

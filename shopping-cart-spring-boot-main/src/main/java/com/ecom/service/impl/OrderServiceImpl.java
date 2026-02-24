@@ -1,6 +1,7 @@
 package com.ecom.service.impl;
 
 import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -75,17 +76,17 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public Boolean deleteOrder(Integer orderId) {
-	    try {
-	        ProductOrder order = orderRepository.findById(orderId).orElse(null);
-	        if (order != null) {
-	            orderRepository.delete(order);
-	            return true;
-	        }
-	        return false;
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return false;
-	    }
+		try {
+			ProductOrder order = orderRepository.findById(orderId).orElse(null);
+			if (order != null) {
+				orderRepository.delete(order);
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Override
@@ -98,9 +99,9 @@ public class OrderServiceImpl implements OrderService {
 		}
 
 		// Calculate total price
-		double totalPrice = carts.stream()
-				.mapToDouble(cart -> cart.getProduct().getDiscountPrice())
-				.sum();
+		BigDecimal totalPrice = carts.stream()
+				.map(cart -> BigDecimal.valueOf(cart.getProduct().getDiscountPrice()))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 
 		// Get user from first cart
 		UserDtls user = carts.get(0).getUser();
@@ -142,7 +143,8 @@ public class OrderServiceImpl implements OrderService {
 		StringBuilder key = new StringBuilder();
 		java.util.Random random = new java.util.Random();
 		for (int i = 0; i < 4; i++) {
-			if (i > 0) key.append("-");
+			if (i > 0)
+				key.append("-");
 			for (int j = 0; j < 4; j++) {
 				key.append(chars.charAt(random.nextInt(chars.length())));
 			}
@@ -159,11 +161,11 @@ public class OrderServiceImpl implements OrderService {
 		List<ProductOrder> orders = orderRepository.findByUserId(userId);
 		return orders;
 	}
+
 	@Override
 	public List<ProductOrder> getOrdersByProduct(Integer productId) {
-	    return orderRepository.findByProductId(productId);
+		return orderRepository.findByProductId(productId);
 	}
-
 
 	@Override
 	public ProductOrder updateOrderStatus(Integer id, String status) {
@@ -176,82 +178,83 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return null;
 	}
+
 	@Override
-	public Double getTotalRevenue() {
-	    List<ProductOrder> orders = orderRepository.findAll();
-	    return orders.stream()
-	            .filter(order -> !"Cancelled".equals(order.getStatus()))
-	            .mapToDouble(order -> order.getPrice() * order.getQuantity())
-	            .sum();
+	public BigDecimal getTotalRevenue() {
+		List<ProductOrder> orders = orderRepository.findAll();
+		return orders.stream()
+				.filter(order -> !"Cancelled".equals(order.getStatus()))
+				.map(order -> BigDecimal.valueOf(order.getPrice() * order.getQuantity()))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
 	@Override
-	public Double getTodayRevenue() {
-	    LocalDate today = LocalDate.now();
-	    List<ProductOrder> todayOrders = orderRepository.findByOrderDate(today);
-	    return todayOrders.stream()
-	            .filter(order -> !"Cancelled".equals(order.getStatus()))
-	            .mapToDouble(order -> order.getPrice() * order.getQuantity())
-	            .sum();
+	public BigDecimal getTodayRevenue() {
+		LocalDate today = LocalDate.now();
+		List<ProductOrder> todayOrders = orderRepository.findByOrderDate(today);
+		return todayOrders.stream()
+				.filter(order -> !"Cancelled".equals(order.getStatus()))
+				.map(order -> BigDecimal.valueOf(order.getPrice() * order.getQuantity()))
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 
 	@Override
 	public Integer getTodayOrdersCount() {
-	    LocalDate today = LocalDate.now();
-	    return orderRepository.findByOrderDate(today).size();
+		LocalDate today = LocalDate.now();
+		return orderRepository.findByOrderDate(today).size();
 	}
 
 	@Override
 	public Integer getCountOrders() {
-	    return (int) orderRepository.count();
+		return (int) orderRepository.count();
 	}
 
 	@Override
-	public List<Double> getDailyRevenueData(int days) {
-	    List<Double> revenueData = new ArrayList<>();
-	    LocalDate endDate = LocalDate.now();
-	    
-	    for (int i = days - 1; i >= 0; i--) {
-	        LocalDate date = endDate.minusDays(i);
-	        List<ProductOrder> dayOrders = orderRepository.findByOrderDate(date);
-	        Double dayRevenue = dayOrders.stream()
-	                .filter(order -> !"Cancelled".equals(order.getStatus()))
-	                .mapToDouble(order -> order.getPrice() * order.getQuantity())
-	                .sum();
-	        revenueData.add(dayRevenue);
-	    }
-	    return revenueData;
+	public List<BigDecimal> getDailyRevenueData(int days) {
+		List<BigDecimal> revenueData = new ArrayList<>();
+		LocalDate endDate = LocalDate.now();
+
+		for (int i = days - 1; i >= 0; i--) {
+			LocalDate date = endDate.minusDays(i);
+			List<ProductOrder> dayOrders = orderRepository.findByOrderDate(date);
+			BigDecimal dayRevenue = dayOrders.stream()
+					.filter(order -> !"Cancelled".equals(order.getStatus()))
+					.map(order -> BigDecimal.valueOf(order.getPrice() * order.getQuantity()))
+					.reduce(BigDecimal.ZERO, BigDecimal::add);
+			revenueData.add(dayRevenue);
+		}
+		return revenueData;
 	}
 
 	@Override
 	public List<String> getDailyRevenueLabels(int days) {
-	    List<String> labels = new ArrayList<>();
-	    LocalDate endDate = LocalDate.now();
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
-	    
-	    for (int i = days - 1; i >= 0; i--) {
-	        LocalDate date = endDate.minusDays(i);
-	        labels.add(date.format(formatter));
-	    }
-	    return labels;
+		List<String> labels = new ArrayList<>();
+		LocalDate endDate = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
+
+		for (int i = days - 1; i >= 0; i--) {
+			LocalDate date = endDate.minusDays(i);
+			labels.add(date.format(formatter));
+		}
+		return labels;
 	}
 
 	@Override
 	public List<Integer> getDailyOrdersData(int days) {
-	    List<Integer> ordersData = new ArrayList<>();
-	    LocalDate endDate = LocalDate.now();
-	    
-	    for (int i = days - 1; i >= 0; i--) {
-	        LocalDate date = endDate.minusDays(i);
-	        List<ProductOrder> dayOrders = orderRepository.findByOrderDate(date);
-	        ordersData.add(dayOrders.size());
-	    }
-	    return ordersData;
+		List<Integer> ordersData = new ArrayList<>();
+		LocalDate endDate = LocalDate.now();
+
+		for (int i = days - 1; i >= 0; i--) {
+			LocalDate date = endDate.minusDays(i);
+			List<ProductOrder> dayOrders = orderRepository.findByOrderDate(date);
+			ordersData.add(dayOrders.size());
+		}
+		return ordersData;
 	}
 
 	@Override
 	public List<String> getDailyOrdersLabels(int days) {
-	    return getDailyRevenueLabels(days); // Same format
+		return getDailyRevenueLabels(days); // Same format
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.ecom.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -30,7 +31,7 @@ public class Transaction {
     private Long id;
 
     @Column(nullable = false)
-    private Double amount;
+    private BigDecimal amount;
 
     @Column(name = "slip_image_path")
     private String slipImagePath;
@@ -90,11 +91,11 @@ public class Transaction {
         this.id = id;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

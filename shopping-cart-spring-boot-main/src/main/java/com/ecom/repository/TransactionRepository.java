@@ -1,6 +1,7 @@
 package com.ecom.repository;
 
 import java.util.List;
+import java.math.BigDecimal;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,11 +28,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findByTypeAndStatusOrderByCreatedAtDesc(Transaction.Type type, Transaction.Status status);
 
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.type = 'PURCHASE' AND t.status = 'SUCCESS'")
-    Double getTotalPurchaseRevenue();
+    BigDecimal getTotalPurchaseRevenue();
 
     @Query("SELECT COUNT(t) FROM Transaction t WHERE t.type = 'PURCHASE' AND t.status = 'SUCCESS'")
     Long getTotalPurchaseCount();
 
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.type = 'TOPUP' AND t.status = 'SUCCESS'")
-    Double getTotalTopupAmount();
+    BigDecimal getTotalTopupAmount();
 }
