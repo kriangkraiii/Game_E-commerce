@@ -27,12 +27,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     List<Transaction> findByTypeAndStatusOrderByCreatedAtDesc(Transaction.Type type, Transaction.Status status);
 
-    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.type = 'PURCHASE' AND t.status = 'SUCCESS'")
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.type = 'PURCHASE' AND t.status = 'SUCCESS'")
     BigDecimal getTotalPurchaseRevenue();
 
     @Query("SELECT COUNT(t) FROM Transaction t WHERE t.type = 'PURCHASE' AND t.status = 'SUCCESS'")
     Long getTotalPurchaseCount();
 
-    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.type = 'TOPUP' AND t.status = 'SUCCESS'")
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.type = 'TOPUP' AND t.status = 'SUCCESS'")
     BigDecimal getTotalTopupAmount();
 }

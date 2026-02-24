@@ -34,6 +34,7 @@ import com.ecom.model.AdminLog;
 import com.ecom.model.Category;
 import com.ecom.model.Product;
 import com.ecom.model.ProductOrder;
+import com.ecom.model.Transaction;
 import com.ecom.model.UserDtls;
 import com.ecom.service.AdminLogService;
 import com.ecom.service.CartService;
@@ -909,4 +910,23 @@ public class AdminController {
 		return "admin/index";
 	}
 
+	@GetMapping("/transactions")
+	public String transactions() {
+		return "redirect:/admin/transactions/page/1";
+	}
+
+	@GetMapping("/transactions/page/{pageNo}")
+	public String transactionsPagination(@PathVariable int pageNo, Model m) {
+		int pageSize = 10;
+		Page<Transaction> page = walletService.getAllTransactionsPaginated(pageNo, pageSize);
+		List<Transaction> transactions = page.getContent();
+
+		m.addAttribute("currentPage", pageNo);
+		m.addAttribute("totalPages", page.getTotalPages());
+		m.addAttribute("totalItems", page.getTotalElements());
+		m.addAttribute("transactions", transactions);
+		m.addAttribute("pageSize", pageSize);
+
+		return "admin/transactions";
+	}
 }
