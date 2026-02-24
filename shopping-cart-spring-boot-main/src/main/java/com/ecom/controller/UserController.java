@@ -64,6 +64,9 @@ public class UserController {
 	@Autowired
 	private GameLibraryService gameLibraryService;
 
+	@Autowired
+	private com.ecom.service.LoginLogService loginLogService;
+
 	@GetMapping("/")
 	public String home() {
 		return "user/home";
@@ -282,6 +285,33 @@ public class UserController {
 		}
 
 		return "redirect:/user/profile";
+	}
+
+	@PostMapping("/toggle-otp")
+	public String toggleOtp(Principal p, HttpSession session) {
+		UserDtls user = getLoggedInUserDetails(p);
+		if (user != null) {
+			boolean isCurrentlyEnabled = user.isOtpEnabled();
+			user.setOtpEnabled(!isCurrentlyEnabled);
+			UserDtls updatedUser = userService.updateUser(user);
+			if (!ObjectUtils.isEmpty(updatedUser)) {
+				session.setAttribute("succMsg", "Two-Factor Authentication "
+						+ (!isCurrentlyEnabled ? "Enabled" : "Disabled") + " successfully");
+			} else {
+				session.setAttribute("errorMsg", "Failed to update OTP settings. Error in server");
+			}
+		} else {
+			session.setAttribute("errorMsg", "User not found");
+		}
+		return "redirect:/user/profile";
+	}
+
+	@GetMapping("/login-history")
+	public String loginHistory(Principal p, Model m) {
+		UserDtls user = getLoggedInUserDetails(p);
+		List<com.ecom.model.LoginLog> loginLogs = loginLogService.getLogsByUser(user);
+		m.addAttribute("loginLogs", loginLogs);
+		return "user/login_history";
 	}
 
 }
