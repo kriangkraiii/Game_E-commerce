@@ -1,348 +1,360 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:fragment="layout(content)">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content)">
 
 <head>
-<meta charset="UTF-8">
-<title>Game Store</title>
-<link
-	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-	rel="stylesheet"
-	integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
-	crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Game Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-	integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-	crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<link rel="stylesheet" href="/css/style.css">
-<style>
-body {
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-}
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-.content-wrapper {
-	flex: 1;
-}
+        .content-wrapper {
+            flex: 1;
+        }
 
-.footer {
-	margin-top: auto;
-}
+        .footer {
+            margin-top: auto;
+        }
 
-@media ( max-width : 768px) {
-	.footer {
-		margin-top: 2rem;
-	}
-}
-
-@media ( min-width : 769px) {
-	.footer {
-		margin-top: 4rem;
-	}
-}
-</style>
-<script>
-// ===================== Image Mode Switch System =====================
-// Supports AWS (S3 links) and LOCAL (project uploads) modes
-// Controlled from Admin Dashboard toggle switch
-(function() {
-    // Image mode from server: "AWS" or "LOCAL"
-    var IMAGE_MODE = '[[${imageMode}]]';
-
-    // AWS bucket names from server
-    var BUCKETS = {
-        category:   '[[${awsCategoryBucket}]]',
-        product:    '[[${awsProductBucket}]]',
-        profile:    '[[${awsProfileBucket}]]'
-    };
-
-    // Map: bucket name → local path prefix
-    var LOCAL_PATHS = {};
-    LOCAL_PATHS[BUCKETS.category]   = '/img/category_img/';
-    LOCAL_PATHS[BUCKETS.product]    = '/img/product_img/';
-    LOCAL_PATHS[BUCKETS.profile]    = '/img/profile_img/';
-
-    // Convert an AWS S3 URL to a local path
-    function awsToLocal(src) {
-        if (!src || !src.includes('.s3.amazonaws.com')) return null;
-        var filename = src.split('/').pop();
-        for (var bucket in LOCAL_PATHS) {
-            if (src.includes(bucket)) {
-                return LOCAL_PATHS[bucket] + filename;
+        @media (max-width : 768px) {
+            .footer {
+                margin-top: 2rem;
             }
         }
-        return null;
-    }
 
-    // Convert a local path back to AWS URL (best-effort)
-    function localToAws(src) {
-        if (!src) return null;
-        var filename = src.split('/').pop();
-        if (src.includes('/category_img/'))  return 'https://' + BUCKETS.category + '.s3.amazonaws.com/' + filename;
-        if (src.includes('/product_img/'))   return 'https://' + BUCKETS.product + '.s3.amazonaws.com/' + filename;
-        if (src.includes('/profile_img/'))   return 'https://' + BUCKETS.profile + '.s3.amazonaws.com/' + filename;
-        return null;
-    }
-
-    // Rewrite a single image's src based on current mode
-    function rewriteImage(img) {
-        var src = img.getAttribute('src') || '';
-        if (!src || src.startsWith('data:')) return;
-
-        if (IMAGE_MODE === 'LOCAL' && src.includes('.s3.amazonaws.com')) {
-            var localSrc = awsToLocal(src);
-            if (localSrc) {
-                img.dataset.awsSrc = src; // Store original AWS URL
-                img.setAttribute('src', localSrc);
+        @media (min-width : 769px) {
+            .footer {
+                margin-top: 4rem;
             }
-        } else if (IMAGE_MODE === 'AWS' && img.dataset.awsSrc) {
-            img.setAttribute('src', img.dataset.awsSrc);
-            delete img.dataset.awsSrc;
         }
-    }
+    </style>
+    <script>
+        // ===================== Image Mode Switch System =====================
+        // Supports AWS (S3 links) and LOCAL (project uploads) modes
+        // Controlled from Admin Dashboard toggle switch
+        (function () {
+            // Image mode from server: "AWS" or "LOCAL"
+            var IMAGE_MODE = '[[${imageMode}]]';
 
-    // Process all images on page
-    function rewriteAllImages() {
-        document.querySelectorAll('img').forEach(rewriteImage);
-    }
+            // AWS bucket names from server
+            var BUCKETS = {
+                category: '[[${awsCategoryBucket}]]',
+                product: '[[${awsProductBucket}]]',
+                profile: '[[${awsProfileBucket}]]'
+            };
 
-    // Fallback handler: if any image fails, try the other source
-    function attachFallback(img) {
-        img.addEventListener('error', function() {
-            if (this.dataset.fallbackAttempted) return;
-            this.dataset.fallbackAttempted = 'true';
-            var src = this.getAttribute('src') || '';
-            var filename = src.split('/').pop();
-            if (!filename) return;
+            // Map: bucket name → local path prefix
+            var LOCAL_PATHS = {};
+            LOCAL_PATHS[BUCKETS.category] = '/img/category_img/';
+            LOCAL_PATHS[BUCKETS.product] = '/img/product_img/';
+            LOCAL_PATHS[BUCKETS.profile] = '/img/profile_img/';
 
-            if (src.includes('.s3.amazonaws.com')) {
-                // AWS failed → try local
-                var localSrc = awsToLocal(src);
-                if (localSrc) this.src = localSrc;
-            } else {
-                // Local failed → try AWS
-                var awsSrc = localToAws(src);
-                if (awsSrc) {
-                    this.src = awsSrc;
-                } else if (src.includes('profile')) {
-                    this.src = '/img/profile_img/default.png';
+            // Convert an AWS S3 URL to a local path
+            function awsToLocal(src) {
+                if (!src || !src.includes('.s3.amazonaws.com')) return null;
+                var filename = src.split('/').pop();
+                for (var bucket in LOCAL_PATHS) {
+                    if (src.includes(bucket)) {
+                        return LOCAL_PATHS[bucket] + filename;
+                    }
+                }
+                return null;
+            }
+
+            // Convert a local path back to AWS URL (best-effort)
+            function localToAws(src) {
+                if (!src) return null;
+                var filename = src.split('/').pop();
+                if (src.includes('/category_img/')) return 'https://' + BUCKETS.category + '.s3.amazonaws.com/' + filename;
+                if (src.includes('/product_img/')) return 'https://' + BUCKETS.product + '.s3.amazonaws.com/' + filename;
+                if (src.includes('/profile_img/')) return 'https://' + BUCKETS.profile + '.s3.amazonaws.com/' + filename;
+                return null;
+            }
+
+            // Rewrite a single image's src based on current mode
+            function rewriteImage(img) {
+                var src = img.getAttribute('src') || '';
+                if (!src || src.startsWith('data:')) return;
+
+                if (IMAGE_MODE === 'LOCAL' && src.includes('.s3.amazonaws.com')) {
+                    var localSrc = awsToLocal(src);
+                    if (localSrc) {
+                        img.dataset.awsSrc = src; // Store original AWS URL
+                        img.setAttribute('src', localSrc);
+                    }
+                } else if (IMAGE_MODE === 'AWS' && img.dataset.awsSrc) {
+                    img.setAttribute('src', img.dataset.awsSrc);
+                    delete img.dataset.awsSrc;
                 }
             }
-        });
-    }
 
-    // Global image mode update (called from admin toggle)
-    window.updateImageMode = function(newMode) {
-        IMAGE_MODE = newMode;
-        // Reset fallback flags
-        document.querySelectorAll('img').forEach(function(img) {
-            delete img.dataset.fallbackAttempted;
-        });
-        rewriteAllImages();
-    };
+            // Process all images on page
+            function rewriteAllImages() {
+                document.querySelectorAll('img').forEach(rewriteImage);
+            }
 
-    // Run on DOM ready
-    document.addEventListener('DOMContentLoaded', function() {
-        rewriteAllImages();
-        document.querySelectorAll('img').forEach(attachFallback);
+            // Fallback handler: if any image fails, try the other source
+            function attachFallback(img) {
+                img.addEventListener('error', function () {
+                    if (this.dataset.fallbackAttempted) return;
+                    this.dataset.fallbackAttempted = 'true';
+                    var src = this.getAttribute('src') || '';
+                    var filename = src.split('/').pop();
+                    if (!filename) return;
 
-        // Observe dynamically added images
-        var observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(m) {
-                m.addedNodes.forEach(function(node) {
-                    if (node.nodeName === 'IMG') {
-                        rewriteImage(node);
-                        attachFallback(node);
-                    }
-                    if (node.querySelectorAll) {
-                        node.querySelectorAll('img').forEach(function(img) {
-                            rewriteImage(img);
-                            attachFallback(img);
-                        });
+                    if (src.includes('.s3.amazonaws.com')) {
+                        // AWS failed → try local
+                        var localSrc = awsToLocal(src);
+                        if (localSrc) this.src = localSrc;
+                    } else {
+                        // Local failed → try AWS
+                        var awsSrc = localToAws(src);
+                        if (awsSrc) {
+                            this.src = awsSrc;
+                        } else if (src.includes('profile')) {
+                            this.src = '/img/profile_img/default.png';
+                        }
                     }
                 });
+            }
+
+            // Global image mode update (called from admin toggle)
+            window.updateImageMode = function (newMode) {
+                IMAGE_MODE = newMode;
+                // Reset fallback flags
+                document.querySelectorAll('img').forEach(function (img) {
+                    delete img.dataset.fallbackAttempted;
+                });
+                rewriteAllImages();
+            };
+
+            // Run on DOM ready
+            document.addEventListener('DOMContentLoaded', function () {
+                rewriteAllImages();
+                document.querySelectorAll('img').forEach(attachFallback);
+
+                // Observe dynamically added images
+                var observer = new MutationObserver(function (mutations) {
+                    mutations.forEach(function (m) {
+                        m.addedNodes.forEach(function (node) {
+                            if (node.nodeName === 'IMG') {
+                                rewriteImage(node);
+                                attachFallback(node);
+                            }
+                            if (node.querySelectorAll) {
+                                node.querySelectorAll('img').forEach(function (img) {
+                                    rewriteImage(img);
+                                    attachFallback(img);
+                                });
+                            }
+                        });
+                    });
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
             });
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-    });
-})();
-</script>
+        })();
+    </script>
 </head>
 
 <body>
-	<!-- Start Navbar  -->
-	<nav class="navbar navbar-expand-lg bg-primary fixed-top navbar-dark py-3">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/"><i class="fa-solid fa-gamepad"></i> GAME STORE</a>
+    <!-- Start Navbar  -->
+    <nav class="navbar navbar-expand-lg bg-primary fixed-top navbar-dark py-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/"><i class="fa-solid fa-gamepad"></i> GAME STORE</a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <th:block th:if="${user==null}">
-                    <li class="nav-item"><a class="nav-link active" href="/"><i class="fa-solid fa-house"></i> Home</a></li>
-                </th:block>
-                <th:block th:unless="${user==null}">
-                    <li class="nav-item" th:if="${user.role=='ROLE_ADMIN'}"><a class="nav-link active" href="/admin/"><i class="fa-solid fa-house"></i> Home</a></li>
-                    <li class="nav-item" th:if="${user.role=='ROLE_USER'}"><a class="nav-link active" href="/"><i class="fa-solid fa-house"></i> Home</a></li>
-                </th:block>
-
-                <li class="nav-item"><a class="nav-link active" href="/products"><i class="fa-solid fa-store"></i> Game Store</a></li>
-                <th:block th:if="${user!=null and user.role!='ROLE_ADMIN'}">
-                    <li class="nav-item"><a class="nav-link active" href="/user/community"><i class="fa-solid fa-users"></i> Community</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="/user/game-library"><i class="fa-solid fa-gamepad"></i> Game Library</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="/user/wallet"><i class="fa-solid fa-wallet"></i> <span id="wallet-balance-nav">฿...</span></a></li>
-                </th:block>
-            </ul>
-
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <th:block th:if="${user==null}">
-                    <li class="nav-item"><a class="nav-link active" href="/signin"><i class="fa-solid fa-right-to-bracket"></i> LOGIN</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="/register"><i class="fa-solid fa-user-plus"></i> REGISTER</a></li>
-                </th:block>
-
-                <th:block th:if="${user!=null}">
-                    <th:block th:if="${user.role=='ROLE_USER'}">
-                        <li class="nav-item"><a class="nav-link active" href="/user/cart"><i class="fa-solid fa-cart-shopping"></i> [[${countCart}]] </a></li>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <th:block th:if="${user==null}">
+                        <li class="nav-item"><a class="nav-link active" href="/"><i class="fa-solid fa-house"></i>
+                                Home</a></li>
+                    </th:block>
+                    <th:block th:unless="${user==null}">
+                        <li class="nav-item" th:if="${user.role=='ROLE_ADMIN'}"><a class="nav-link active"
+                                href="/admin/"><i class="fa-solid fa-house"></i> Home</a></li>
+                        <li class="nav-item" th:if="${user.role=='ROLE_USER'}"><a class="nav-link active" href="/"><i
+                                    class="fa-solid fa-house"></i> Home</a></li>
                     </th:block>
 
-                    <th:block th:if="${user.role != 'ROLE_ADMIN'}">
-                        <li class="nav-item">
-                            <a href="/notifications" class="nav-link active position-relative notification-bell">
-                                <i class="fas fa-bell"></i>
-                                <span id="notification-badge" class="notification-badge hidden">0</span>
+                    <li class="nav-item"><a class="nav-link active" href="/products"><i class="fa-solid fa-store"></i>
+                            Game Store</a></li>
+                    <th:block th:if="${user!=null and user.role!='ROLE_ADMIN'}">
+                        <li class="nav-item"><a class="nav-link active" href="/user/community"><i
+                                    class="fa-solid fa-users"></i> Community</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/user/game-library"><i
+                                    class="fa-solid fa-gamepad"></i> Game Library</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/user/wallet"><i
+                                    class="fa-solid fa-wallet"></i> <span id="wallet-balance-nav">฿...</span></a></li>
+                    </th:block>
+                </ul>
+
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <th:block th:if="${user==null}">
+                        <li class="nav-item"><a class="nav-link active" href="/signin"><i
+                                    class="fa-solid fa-right-to-bracket"></i> LOGIN</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="/register"><i
+                                    class="fa-solid fa-user-plus"></i> REGISTER</a></li>
+                    </th:block>
+
+                    <th:block th:if="${user!=null}">
+                        <th:block th:if="${user.role=='ROLE_USER'}">
+                            <li class="nav-item"><a class="nav-link active" href="/user/cart"><i
+                                        class="fa-solid fa-cart-shopping"></i> [[${countCart}]] </a></li>
+                        </th:block>
+
+                        <th:block th:if="${user.role != 'ROLE_ADMIN'}">
+                            <li class="nav-item">
+                                <a href="/notifications" class="nav-link active position-relative notification-bell">
+                                    <i class="fas fa-bell"></i>
+                                    <span id="notification-badge" class="notification-badge hidden">0</span>
+                                </a>
+                            </li>
+                        </th:block>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <i class="fa-solid fa-user"></i> [[${user.name}]]
                             </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item"
+                                        href="/user/profile">Profile</a></li>
+                                <li th:if="${user.role=='ROLE_ADMIN'}"><a class="dropdown-item"
+                                        href="/admin/profile">Profile</a></li>
+                                <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item"
+                                        href="/user/user-orders">My Purchases</a></li>
+                                <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item"
+                                        href="/user/community/my-posts">My Posts</a></li>
+                                <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/wallet"><i
+                                            class="fa-solid fa-wallet"></i> Wallet</a></li>
+                                <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item"
+                                        href="/user/login-history">Login History</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                            </ul>
                         </li>
                     </th:block>
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fa-solid fa-user"></i> [[${user.name}]]
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/profile">Profile</a></li>
-                            <li th:if="${user.role=='ROLE_ADMIN'}"><a class="dropdown-item" href="/admin/profile">Profile</a></li>
-                            <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/user-orders">My Purchases</a></li>
-                            <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/community/my-posts">My Posts</a></li>
-                            <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/wallet"><i class="fa-solid fa-wallet"></i> Wallet</a></li>
-                            <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/login-history">Login History</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
-                        </ul>
-                    </li>
-                </th:block>
-            </ul>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
-	<!-- End Navbar -->
+    </nav>
+    <!-- End Navbar -->
 
-	<div class="content-wrapper" th:replace="${content}"></div>
-
-
-
-
-	<!-- Jquery Validation Library  -->
-	<script
-		src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
-	<script type="text/javascript" src="/js/script.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <div class="content-wrapper" th:replace="${content}"></div>
 
 
 
 
-	<script th:if="${user != null and user.role == 'ROLE_USER'}">
-			// ฟังก์ชันอัพเดตจำนวน notification
-			function updateNotificationCount() {
-				fetch('/notifications/count')
-					.then(response => response.json())
-					.then(data => {
-						const badge = document.getElementById('notification-badge');
-						if (badge) {
-							if (data.count > 0) {
-								badge.textContent = data.count > 99 ? '99+' : data.count;
-								badge.classList.remove('hidden');
-							} else {
-								badge.classList.add('hidden');
-							}
-						}
-					})
-					.catch(error => console.error('Error fetching notification count:', error));
-			}
+    <!-- Jquery Validation Library  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.js"></script>
+    <script type="text/javascript" src="/js/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
-			// ฟังก์ชันอัพเดตยอดเงิน wallet แบบ real-time
-			function updateWalletBalance() {
-				fetch('/user/wallet/balance')
-					.then(response => response.json())
-					.then(data => {
-						const walletEl = document.getElementById('wallet-balance-nav');
-						if (walletEl && data.success) {
-							walletEl.textContent = '฿' + Number(data.balance).toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-						}
-					})
-					.catch(error => console.error('Error fetching wallet balance:', error));
-			}
 
-			// อัพเดตทันทีเมื่อโหลดหน้า
-			document.addEventListener('DOMContentLoaded', function() {
-				updateNotificationCount();
-				updateWalletBalance();
-			});
 
-			// อัพเดตทุก 10 วินาที
-			setInterval(updateNotificationCount, 10000);
-			setInterval(updateNotificationCount, 10000);
-			setInterval(updateWalletBalance, 10000);
 
-			// WebSocket Real-time Notifications
-			var stompClient = null;
+    <script th:if="${user != null and user.role == 'ROLE_USER'}">
+        // ฟังก์ชันอัพเดตจำนวน notification
+        function updateNotificationCount() {
+            fetch('/notifications/count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('notification-badge');
+                    if (badge) {
+                        if (data.count > 0) {
+                            badge.textContent = data.count > 99 ? '99+' : data.count;
+                            badge.classList.remove('hidden');
+                        } else {
+                            badge.classList.add('hidden');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error fetching notification count:', error));
+        }
 
-			function connectWebSocket() {
-				var socket = new SockJS('/ws');
-				stompClient = Stomp.over(socket);
-				stompClient.debug = null; // Disable debug logs
-				stompClient.connect({}, function (frame) {
-					console.log('Connected: ' + frame);
-					stompClient.subscribe('/user/queue/notifications', function (notification) {
-						showNotification(JSON.parse(notification.body));
-						updateNotificationCount(); // Refresh badge
-					});
-				});
-			}
+        // ฟังก์ชันอัพเดตยอดเงิน wallet แบบ real-time
+        function updateWalletBalance() {
+            fetch('/user/wallet/balance')
+                .then(response => response.json())
+                .then(data => {
+                    const walletEl = document.getElementById('wallet-balance-nav');
+                    if (walletEl && data.success) {
+                        walletEl.textContent = '฿' + Number(data.balance).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    }
+                })
+                .catch(error => console.error('Error fetching wallet balance:', error));
+        }
 
-			function showNotification(notification) {
-				// Show toast or alert
-				// For now, let's just log it and maybe show a browser notification if supported/allowed
-				console.log("Received notification: ", notification);
-				
-				// Create a simple toast if Bootstrap Toasts are available, otherwise alert
-				// Or just update the badge which is already done.
-				// Let's create a custom toast element on the fly
-				var toastContainer = document.getElementById('toast-container');
-				if (!toastContainer) {
-					toastContainer = document.createElement('div');
-					toastContainer.id = 'toast-container';
-					toastContainer.style.position = 'fixed';
-					toastContainer.style.bottom = '20px';
-					toastContainer.style.right = '20px';
-					toastContainer.style.zIndex = '1055';
-					document.body.appendChild(toastContainer);
-				}
-				
-				var toast = document.createElement('div');
-				toast.className = 'toast show';
-				toast.role = 'alert';
-				toast.innerHTML = `
+        // อัพเดตทันทีเมื่อโหลดหน้า
+        document.addEventListener('DOMContentLoaded', function () {
+            updateNotificationCount();
+            updateWalletBalance();
+        });
+
+        // อัพเดตทุก 10 วินาที
+        setInterval(updateNotificationCount, 10000);
+        setInterval(updateNotificationCount, 10000);
+        setInterval(updateWalletBalance, 10000);
+
+        // WebSocket Real-time Notifications
+        var stompClient = null;
+
+        function connectWebSocket() {
+            var socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.debug = null; // Disable debug logs
+            stompClient.connect({}, function (frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/user/queue/notifications', function (notification) {
+                    showNotification(JSON.parse(notification.body));
+                    updateNotificationCount(); // Refresh badge
+                });
+            });
+        }
+
+        function showNotification(notification) {
+            // Show toast or alert
+            // For now, let's just log it and maybe show a browser notification if supported/allowed
+            console.log("Received notification: ", notification);
+
+            // Create a simple toast if Bootstrap Toasts are available, otherwise alert
+            // Or just update the badge which is already done.
+            // Let's create a custom toast element on the fly
+            var toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.style.position = 'fixed';
+                toastContainer.style.bottom = '20px';
+                toastContainer.style.right = '20px';
+                toastContainer.style.zIndex = '1055';
+                document.body.appendChild(toastContainer);
+            }
+
+            var toast = document.createElement('div');
+            toast.className = 'toast show';
+            toast.role = 'alert';
+            toast.innerHTML = `
 					<div class="toast-header">
 						<strong class="me-auto">Notification</strong>
 						<button type="button" class="btn-close" data-bs-dismiss="toast"></button>
@@ -351,18 +363,16 @@ body {
 						${notification.message}
 					</div>
 				`;
-				toastContainer.appendChild(toast);
-				
-				setTimeout(() => {
-					toast.remove();
-				}, 5000);
-			}
+            toastContainer.appendChild(toast);
 
-			connectWebSocket();
-			
-		</script>
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
 
+        connectWebSocket();
 
+    </script>
 
 
 
@@ -373,189 +383,478 @@ body {
 
 
 
-	<!-- End  -->
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-		crossorigin="anonymous"></script>
 
-	<!-- ===== AI Chatbot Widget (User Only) ===== -->
-	<th:block th:if="${user != null and user.role == 'ROLE_USER'}">
 
-	<!-- Floating Action Button -->
-	<button class="chatbot-fab" id="chatbot-fab" onclick="toggleChatbot()" title="Game Assistant">
-		<i class="fa-solid fa-robot"></i>
-	</button>
+    <!-- End  -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 
-	<!-- Chat Window -->
-	<div class="chatbot-window" id="chatbot-window">
-		<div class="chatbot-header">
-			<div class="chatbot-header-avatar">
-				<i class="fa-solid fa-robot"></i>
-			</div>
-			<div class="chatbot-header-info">
-				<h4>Game Assistant</h4>
-				<span>🟢 Online — พร้อมช่วยเหลือ</span>
-			</div>
-		</div>
+    <!-- ===== AI Chatbot Widget (User Only) ===== -->
+    <th:block th:if="${user != null and user.role == 'ROLE_USER'}">
 
-		<div class="chatbot-messages" id="chatbot-messages">
-			<div class="chat-bubble chat-bubble-welcome">
-				👋 สวัสดี! ฉันคือผู้ช่วยของ Game Store<br>
-				ถามเกี่ยวกับเกม แนะนำเกม หรือสอบถามการใช้งานได้เลย!
-			</div>
-		</div>
+        <!-- Floating Action Button -->
+        <button class="chatbot-fab" id="chatbot-fab" onclick="toggleChatbot()" title="Game Assistant">
+            <i class="fa-solid fa-robot"></i>
+        </button>
 
-		<div class="chatbot-input-area">
-			<textarea class="chatbot-input" id="chatbot-input"
-				placeholder="พิมพ์ข้อความ..." rows="1"
-				onkeydown="handleChatKeydown(event)"></textarea>
-			<button class="chatbot-send-btn" id="chatbot-send-btn" onclick="sendChatMessage()" title="Send">
-				<i class="fa-solid fa-paper-plane"></i>
-			</button>
-		</div>
-	</div>
+        <!-- Chat Window -->
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <div class="chatbot-header-avatar">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="chatbot-header-info" style="flex:1">
+                    <h4>Game Assistant</h4>
+                    <span>🟢 Online — พร้อมช่วยเหลือ</span>
+                </div>
+                <button onclick="toggleUsagePanel()" title="Token Usage"
+                    style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;">
+                    <i class="fa-solid fa-chart-pie"></i>
+                </button>
+            </div>
 
-	<script>
-	// ===== AI Chatbot Logic =====
-	var chatHistory = [];
-	var isChatbotOpen = false;
-	var isSending = false;
+            <!-- Model Selector -->
+            <div
+                style="padding:8px 16px;background:#fff;border-bottom:1px solid rgba(230,81,0,0.1);display:flex;align-items:center;gap:8px;">
+                <i class="fa-solid fa-microchip" style="color:var(--primary);font-size:13px;"></i>
+                <select id="chatbot-model-select" onchange="onModelChange()"
+                    style="flex:1;border:1.5px solid rgba(230,81,0,0.15);border-radius:8px;padding:5px 8px;font-size:12px;outline:none;background:#fff;font-family:inherit;cursor:pointer;">
+                    <option value="">Loading models...</option>
+                </select>
+            </div>
 
-	function toggleChatbot() {
-		var fab = document.getElementById('chatbot-fab');
-		var win = document.getElementById('chatbot-window');
-		isChatbotOpen = !isChatbotOpen;
+            <!-- Token Usage Panel (hidden by default) -->
+            <div id="chatbot-usage-panel"
+                style="display:none;padding:10px 16px;background:#fef7f4;border-bottom:1px solid rgba(230,81,0,0.1);max-height:200px;overflow-y:auto;">
+                <div style="font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">
+                    📊 Token Usage Today <span id="chatbot-usage-date" style="font-weight:400;opacity:0.7;"></span>
+                </div>
+                <div id="chatbot-usage-bars"></div>
+            </div>
 
-		if (isChatbotOpen) {
-			win.classList.add('open');
-			fab.classList.add('active');
-			fab.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-			document.getElementById('chatbot-input').focus();
-		} else {
-			win.classList.remove('open');
-			fab.classList.remove('active');
-			fab.innerHTML = '<i class="fa-solid fa-robot"></i>';
-		}
-	}
+            <!-- Current Provider Usage Bar -->
+            <div id="chatbot-current-usage"
+                style="padding:4px 16px;background:#fef7f4;border-bottom:1px solid rgba(230,81,0,0.08);display:none;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+                    <span id="chatbot-current-provider"
+                        style="font-size:11px;font-weight:600;color:var(--text-secondary);"></span>
+                    <span id="chatbot-current-percent"
+                        style="font-size:11px;font-weight:600;color:var(--primary);"></span>
+                </div>
+                <div style="height:4px;background:rgba(230,81,0,0.1);border-radius:4px;overflow:hidden;">
+                    <div id="chatbot-current-bar"
+                        style="height:100%;border-radius:4px;transition:width 0.5s ease;background:linear-gradient(90deg,var(--primary-light),var(--primary));width:0%;">
+                    </div>
+                </div>
+            </div>
 
-	function handleChatKeydown(e) {
-		if (e.key === 'Enter' && !e.shiftKey) {
-			e.preventDefault();
-			sendChatMessage();
-		}
-	}
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="chat-bubble chat-bubble-welcome">
+                    👋 สวัสดี! ฉันคือผู้ช่วยของ Game Store<br>
+                    ถามเกี่ยวกับเกม แนะนำเกม หรือสอบถามการใช้งานได้เลย!
+                </div>
+            </div>
 
-	function addMessage(content, type) {
-		var container = document.getElementById('chatbot-messages');
-		var bubble = document.createElement('div');
-		bubble.className = 'chat-bubble chat-bubble-' + type;
+            <!-- File Preview -->
+            <div id="chatbot-file-preview"
+                style="display:none;padding:6px 16px;background:#fef7f4;border-top:1px solid rgba(230,81,0,0.08);">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div id="chatbot-file-thumb"
+                        style="width:36px;height:36px;border-radius:6px;overflow:hidden;background:rgba(230,81,0,0.08);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--primary);flex-shrink:0;">
+                        <i class="fa-solid fa-file"></i>
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                        <div id="chatbot-file-name"
+                            style="font-size:12px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        </div>
+                        <div id="chatbot-file-size" style="font-size:10px;color:var(--text-secondary);"></div>
+                    </div>
+                    <button onclick="removeAttachment()" title="Remove"
+                        style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:14px;padding:4px;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
 
-		if (type === 'bot') {
-			bubble.innerHTML = formatBotMessage(content);
-		} else {
-			bubble.textContent = content;
-		}
+            <div class="chatbot-input-area">
+                <!-- File Attach Button -->
+                <input type="file" id="chatbot-file-input" style="display:none;"
+                    accept=".jpg,.jpeg,.png,.pdf,.txt,.docx,.pptx,.xlsx,.csv,.json" onchange="onFileSelected(this)" />
+                <button onclick="document.getElementById('chatbot-file-input').click()" title="Attach File"
+                    style="background:none;border:none;color:var(--primary);cursor:pointer;font-size:18px;padding:4px 6px;flex-shrink:0;transition:transform 0.2s;">
+                    <i class="fa-solid fa-paperclip"></i>
+                </button>
 
-		container.appendChild(bubble);
-		container.scrollTop = container.scrollHeight;
-	}
+                <textarea class="chatbot-input" id="chatbot-input" placeholder="พิมพ์ข้อความ..." rows="1"
+                    onkeydown="handleChatKeydown(event)"></textarea>
+                <button class="chatbot-send-btn" id="chatbot-send-btn" onclick="sendChatMessage()" title="Send">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
 
-	function showTyping() {
-		var container = document.getElementById('chatbot-messages');
-		var indicator = document.createElement('div');
-		indicator.className = 'typing-indicator';
-		indicator.id = 'typing-indicator';
-		indicator.innerHTML = '<span></span><span></span><span></span>';
-		container.appendChild(indicator);
-		container.scrollTop = container.scrollHeight;
-	}
+        <script>
+            // ===== AI Chatbot Logic =====
+            var chatHistory = [];
+            var isChatbotOpen = false;
+            var isSending = false;
+            var selectedModel = 'gemini-2.5-flash';
+            var attachedFile = null;
+            var ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'pdf', 'txt', 'docx', 'pptx', 'xlsx', 'csv', 'json'];
+            var MAX_FILE_MB = 10;
+            var modelProviderMap = {};
+            var usagePanelOpen = false;
 
-	function hideTyping() {
-		var el = document.getElementById('typing-indicator');
-		if (el) el.remove();
-	}
+            function toggleChatbot() {
+                var fab = document.getElementById('chatbot-fab');
+                var win = document.getElementById('chatbot-window');
+                isChatbotOpen = !isChatbotOpen;
 
-	function formatBotMessage(text) {
-		// Simple markdown formatting
-		var html = text
-			.replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')
-			.replace(/`([^`]+)`/g, '<code>$1</code>')
-			.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-			.replace(/\*([^*]+)\*/g, '<em>$1</em>')
-			.replace(/\n/g, '<br>');
-		return html;
-	}
+                if (isChatbotOpen) {
+                    win.classList.add('open');
+                    fab.classList.add('active');
+                    fab.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                    loadModels();
+                    document.getElementById('chatbot-input').focus();
+                } else {
+                    win.classList.remove('open');
+                    fab.classList.remove('active');
+                    fab.innerHTML = '<i class="fa-solid fa-robot"></i>';
+                }
+            }
 
-	function sendChatMessage() {
-		if (isSending) return;
+            function loadModels() {
+                var select = document.getElementById('chatbot-model-select');
+                if (select.options.length > 1) return; // already loaded
 
-		var input = document.getElementById('chatbot-input');
-		var message = input.value.trim();
-		if (!message) return;
+                fetch('/user/chatbot/models')
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        select.innerHTML = '';
+                        var providers = data.providers;
+                        for (var provider in providers) {
+                            var group = document.createElement('optgroup');
+                            group.label = provider;
+                            var models = providers[provider];
+                            for (var i = 0; i < models.length; i++) {
+                                var opt = document.createElement('option');
+                                opt.value = models[i];
+                                opt.textContent = models[i];
+                                modelProviderMap[models[i]] = provider;
+                                if (models[i] === data.defaultModel) opt.selected = true;
+                                group.appendChild(opt);
+                            }
+                            select.appendChild(group);
+                        }
+                        selectedModel = data.defaultModel;
+                        updateCurrentUsageBar();
+                    })
+                    .catch(function () {
+                        select.innerHTML = '<option value="gemini-2.5-flash">gemini-2.5-flash</option>';
+                    });
+            }
 
-		// Show user message
-		addMessage(message, 'user');
-		input.value = '';
-		input.style.height = 'auto';
+            function onModelChange() {
+                selectedModel = document.getElementById('chatbot-model-select').value;
+                updateCurrentUsageBar();
+            }
 
-		// Add to history
-		chatHistory.push({ role: 'user', content: message });
+            function toggleUsagePanel() {
+                usagePanelOpen = !usagePanelOpen;
+                var panel = document.getElementById('chatbot-usage-panel');
+                panel.style.display = usagePanelOpen ? 'block' : 'none';
+                if (usagePanelOpen) loadUsage();
+            }
 
-		// Disable input
-		isSending = true;
-		document.getElementById('chatbot-send-btn').disabled = true;
-		showTyping();
+            function loadUsage() {
+                fetch('/user/chatbot/usage')
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        var container = document.getElementById('chatbot-usage-bars');
+                        var dateEl = document.getElementById('chatbot-usage-date');
+                        dateEl.textContent = '(' + data.date + ')';
+                        container.innerHTML = '';
 
-		// Send to backend
-		fetch('/user/chatbot/send', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				message: message,
-				history: chatHistory.slice(0, -1) // exclude current msg, backend adds it
-			})
-		})
-		.then(function(response) { return response.json(); })
-		.then(function(data) {
-			hideTyping();
-			if (data.success && data.reply) {
-				addMessage(data.reply, 'bot');
-				chatHistory.push({ role: 'assistant', content: data.reply });
-			} else {
-				addMessage(data.reply || 'ขออภัย เกิดข้อผิดพลาด กรุณาลองใหม่', 'bot');
-			}
+                        var usages = data.usage;
+                        for (var i = 0; i < usages.length; i++) {
+                            var u = usages[i];
+                            var color = u.percent > 80 ? '#dc2626' : u.percent > 50 ? '#f59e0b' : '#059669';
+                            var row = document.createElement('div');
+                            row.style.cssText = 'margin-bottom:6px;';
+                            row.innerHTML =
+                                '<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px;">' +
+                                '<span style="font-weight:500;color:var(--text-primary)">' + u.provider + '</span>' +
+                                '<span style="color:' + color + ';font-weight:600;">' + u.percent + '% <span style="font-weight:400;opacity:0.7;">(' + formatTokens(u.used) + '/' + formatTokens(u.limit) + ')</span></span>' +
+                                '</div>' +
+                                '<div style="height:4px;background:rgba(0,0,0,0.06);border-radius:4px;overflow:hidden;">' +
+                                '<div style="height:100%;width:' + u.percent + '%;background:' + color + ';border-radius:4px;transition:width 0.5s ease;"></div>' +
+                                '</div>';
+                            container.appendChild(row);
+                        }
+                    });
+            }
 
-			// Keep history manageable (last 20 messages)
-			if (chatHistory.length > 20) {
-				chatHistory = chatHistory.slice(-20);
-			}
-		})
-		.catch(function(err) {
-			hideTyping();
-			addMessage('ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่อีกครั้ง', 'bot');
-			console.error('Chatbot error:', err);
-		})
-		.finally(function() {
-			isSending = false;
-			document.getElementById('chatbot-send-btn').disabled = false;
-			document.getElementById('chatbot-input').focus();
-		});
-	}
+            function formatTokens(n) {
+                if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+                if (n >= 1000) return (n / 1000).toFixed(0) + 'K';
+                return n.toString();
+            }
 
-	// Auto-resize textarea
-	document.addEventListener('DOMContentLoaded', function() {
-		var chatInput = document.getElementById('chatbot-input');
-		if (chatInput) {
-			chatInput.addEventListener('input', function() {
-				this.style.height = 'auto';
-				this.style.height = Math.min(this.scrollHeight, 80) + 'px';
-			});
-		}
-	});
-	</script>
+            function updateCurrentUsageBar(percent, provider) {
+                var bar = document.getElementById('chatbot-current-usage');
+                var providerEl = document.getElementById('chatbot-current-provider');
+                var percentEl = document.getElementById('chatbot-current-percent');
+                var barFill = document.getElementById('chatbot-current-bar');
+                var prov = provider || modelProviderMap[selectedModel] || '';
 
-	</th:block>
+                if (!prov) { bar.style.display = 'none'; return; }
+
+                bar.style.display = 'block';
+                providerEl.textContent = prov;
+
+                if (percent !== undefined) {
+                    percentEl.textContent = percent + '%';
+                    barFill.style.width = percent + '%';
+                    barFill.style.background = percent > 80 ? 'linear-gradient(90deg,#f59e0b,#dc2626)' :
+                        percent > 50 ? 'linear-gradient(90deg,#059669,#f59e0b)' :
+                            'linear-gradient(90deg,var(--primary-light),var(--primary))';
+                } else {
+                    // Fetch current usage
+                    fetch('/user/chatbot/usage')
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                            var usages = data.usage;
+                            for (var i = 0; i < usages.length; i++) {
+                                if (usages[i].provider === prov) {
+                                    percentEl.textContent = usages[i].percent + '%';
+                                    barFill.style.width = usages[i].percent + '%';
+                                    var p = usages[i].percent;
+                                    barFill.style.background = p > 80 ? 'linear-gradient(90deg,#f59e0b,#dc2626)' :
+                                        p > 50 ? 'linear-gradient(90deg,#059669,#f59e0b)' :
+                                            'linear-gradient(90deg,var(--primary-light),var(--primary))';
+                                    break;
+                                }
+                            }
+                        });
+                }
+            }
+
+            function handleChatKeydown(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendChatMessage();
+                }
+            }
+
+            function addMessage(content, type, fileInfo) {
+                var container = document.getElementById('chatbot-messages');
+                var bubble = document.createElement('div');
+                bubble.className = 'chat-bubble chat-bubble-' + type;
+
+                if (type === 'bot') {
+                    bubble.innerHTML = formatBotMessage(content);
+                } else {
+                    var html = '';
+                    if (fileInfo) {
+                        if (fileInfo.isImage && fileInfo.dataUrl) {
+                            html += '<div style="margin-bottom:6px;"><img src="' + fileInfo.dataUrl + '" style="max-width:180px;max-height:140px;border-radius:8px;display:block;" /></div>';
+                        } else {
+                            html += '<div style="margin-bottom:4px;font-size:12px;opacity:0.9;">📎 ' + fileInfo.name + ' (' + fileInfo.size + ')</div>';
+                        }
+                    }
+                    html += '<span>' + escapeHtml(content) + '</span>';
+                    bubble.innerHTML = html;
+                }
+
+                container.appendChild(bubble);
+                container.scrollTop = container.scrollHeight;
+            }
+
+            function escapeHtml(text) {
+                var div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function onFileSelected(input) {
+                var file = input.files[0];
+                if (!file) return;
+
+                var ext = file.name.split('.').pop().toLowerCase();
+                if (ALLOWED_EXTS.indexOf(ext) === -1) {
+                    alert('ไม่รองรับไฟล์นามสกุล .' + ext + '\nรองรับ: ' + ALLOWED_EXTS.join(', '));
+                    input.value = '';
+                    return;
+                }
+                if (file.size > MAX_FILE_MB * 1024 * 1024) {
+                    alert('ไฟล์ขนาดเกิน ' + MAX_FILE_MB + 'MB');
+                    input.value = '';
+                    return;
+                }
+
+                attachedFile = file;
+                var preview = document.getElementById('chatbot-file-preview');
+                var nameEl = document.getElementById('chatbot-file-name');
+                var sizeEl = document.getElementById('chatbot-file-size');
+                var thumbEl = document.getElementById('chatbot-file-thumb');
+
+                nameEl.textContent = file.name;
+                sizeEl.textContent = formatFileSizeJS(file.size);
+                preview.style.display = 'block';
+
+                var isImage = ['jpg', 'jpeg', 'png'].indexOf(ext) !== -1;
+                if (isImage) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        thumbEl.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover;" />';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    var iconMap = {
+                        pdf: 'fa-file-pdf', txt: 'fa-file-lines', csv: 'fa-file-csv', json: 'fa-file-code',
+                        docx: 'fa-file-word', pptx: 'fa-file-powerpoint', xlsx: 'fa-file-excel'
+                    };
+                    thumbEl.innerHTML = '<i class="fa-solid ' + (iconMap[ext] || 'fa-file') + '"></i>';
+                }
+            }
+
+            function removeAttachment() {
+                attachedFile = null;
+                document.getElementById('chatbot-file-input').value = '';
+                document.getElementById('chatbot-file-preview').style.display = 'none';
+                document.getElementById('chatbot-file-thumb').innerHTML = '<i class="fa-solid fa-file"></i>';
+            }
+
+            function formatFileSizeJS(size) {
+                if (size >= 1024 * 1024) return (size / (1024 * 1024)).toFixed(1) + ' MB';
+                if (size >= 1024) return Math.round(size / 1024) + ' KB';
+                return size + ' B';
+            }
+
+            function showTyping() {
+                var container = document.getElementById('chatbot-messages');
+                var indicator = document.createElement('div');
+                indicator.className = 'typing-indicator';
+                indicator.id = 'typing-indicator';
+                indicator.innerHTML = '<span></span><span></span><span></span>';
+                container.appendChild(indicator);
+                container.scrollTop = container.scrollHeight;
+            }
+
+            function hideTyping() {
+                var el = document.getElementById('typing-indicator');
+                if (el) el.remove();
+            }
+
+            function formatBotMessage(text) {
+                var html = text
+                    .replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')
+                    .replace(/`([^`]+)`/g, '<code>$1</code>')
+                    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                    .replace(/\n/g, '<br>');
+                return html;
+            }
+
+            function sendChatMessage() {
+                if (isSending) return;
+
+                var input = document.getElementById('chatbot-input');
+                var message = input.value.trim();
+                if (!message && !attachedFile) return;
+
+                // Build file info for display
+                var fileInfo = null;
+                if (attachedFile) {
+                    var ext = attachedFile.name.split('.').pop().toLowerCase();
+                    var isImg = ['jpg', 'jpeg', 'png'].indexOf(ext) !== -1;
+                    fileInfo = { name: attachedFile.name, size: formatFileSizeJS(attachedFile.size), isImage: isImg };
+                }
+
+                // If image, get dataUrl for bubble display
+                var sendFn = function (dataUrl) {
+                    if (fileInfo && dataUrl) fileInfo.dataUrl = dataUrl;
+
+                    addMessage(message || '📎 ' + (attachedFile ? attachedFile.name : ''), 'user', fileInfo);
+                    input.value = '';
+                    input.style.height = 'auto';
+
+                    chatHistory.push({ role: 'user', content: message || '(file attached)' });
+
+                    isSending = true;
+                    document.getElementById('chatbot-send-btn').disabled = true;
+                    showTyping();
+
+                    // Use FormData for multipart
+                    var formData = new FormData();
+                    formData.append('message', message || '');
+                    formData.append('model', selectedModel);
+                    formData.append('history', JSON.stringify(chatHistory.slice(0, -1)));
+                    if (attachedFile) {
+                        formData.append('file', attachedFile);
+                    }
+
+                    // Clear attachment after capturing
+                    removeAttachment();
+
+                    fetch('/user/chatbot/send', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(function (response) { return response.json(); })
+                        .then(function (data) {
+                            hideTyping();
+                            if (data.success && data.reply) {
+                                addMessage(data.reply, 'bot');
+                                chatHistory.push({ role: 'assistant', content: data.reply });
+                                if (data.providerUsage !== undefined) {
+                                    updateCurrentUsageBar(data.providerUsage, data.provider);
+                                }
+                                if (usagePanelOpen) loadUsage();
+                            } else {
+                                addMessage(data.reply || 'ขออภัย เกิดข้อผิดพลาด กรุณาลองใหม่', 'bot');
+                            }
+
+                            if (chatHistory.length > 20) {
+                                chatHistory = chatHistory.slice(-20);
+                            }
+                        })
+                        .catch(function (err) {
+                            hideTyping();
+                            addMessage('ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่อีกครั้ง', 'bot');
+                            console.error('Chatbot error:', err);
+                        })
+                        .finally(function () {
+                            isSending = false;
+                            document.getElementById('chatbot-send-btn').disabled = false;
+                            document.getElementById('chatbot-input').focus();
+                        });
+                };
+
+                // If image attached, read as dataUrl for thumbnail in chat bubble
+                if (fileInfo && fileInfo.isImage && attachedFile) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) { sendFn(e.target.result); };
+                    reader.readAsDataURL(attachedFile);
+                } else {
+                    sendFn(null);
+                }
+            }
+
+            // Auto-resize textarea
+            document.addEventListener('DOMContentLoaded', function () {
+                var chatInput = document.getElementById('chatbot-input');
+                if (chatInput) {
+                    chatInput.addEventListener('input', function () {
+                        this.style.height = 'auto';
+                        this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+                    });
+                }
+            });
+        </script>
+
+    </th:block>
 
 </body>
 
