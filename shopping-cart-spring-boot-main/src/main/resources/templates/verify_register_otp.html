@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>ยืนยัน Email</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .otp-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            width: 380px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .otp-container h2 {
+            margin-bottom: 8px;
+            color: #1a1a2e;
+        }
+
+        .otp-container p {
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .email-badge {
+            background: #f0f4ff;
+            border: 1px solid #c0d0ff;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 13px;
+            color: #3355aa;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .otp-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+            font-size: 20px;
+            text-align: center;
+            letter-spacing: 5px;
+            box-sizing: border-box;
+        }
+
+        .otp-input:focus {
+            border-color: #0f3460;
+            outline: none;
+            box-shadow: 0 0 8px rgba(15, 52, 96, 0.3);
+        }
+
+        .verify-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(90deg, #0f3460, #533483);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .verify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(15, 52, 96, 0.4);
+        }
+
+        .timer {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #0f3460;
+            font-weight: bold;
+        }
+
+        .error-msg {
+            color: red;
+            margin-top: 10px;
+            font-size: 14px;
+            background: #fff0f0;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .game-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+            text-decoration: none;
+            border: 1px solid #ccc;
+            padding: 8px 20px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="otp-container">
+        <div class="game-icon">📧</div>
+        <h2>ยืนยัน Email</h2>
+        <p>กรอกรหัส OTP 6 หลักที่ส่งไปยัง Email ของคุณ<br>เพื่อยืนยันตัวตนก่อนสมัครสมาชิก</p>
+        <p>รหัสจะหมดอายุใน 5 นาที</p>
+
+        <form action="/verify-register-otp" method="post">
+            <input type="text" name="otp" class="otp-input" placeholder="_ _ _ _ _ _"
+                   maxlength="6" inputmode="numeric" required autofocus />
+            <button type="submit" class="verify-btn">ยืนยัน OTP</button>
+        </form>
+
+        <div class="timer">
+            หมดอายุใน <span id="timer">05:00</span>
+        </div>
+
+        <div th:if="${error}" class="error-msg" th:text="${error}"></div>
+
+        <a href="/register" class="back-btn">← ย้อนกลับ</a>
+    </div>
+
+    <script>
+        let timeLeft = 300;
+        const timerEl = document.getElementById("timer");
+
+        const interval = setInterval(() => {
+            const m = Math.floor(timeLeft / 60);
+            const s = timeLeft % 60;
+            timerEl.textContent = String(m).padStart(2, '0') + ":" + String(s).padStart(2, '0');
+            timeLeft--;
+
+            if (timeLeft < 0) {
+                clearInterval(interval);
+                window.location.href = "/register?expired=true";
+            }
+        }, 1000);
+    </script>
+
+</body>
+
+</html>

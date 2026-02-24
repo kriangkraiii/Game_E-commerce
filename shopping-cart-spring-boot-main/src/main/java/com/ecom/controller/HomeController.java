@@ -2,7 +2,10 @@ package com.ecom.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +19,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ecom.model.Category;
 import com.ecom.model.Product;
 import com.ecom.model.UserDtls;
 import com.ecom.service.CartService;
 import com.ecom.service.CategoryService;
+import com.ecom.service.EmailService;
 import com.ecom.service.GameLibraryService;
 import com.ecom.service.ProductService;
 import com.ecom.service.UserService;
@@ -55,6 +60,9 @@ public class HomeController {
 
 	@Autowired
 	private GameLibraryService gameLibraryService;
+
+	@Autowired
+	private EmailService emailService;
 
 	@ModelAttribute
 	public void getUserDetails(Principal p, Model m) {
@@ -90,6 +98,78 @@ public class HomeController {
 	@GetMapping("/register")
 	public String register() {
 		return "guest/register";
+	}
+
+	// ─── AJAX: ส่ง OTP ไปยัง email สำหรับการสมัคร ───────────────────────────
+	@PostMapping("/register/send-otp")
+	@ResponseBody
+	public Map<String, Object> sendRegisterOtp(@RequestParam String email, HttpSession session) {
+		Map<String, Object> result = new HashMap<>();
+
+		if (userService.existsEmail(email)) {
+			result.put("success", false);
+			result.put("message", "Email นี้ถูกใช้งานแล้ว");
+			return result;
+		}
+
+		String otp = String.valueOf((int) ((Math.random() * 900000) + 100000));
+		session.setAttribute("registerOtp", otp);
+		session.setAttribute("registerOtpExpiry", LocalDateTime.now().plusMinutes(5));
+		session.setAttribute("registerOtpEmail", email);
+		session.removeAttribute("verifiedEmail");
+
+		emailService.sendOtpEmail(email, otp);
+
+		result.put("success", true);
+		result.put("message", "ส่ง OTP ไปยัง " + email + " แล้ว");
+		return result;
+	}
+
+	// ─── AJAX: ตรวจสอบ OTP ที่กรอก ──────────────────────────────────────────
+	@PostMapping("/register/verify-email-otp")
+	@ResponseBody
+	public Map<String, Object> verifyRegisterEmailOtp(@RequestParam String email,
+	                                                   @RequestParam String otp,
+	                                                   HttpSession session) {
+		Map<String, Object> result = new HashMap<>();
+
+		String storedOtp    = (String)        session.getAttribute("registerOtp");
+		LocalDateTime expiry = (LocalDateTime) session.getAttribute("registerOtpExpiry");
+		String otpEmail     = (String)        session.getAttribute("registerOtpEmail");
+
+		if (storedOtp == null || expiry == null || otpEmail == null) {
+			result.put("success", false);
+			result.put("message", "กรุณากด 'ส่ง OTP' ก่อน");
+			return result;
+		}
+
+		if (!email.equals(otpEmail)) {
+			result.put("success", false);
+			result.put("message", "Email ไม่ตรงกัน กรุณากด 'ส่ง OTP' ใหม่");
+			return result;
+		}
+
+		if (expiry.isBefore(LocalDateTime.now())) {
+			result.put("success", false);
+			result.put("message", "OTP หมดอายุแล้ว กรุณากด 'ส่ง OTP' อีกครั้ง");
+			return result;
+		}
+
+		if (!storedOtp.equals(otp)) {
+			result.put("success", false);
+			result.put("message", "รหัส OTP ไม่ถูกต้อง");
+			return result;
+		}
+
+		// OTP ถูก → บันทึก email ที่ยืนยันแล้ว
+		session.setAttribute("verifiedEmail", email);
+		session.removeAttribute("registerOtp");
+		session.removeAttribute("registerOtpExpiry");
+		session.removeAttribute("registerOtpEmail");
+
+		result.put("success", true);
+		result.put("message", "ยืนยัน Email สำเร็จ!");
+		return result;
 	}
 
 	@GetMapping("/products")
@@ -142,29 +222,30 @@ public class HomeController {
 	@PostMapping("/saveUser")
 	public String saveUser(@ModelAttribute UserDtls user, HttpSession session) {
 
-	    Boolean existsEmail = userService.existsEmail(user.getEmail());
-	    
-	    
-	    if (existsEmail) {
-	        session.setAttribute("errorMsg", "Email already exist");
-	    } else {
-	        try {
-	            // Set default profile image
-	            user.setProfileImage("default.png");
-	            UserDtls saveUser = userService.saveUser(user);
+		// ต้องยืนยัน Email ด้วย OTP ก่อนเสมอ
+		String verifiedEmail = (String) session.getAttribute("verifiedEmail");
+		if (verifiedEmail == null || !verifiedEmail.equals(user.getEmail())) {
+			session.setAttribute("errorMsg", "กรุณายืนยัน Email ด้วย OTP ก่อนสมัครสมาชิก");
+			return "redirect:/register";
+		}
 
-	            if (!ObjectUtils.isEmpty(saveUser)) {
-	                session.setAttribute("succMsg", "Register successfully");
-	            } else {
-	                session.setAttribute("errorMsg", "Something wrong on server");
-	            }
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            session.setAttribute("errorMsg", "Registration failed: " + e.getMessage());
-	        }
-	    }
+		if (userService.existsEmail(user.getEmail())) {
+			session.setAttribute("errorMsg", "Email already exist");
+			return "redirect:/register";
+		}
 
-	    return "redirect:/register";
+		user.setProfileImage("default.png");
+		UserDtls savedUser = userService.saveUser(user);
+
+		session.removeAttribute("verifiedEmail");
+
+		if (savedUser != null) {
+			session.setAttribute("succMsg", "สมัครสมาชิกสำเร็จ! กรุณาล็อกอิน");
+		} else {
+			session.setAttribute("errorMsg", "เกิดข้อผิดพลาด กรุณาลองใหม่");
+		}
+
+		return "redirect:/register";
 	}
 
 

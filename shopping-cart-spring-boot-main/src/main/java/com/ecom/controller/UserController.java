@@ -25,6 +25,7 @@ import com.ecom.service.CartService;
 import com.ecom.service.CategoryService;
 import com.ecom.service.FileService;
 import com.ecom.service.GameLibraryService;
+import com.ecom.service.LoginLogService;
 import com.ecom.service.OrderService;
 import com.ecom.service.UserService;
 import com.ecom.service.WalletService;
@@ -62,6 +63,9 @@ public class UserController {
 
 	@Autowired
 	private GameLibraryService gameLibraryService;
+
+	@Autowired
+	private LoginLogService loginLogService;
 
 	@GetMapping("/")
 	public String home() {
@@ -240,6 +244,13 @@ public class UserController {
 	public String profile() {
 		return "user/profile";
 	}
+
+	@GetMapping("/login-history")
+	public String loginHistory(Principal p, Model m) {
+		UserDtls user = getLoggedInUserDetails(p);
+		m.addAttribute("loginLogs", loginLogService.getLogsByUser(user));
+		return "user/login_history";
+	}
 //
 //	@GetMapping("/profile")
 //	public String profile(Principal p, Model m) {
@@ -269,6 +280,19 @@ public class UserController {
 	    return "redirect:/user/profile";
 	}
 
+
+	@PostMapping("/toggle-otp")
+	public String toggleOtp(Principal p, HttpSession session) {
+		UserDtls user = getLoggedInUserDetails(p);
+		user.setOtpEnabled(!user.isOtpEnabled());
+		userService.updateUser(user);
+		if (user.isOtpEnabled()) {
+			session.setAttribute("succMsg", "เปิดใช้งาน OTP เรียบร้อยแล้ว");
+		} else {
+			session.setAttribute("succMsg", "ปิดใช้งาน OTP เรียบร้อยแล้ว");
+		}
+		return "redirect:/user/profile";
+	}
 
 	@PostMapping("/change-password")
 	public String changePassword(@RequestParam String newPassword, @RequestParam String currentPassword, Principal p,

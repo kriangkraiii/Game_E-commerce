@@ -26,16 +26,16 @@
 					<hr>
 
 					<!-- Profile Image -->
-<div class="d-flex justify-content-center mb-4">
-    <img th:src="${user.profileImage}" 
-         alt="Profile Image"
-         class="border p-2" 
-         style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover;"
-         onerror="this.src='/img/profile_img/default.png'">
-</div>
+					<div class="d-flex justify-content-center mb-4">
+						<img th:src="${user.profileImage}"
+							 alt="Profile Image"
+							 class="border p-2"
+							 style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover;"
+							 onerror="this.src='/img/profile_img/default.png'">
+					</div>
 
 					<!-- Profile Update Form -->
-					<div class="card shadow-sm mb-5">
+					<div class="card shadow-sm mb-4">
 						<div class="card-header bg-primary text-white">
 							<h5 class="mb-0">Update Profile Information</h5>
 						</div>
@@ -47,37 +47,8 @@
 										<input type="text" name="name" class="form-control" th:value="${user.name}">
 									</div>
 									<div class="col-md-6">
-										<label class="form-label fw-bold">Mobile Number</label>
-										<input type="text" name="mobileNumber" class="form-control"
-											th:value="${user.mobileNumber}">
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<div class="col-md-6">
 										<label class="form-label fw-bold">Email</label>
 										<input type="email" class="form-control" readonly th:value="${user.email}">
-									</div>
-									<div class="col-md-6">
-										<label class="form-label fw-bold">Address</label>
-										<input type="text" name="address" class="form-control"
-											th:value="${user.address}">
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<div class="col-md-4">
-										<label class="form-label fw-bold">City</label>
-										<input type="text" name="city" class="form-control" th:value="${user.city}">
-									</div>
-									<div class="col-md-4">
-										<label class="form-label fw-bold">Province</label>
-										<input type="text" name="state" class="form-control" th:value="${user.state}">
-									</div>
-									<div class="col-md-4">
-										<label class="form-label fw-bold">Postcode</label>
-										<input type="text" name="pincode" class="form-control"
-											th:value="${user.pincode}">
 									</div>
 								</div>
 
@@ -102,6 +73,29 @@
 									<button type="submit" class="btn btn-primary px-5">Update Profile</button>
 								</div>
 							</form>
+						</div>
+					</div>
+
+					<!-- Login Security (OTP) -->
+					<div class="card shadow-sm mb-4">
+						<div class="card-header bg-info text-white">
+							<h5 class="mb-0">Login Security</h5>
+						</div>
+						<div class="card-body">
+							<div class="d-flex align-items-center justify-content-between">
+								<div>
+									<p class="fw-bold mb-1">Two-Factor Authentication (OTP)</p>
+									<p class="text-muted mb-0">Receive a one-time code to your email every time you sign in.</p>
+								</div>
+								<form action="/user/toggle-otp" method="post" class="ms-4">
+									<div class="form-check form-switch mb-0">
+										<input class="form-check-input" type="checkbox" role="switch"
+											   style="width:2.5em;height:1.3em;cursor:pointer;"
+											   th:checked="${user.otpEnabled}"
+											   onchange="this.form.submit()">
+									</div>
+								</form>
+							</div>
 						</div>
 					</div>
 
