@@ -2,109 +2,189 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <title>Verify OTP</title>
+    <title>Verify OTP | Game Store</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Premium Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for modern icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
+        :root {
+            --primary-orange: #e65100;
+            --primary-dark: #bf360c;
+            --primary-light: #ff6d00;
+            --bg-gradient: linear-gradient(135deg, #bf360c 0%, #e65100 50%, #ff6d00 100%);
+            --card-shadow: 0 15px 35px rgba(191, 54, 12, 0.2);
+        }
+
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ff7a18, #ffb347);
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            color: #333;
         }
 
         .otp-container {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            width: 350px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 45px 40px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .otp-container:hover {
+            transform: translateY(-5px);
+        }
+
+        .icon-header {
+            width: 70px;
+            height: 70px;
+            background: rgba(230, 81, 0, 0.1);
+            color: var(--primary-orange);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin: 0 auto 25px;
         }
 
         .otp-container h2 {
-            margin-bottom: 10px;
-            color: #e65100;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: -0.5px;
         }
 
         .otp-container p {
-            margin-bottom: 15px;
-            color: #666;
-            font-size: 14px;
+            margin-bottom: 30px;
+            color: #6c757d;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .otp-input-group {
+            margin-bottom: 25px;
         }
 
         .otp-input {
             width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            margin-bottom: 20px;
-            font-size: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            border: 2px solid #fceae3;
+            font-size: 20px;
             text-align: center;
-            letter-spacing: 3px;
+            letter-spacing: 8px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            color: var(--primary-orange);
+            box-sizing: border-box;
+            background: #fffafa;
         }
 
         .otp-input:focus {
-            border-color: #ff7a18;
+            border-color: var(--primary-orange);
             outline: none;
-            box-shadow: 0 0 8px rgba(255, 122, 24, 0.3);
+            box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.1);
+            background: #fff;
+        }
+
+        .otp-input::placeholder {
+            letter-spacing: normal;
+            font-size: 16px;
+            font-weight: 400;
+            color: #adb5bd;
         }
 
         .verify-btn {
             width: 100%;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 16px;
+            border-radius: 12px;
             border: none;
-            background: linear-gradient(90deg, #ff7a18, #ff5722);
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-dark));
             color: white;
             font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(191, 54, 12, 0.2);
         }
 
         .verify-btn:hover {
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-orange));
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.4);
+            box-shadow: 0 6px 20px rgba(191, 54, 12, 0.3);
+        }
+
+        .verify-btn:active {
+            transform: translateY(0);
+        }
+
+        .timer-container {
+            margin-top: 20px;
+            padding: 12px;
+            background: #fff8f5;
+            border-radius: 10px;
+            display: inline-block;
+            min-width: 150px;
         }
 
         .timer {
-            margin-top: 15px;
             font-size: 14px;
-            color: #e65100;
-            font-weight: bold;
+            color: #495057;
+        }
+
+        #timer {
+            color: var(--primary-orange);
+            font-weight: 700;
+            margin-left: 5px;
         }
 
         .error-msg {
-            color: red;
-            margin-top: 10px;
+            color: #d84315;
+            margin-top: 15px;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
 
-        .game-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
+        .footer-links {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #fceae3;
         }
 
         .back-btn {
-            display: inline-block;
-            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
             font-size: 14px;
-            color: #e65100;
+            color: #6d4c41;
             text-decoration: none;
-            border: 1px solid #e65100;
-            padding: 8px 20px;
-            border-radius: 8px;
-            transition: 0.3s;
+            transition: color 0.2s ease;
+            font-weight: 500;
+        }
+
+        .back-btn i {
+            margin-right: 8px;
         }
 
         .back-btn:hover {
-            background: #e65100;
-            color: white;
+            color: var(--primary-orange);
         }
     </style>
 </head>
@@ -112,22 +192,35 @@
 <body>
 
     <div class="otp-container">
-        <div class="game-icon">🎮</div>
-        <h2>Verify OTP</h2>
-        <p>Please enter the verification code sent to your email</p>
+        <div class="icon-header">
+            <i class="fa-solid fa-gamepad"></i>
+        </div>
+        <h2>Verification</h2>
+        <p>A 6-digit verification code has been sent to your email address. It will expire in 5 minutes.</p>
 
         <form action="/verify-otp" method="post">
-            <input type="text" name="otp" class="otp-input" placeholder="Enter OTP" required />
-            <button type="submit" class="verify-btn">Verify</button>
+            <div class="otp-input-group">
+                <input type="text" name="otp" class="otp-input" placeholder="Enter code" required maxlength="6" autocomplete="off" />
+            </div>
+            <button type="submit" class="verify-btn">Verify Account</button>
         </form>
 
-        <div class="timer">
-            OTP expires in <span id="timer">05:00</span>
+        <div class="timer-container">
+            <span class="timer">
+                <i class="fa-regular fa-clock me-1"></i> Expires in <span id="timer">05:00</span>
+            </span>
         </div>
 
-        <p th:if="${error}" th:text="${error}" class="error-msg"></p>
+        <div th:if="${error}" class="error-msg">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span th:text="${error}">Error message</span>
+        </div>
 
-        <a href="/logout" class="back-btn">← ย้อนกลับ</a>
+        <div class="footer-links">
+            <a href="/logout" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i> ย้อนกลับหน้าหลัก
+            </a>
+        </div>
     </div>
 
     <script>
@@ -146,8 +239,6 @@
 
             if (timeLeft < 0) {
                 clearInterval(timerInterval);
-
-
                 window.location.href = "/signin";
             }
         }, 1000);
