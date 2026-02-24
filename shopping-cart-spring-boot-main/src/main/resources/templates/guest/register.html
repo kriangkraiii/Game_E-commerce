@@ -9,92 +9,249 @@
 	<section>
 <div class="container mt-5 p-5">
     <div class="row justify-content-center align-items-center min-vh-100">
-        <div class="col-md-7 p-2">
+        <div class="col-md-6 p-2">
             <div class="card shadow p-3 mb-5 bg-body-tertiary rounded">
+
                 <div class="card-header text-center">
-                    <p class="fs-4 text-center">Register</p>
+                    <p class="fs-4 fw-bold mb-1">Register</p>
+
                     <th:block th:if="${session.succMsg}">
-                        <p class="text-success fw-bold">[[${session.succMsg}]]</p>
+                        <p class="text-success fw-bold mb-0">[[${session.succMsg}]]</p>
                         <th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
                     </th:block>
-
                     <th:block th:if="${session.errorMsg}">
-                        <p class="text-danger fw-bold">[[${session.errorMsg}]]</p>
+                        <p class="text-danger fw-bold mb-0">[[${session.errorMsg}]]</p>
                         <th:block th:text="${@commnServiceImpl.removeSessionMessage()}"></th:block>
                     </th:block>
                 </div>
+
                 <div class="card-body">
-                    <form action="/saveUser" enctype="multipart/form-data"
-                        id="userRegister" novalidate method="post">
-                        <div class="row">
-                            <div class="col">
-                                <label class="form-label">Full Name</label> <input required
-                                    class="form-control" name="name" type="text">
-                            </div>
+                    <form action="/saveUser" method="post" id="regForm" novalidate>
 
-                            <div class="col">
-                                <label class="form-label">Mobile Number</label> <input
-                                    required class="form-control" name="mobileNumber"
-                                    type="number">
-                            </div>
-                        </div>
-
+                        <!-- Full Name -->
                         <div class="mb-3">
-                            <label class="form-label">Email</label> <input required
-                                class="form-control" name="email" type="email">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="name" class="form-control" required
+                                   placeholder="กรอกชื่อ-นามสกุล">
                         </div>
 
-                        <div class="row">
-                            <div class="col">
-                                <label class="form-label">Address</label> <input required
-                                    class="form-control" name="address" type="text">
+                        <!-- Email + ปุ่มส่ง OTP -->
+                        <div class="mb-2">
+                            <label class="form-label">Email</label>
+                            <div class="input-group">
+                                <input type="email" id="emailInput" name="email"
+                                       class="form-control" required
+                                       placeholder="example@email.com"
+                                       oninput="onEmailChange()">
+                                <button type="button" id="sendOtpBtn"
+                                        class="btn btn-outline-primary"
+                                        onclick="sendOtp()">ส่ง OTP</button>
                             </div>
+                            <div id="emailStatus" class="small mt-1"></div>
+                        </div>
 
+                        <!-- ช่อง OTP (ซ่อนอยู่จนกว่าจะส่ง OTP) -->
+                        <div class="mb-3" id="otpSection" style="display:none;">
+                            <label class="form-label">
+                                รหัส OTP
+                                <span id="otpTimer" class="text-danger ms-2 small fw-bold"></span>
+                            </label>
+                            <div class="input-group">
+                                <input type="text" id="otpInput"
+                                       class="form-control text-center fw-bold"
+                                       style="font-size:1.2rem; letter-spacing:8px;"
+                                       maxlength="6" inputmode="numeric"
+                                       placeholder="_ _ _ _ _ _">
+                                <button type="button" id="verifyOtpBtn"
+                                        class="btn btn-outline-success"
+                                        onclick="verifyOtp()">ยืนยัน OTP</button>
+                            </div>
+                            <div id="otpMsg" class="small mt-1"></div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="row mb-3">
                             <div class="col">
-                                <label class="form-label">City</label> <input required
-                                    class="form-control" name="city" type="text">
+                                <label class="form-label">Password</label>
+                                <input type="password" name="password"
+                                       class="form-control" required
+                                       placeholder="อย่างน้อย 6 ตัวอักษร">
+                            </div>
+                            <div class="col">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" name="confirmpassword"
+                                       class="form-control" required>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col">
-                                <label class="form-label">Province</label> <input required
-                                    class="form-control" name="state" type="text">
-                            </div>
+                        <!-- ปุ่ม Register (ปิดจนกว่าจะยืนยัน OTP) -->
+                        <button type="submit" id="registerBtn"
+                                class="btn btn-primary col-12" disabled>
+                            Register
+                        </button>
+                        <p id="registerHint" class="text-muted small text-center mt-1 mb-0">
+                            กรุณายืนยัน Email ด้วย OTP ก่อนสมัครสมาชิก
+                        </p>
 
-                            <div class="col">
-                                <label class="form-label">Postcode</label> <input required
-                                    class="form-control" name="pincode" type="number">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col">
-                                <label class="form-label">Password</label> <input required
-                                    class="form-control" name="password" type="password"
-                                    id="pass">
-                            </div>
-
-                            <div class="col">
-                                <label class="form-label">Confirm Password</label> <input
-                                    required class="form-control" name="confirmpassword"
-                                    type="password">
-                            </div>
-                        </div>
-
-                        <button type="submit"
-                            class="btn bg-primary text-white col-md-12">Register</button>
                     </form>
                 </div>
 
                 <div class="card-footer text-center">
-                    Have an account ? <a href="/login" class="text-decoration-none">Login</a>
+                    Have an account ? <a href="/signin" class="text-decoration-none">Login</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<script>
+let otpVerified = false;
+let timerInterval = null;
+let resendCooldown = null;
+
+// เมื่อผู้ใช้แก้ไข email หลังจาก verify แล้ว → reset
+function onEmailChange() {
+    if (otpVerified) resetOtpState();
+}
+
+function resetOtpState() {
+    otpVerified = false;
+    document.getElementById('registerBtn').disabled = true;
+    document.getElementById('registerHint').style.display = 'block';
+    document.getElementById('otpSection').style.display = 'none';
+    document.getElementById('otpInput').value = '';
+    document.getElementById('otpInput').disabled = false;
+    document.getElementById('verifyOtpBtn').disabled = false;
+    document.getElementById('verifyOtpBtn').textContent = 'ยืนยัน OTP';
+    document.getElementById('otpMsg').textContent = '';
+    document.getElementById('otpMsg').className = 'small mt-1';
+    document.getElementById('emailInput').readOnly = false;
+    document.getElementById('emailStatus').textContent = '';
+    document.getElementById('otpTimer').textContent = '';
+    clearInterval(timerInterval);
+    clearInterval(resendCooldown);
+}
+
+async function sendOtp() {
+    const email = document.getElementById('emailInput').value.trim();
+    if (!email || !email.includes('@')) {
+        showEmailStatus('กรุณากรอก Email ให้ถูกต้องก่อน', 'danger');
+        return;
+    }
+
+    const btn = document.getElementById('sendOtpBtn');
+    btn.disabled = true;
+    btn.textContent = 'กำลังส่ง...';
+
+    try {
+        const resp = await fetch('/register/send-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'email=' + encodeURIComponent(email)
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+            showEmailStatus('📨 ' + data.message, 'success');
+            document.getElementById('otpSection').style.display = 'block';
+            document.getElementById('otpInput').focus();
+            document.getElementById('otpMsg').textContent = '';
+            startOtpTimer();
+            startResendCooldown(btn);
+        } else {
+            showEmailStatus('❌ ' + data.message, 'danger');
+            btn.disabled = false;
+            btn.textContent = 'ส่ง OTP';
+        }
+    } catch (e) {
+        showEmailStatus('เกิดข้อผิดพลาด กรุณาลองใหม่', 'danger');
+        btn.disabled = false;
+        btn.textContent = 'ส่ง OTP';
+    }
+}
+
+function startResendCooldown(btn) {
+    let sec = 60;
+    btn.textContent = 'ส่งอีกครั้ง (' + sec + 's)';
+    clearInterval(resendCooldown);
+    resendCooldown = setInterval(() => {
+        sec--;
+        btn.textContent = 'ส่งอีกครั้ง (' + sec + 's)';
+        if (sec <= 0) {
+            clearInterval(resendCooldown);
+            btn.disabled = false;
+            btn.textContent = 'ส่งอีกครั้ง';
+        }
+    }, 1000);
+}
+
+async function verifyOtp() {
+    const email = document.getElementById('emailInput').value.trim();
+    const otp   = document.getElementById('otpInput').value.trim();
+    if (!otp) return;
+
+    const btn = document.getElementById('verifyOtpBtn');
+    btn.disabled = true;
+    btn.textContent = 'กำลังตรวจสอบ...';
+
+    try {
+        const resp = await fetch('/register/verify-email-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'email=' + encodeURIComponent(email) + '&otp=' + encodeURIComponent(otp)
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+            otpVerified = true;
+            showOtpMsg('✅ ' + data.message, 'success fw-bold');
+            document.getElementById('registerBtn').disabled = false;
+            document.getElementById('registerHint').style.display = 'none';
+            document.getElementById('otpInput').disabled = true;
+            document.getElementById('emailInput').readOnly = true;
+            clearInterval(timerInterval);
+            document.getElementById('otpTimer').textContent = '';
+        } else {
+            showOtpMsg('❌ ' + data.message, 'danger');
+            btn.disabled = false;
+            btn.textContent = 'ยืนยัน OTP';
+        }
+    } catch (e) {
+        showOtpMsg('เกิดข้อผิดพลาด กรุณาลองใหม่', 'danger');
+        btn.disabled = false;
+        btn.textContent = 'ยืนยัน OTP';
+    }
+}
+
+function startOtpTimer() {
+    clearInterval(timerInterval);
+    let timeLeft = 300;
+    const el = document.getElementById('otpTimer');
+    timerInterval = setInterval(() => {
+        const m = Math.floor(timeLeft / 60);
+        const s = timeLeft % 60;
+        el.textContent = '⏱ ' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+        timeLeft--;
+        if (timeLeft < 0) {
+            clearInterval(timerInterval);
+            el.textContent = '(หมดอายุ)';
+            showOtpMsg('OTP หมดอายุแล้ว กรุณากด "ส่งอีกครั้ง"', 'danger');
+        }
+    }, 1000);
+}
+
+function showEmailStatus(msg, type) {
+    const el = document.getElementById('emailStatus');
+    el.textContent = msg;
+    el.className = 'small mt-1 text-' + type;
+}
+
+function showOtpMsg(msg, cls) {
+    const el = document.getElementById('otpMsg');
+    el.textContent = msg;
+    el.className = 'small mt-1 text-' + cls;
+}
+</script>
 
 	</section>
 </body>

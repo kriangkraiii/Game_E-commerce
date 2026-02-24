@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.ecom.model.UserDtls;
 import com.ecom.repository.UserRepository;
 import com.ecom.service.EmailService;
+import com.ecom.service.LoginLogService;
 import com.ecom.service.OtpService;
 
 import jakarta.servlet.ServletException;
@@ -30,6 +31,9 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private LoginLogService loginLogService;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
@@ -39,12 +43,19 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String email = authentication.getName();
         UserDtls user = userRepository.findByEmail(email);
 
-        String otp = otpService.generateOtp(user);
-
-        emailService.sendOtpEmail(user.getEmail(), otp);
-
-        request.getSession().setAttribute("otpUser", user.getEmail());
-
-        response.sendRedirect("/verify-otp");
+        if (user.isOtpEnabled()) {
+            // OTP เปิดอยู่ → ส่ง OTP และ redirect ไปหน้ายืนยัน
+            String otp = otpService.generateOtp(user);
+            emailService.sendOtpEmail(user.getEmail(), otp);
+            request.getSession().setAttribute("otpUser", user.getEmail());
+            response.sendRedirect("/verify-otp");
+        } else {
+            // OTP ปิดอยู่ → ล็อกอินตรงเลย บันทึก login log
+            loginLogService.saveLoginLog(user);
+            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+            boolean isAdmin = authorities.stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            response.sendRedirect(isAdmin ? "/admin/" : "/");
+        }
     }
 }

@@ -55,11 +55,13 @@ public class SecurityConfig {
             )
             .authenticationProvider(authenticationProvider)
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/", "/signin", "/register", "/saveUser", "/products/**", "/product/**", 
+                .requestMatchers("/", "/signin", "/register",
+                                "/register/send-otp", "/register/verify-email-otp",
+                                "/saveUser", "/products/**", "/product/**",
                                 "/static/**", "/css/**", "/js/**", "/img/**", "/img/profile_img/**",
                                 "/admin/css/**", "/admin/js/**", "/admin/img/**",
                                 "/forgot-password", "/reset-password", "/search",
-                                "/game_library").permitAll()
+                                "/game_library", "/verify-register-otp").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/user/**").hasRole("USER")
                 .requestMatchers("/verify-otp").permitAll()

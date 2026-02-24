@@ -3,6 +3,8 @@ package com.ecom.model;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import java.io.Serializable;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,7 +13,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 
 @Entity
-public class UserDtls {
+public class UserDtls implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +39,10 @@ public class UserDtls {
 	private String otp;
 	private LocalDateTime otpExpiryTime;
 	private boolean otpVerified;
+
+	// null หมายถึง enabled (default ให้ OTP เปิดอยู่สำหรับ user เก่า)
+	@Column(name = "otp_enabled")
+	private Boolean otpEnabled;
 
 	
 
@@ -238,6 +246,15 @@ public class UserDtls {
 
 	public void setOtpVerified(boolean otpVerified) {
 		this.otpVerified = otpVerified;
+	}
+
+	// default = ปิด OTP; ต้องเปิดเองในหน้าโปรไฟล์
+	public boolean isOtpEnabled() {
+		return otpEnabled != null && otpEnabled;
+	}
+
+	public void setOtpEnabled(boolean otpEnabled) {
+		this.otpEnabled = otpEnabled;
 	}
 
 }

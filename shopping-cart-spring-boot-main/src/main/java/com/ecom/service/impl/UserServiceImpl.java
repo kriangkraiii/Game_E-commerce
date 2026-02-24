@@ -184,11 +184,6 @@ private FileServiceImpl fileServiceImpl;
 
 	    if (!ObjectUtils.isEmpty(dbUser)) {
 	        dbUser.setName(user.getName());
-	        dbUser.setMobileNumber(user.getMobileNumber());
-	        dbUser.setAddress(user.getAddress());
-	        dbUser.setCity(user.getCity());
-	        dbUser.setState(user.getState());
-	        dbUser.setPincode(user.getPincode());
 	        dbUser = userRepository.save(dbUser);
 	    }
 
