@@ -379,6 +379,183 @@ body {
 		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
 		crossorigin="anonymous"></script>
 
+	<!-- ===== AI Chatbot Widget (User Only) ===== -->
+	<th:block th:if="${user != null and user.role == 'ROLE_USER'}">
+
+	<!-- Floating Action Button -->
+	<button class="chatbot-fab" id="chatbot-fab" onclick="toggleChatbot()" title="Game Assistant">
+		<i class="fa-solid fa-robot"></i>
+	</button>
+
+	<!-- Chat Window -->
+	<div class="chatbot-window" id="chatbot-window">
+		<div class="chatbot-header">
+			<div class="chatbot-header-avatar">
+				<i class="fa-solid fa-robot"></i>
+			</div>
+			<div class="chatbot-header-info">
+				<h4>Game Assistant</h4>
+				<span>🟢 Online — พร้อมช่วยเหลือ</span>
+			</div>
+		</div>
+
+		<div class="chatbot-messages" id="chatbot-messages">
+			<div class="chat-bubble chat-bubble-welcome">
+				👋 สวัสดี! ฉันคือผู้ช่วยของ Game Store<br>
+				ถามเกี่ยวกับเกม แนะนำเกม หรือสอบถามการใช้งานได้เลย!
+			</div>
+		</div>
+
+		<div class="chatbot-input-area">
+			<textarea class="chatbot-input" id="chatbot-input"
+				placeholder="พิมพ์ข้อความ..." rows="1"
+				onkeydown="handleChatKeydown(event)"></textarea>
+			<button class="chatbot-send-btn" id="chatbot-send-btn" onclick="sendChatMessage()" title="Send">
+				<i class="fa-solid fa-paper-plane"></i>
+			</button>
+		</div>
+	</div>
+
+	<script>
+	// ===== AI Chatbot Logic =====
+	var chatHistory = [];
+	var isChatbotOpen = false;
+	var isSending = false;
+
+	function toggleChatbot() {
+		var fab = document.getElementById('chatbot-fab');
+		var win = document.getElementById('chatbot-window');
+		isChatbotOpen = !isChatbotOpen;
+
+		if (isChatbotOpen) {
+			win.classList.add('open');
+			fab.classList.add('active');
+			fab.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+			document.getElementById('chatbot-input').focus();
+		} else {
+			win.classList.remove('open');
+			fab.classList.remove('active');
+			fab.innerHTML = '<i class="fa-solid fa-robot"></i>';
+		}
+	}
+
+	function handleChatKeydown(e) {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			sendChatMessage();
+		}
+	}
+
+	function addMessage(content, type) {
+		var container = document.getElementById('chatbot-messages');
+		var bubble = document.createElement('div');
+		bubble.className = 'chat-bubble chat-bubble-' + type;
+
+		if (type === 'bot') {
+			bubble.innerHTML = formatBotMessage(content);
+		} else {
+			bubble.textContent = content;
+		}
+
+		container.appendChild(bubble);
+		container.scrollTop = container.scrollHeight;
+	}
+
+	function showTyping() {
+		var container = document.getElementById('chatbot-messages');
+		var indicator = document.createElement('div');
+		indicator.className = 'typing-indicator';
+		indicator.id = 'typing-indicator';
+		indicator.innerHTML = '<span></span><span></span><span></span>';
+		container.appendChild(indicator);
+		container.scrollTop = container.scrollHeight;
+	}
+
+	function hideTyping() {
+		var el = document.getElementById('typing-indicator');
+		if (el) el.remove();
+	}
+
+	function formatBotMessage(text) {
+		// Simple markdown formatting
+		var html = text
+			.replace(/```([\s\S]*?)```/g, '<pre>$1</pre>')
+			.replace(/`([^`]+)`/g, '<code>$1</code>')
+			.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+			.replace(/\*([^*]+)\*/g, '<em>$1</em>')
+			.replace(/\n/g, '<br>');
+		return html;
+	}
+
+	function sendChatMessage() {
+		if (isSending) return;
+
+		var input = document.getElementById('chatbot-input');
+		var message = input.value.trim();
+		if (!message) return;
+
+		// Show user message
+		addMessage(message, 'user');
+		input.value = '';
+		input.style.height = 'auto';
+
+		// Add to history
+		chatHistory.push({ role: 'user', content: message });
+
+		// Disable input
+		isSending = true;
+		document.getElementById('chatbot-send-btn').disabled = true;
+		showTyping();
+
+		// Send to backend
+		fetch('/user/chatbot/send', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				message: message,
+				history: chatHistory.slice(0, -1) // exclude current msg, backend adds it
+			})
+		})
+		.then(function(response) { return response.json(); })
+		.then(function(data) {
+			hideTyping();
+			if (data.success && data.reply) {
+				addMessage(data.reply, 'bot');
+				chatHistory.push({ role: 'assistant', content: data.reply });
+			} else {
+				addMessage(data.reply || 'ขออภัย เกิดข้อผิดพลาด กรุณาลองใหม่', 'bot');
+			}
+
+			// Keep history manageable (last 20 messages)
+			if (chatHistory.length > 20) {
+				chatHistory = chatHistory.slice(-20);
+			}
+		})
+		.catch(function(err) {
+			hideTyping();
+			addMessage('ไม่สามารถเชื่อมต่อได้ กรุณาลองใหม่อีกครั้ง', 'bot');
+			console.error('Chatbot error:', err);
+		})
+		.finally(function() {
+			isSending = false;
+			document.getElementById('chatbot-send-btn').disabled = false;
+			document.getElementById('chatbot-input').focus();
+		});
+	}
+
+	// Auto-resize textarea
+	document.addEventListener('DOMContentLoaded', function() {
+		var chatInput = document.getElementById('chatbot-input');
+		if (chatInput) {
+			chatInput.addEventListener('input', function() {
+				this.style.height = 'auto';
+				this.style.height = Math.min(this.scrollHeight, 80) + 'px';
+			});
+		}
+	});
+	</script>
+
+	</th:block>
 
 </body>
 
