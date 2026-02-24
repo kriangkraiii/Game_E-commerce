@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+
+<head>
+    <meta charset="UTF-8">
+    <title>All Transactions - Admin</title>
+</head>
+
+<body>
+    <section>
+        <div class="container p-5">
+            <!-- Header -->
+            <div class="dashboard-hero text-center mb-5">
+                <h1 class="dashboard-title">
+                    <i class="fa-solid fa-clock-rotate-left me-3"></i>
+                    All Transactions
+                </h1>
+                <p class="text-muted mt-2">Manage and view all platform transactions</p>
+            </div>
+
+            <!-- Back Button to Dashboard -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <a href="/admin/" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Transactions Table List -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-sh">
+                        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fa-solid fa-list me-2"></i>Transaction History
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Transaction Ref</th>
+                                            <th>Type</th>
+                                            <th>Sender / User</th>
+                                            <th>Amount</th>
+                                            <th>Status</th>
+                                            <th>Description</th>
+                                            <th>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="tx, i : ${transactions}">
+                                            <td th:text="${(currentPage - 1) * pageSize + i.count}">1</td>
+                                            <td class="text-muted" style="font-family: monospace;"
+                                                th:text="${tx.refTransactionId != null ? tx.refTransactionId : '-'}">
+                                                REF-123</td>
+                                            <td>
+                                                <span th:if="${tx.type != null and tx.type.name() == 'PURCHASE'}"
+                                                    class="badge bg-danger">PURCHASE</span>
+                                                <span th:if="${tx.type == null or tx.type.name() == 'TOPUP'}"
+                                                    class="badge bg-success">TOPUP</span>
+                                            </td>
+                                            <td
+                                                th:text="${tx.senderName != null ? tx.senderName : (tx.user != null ? tx.user.name : '-')}">
+                                                User</td>
+                                            <td class="fw-bold fs-5">฿<span
+                                                    th:text="${#numbers.formatDecimal(tx.amount, 1, 2)}">0.00</span>
+                                            </td>
+                                            <td>
+                                                <span th:if="${tx.status.name() == 'SUCCESS'}"
+                                                    class="badge bg-success"><i
+                                                        class="fa-solid fa-check-circle me-1"></i> Success</span>
+                                                <span th:if="${tx.status.name() == 'PENDING'}"
+                                                    class="badge bg-warning text-dark"><i
+                                                        class="fa-solid fa-clock position-relative top-0 me-1"></i>
+                                                    Pending</span>
+                                                <span th:if="${tx.status.name() == 'FAILED'}" class="badge bg-danger"><i
+                                                        class="fa-solid fa-times-circle me-1"></i> Failed</span>
+                                            </td>
+                                            <td th:text="${tx.description != null ? tx.description : '-'}">-</td>
+                                            <td class="text-muted"
+                                                th:text="${tx.createdAt != null ? #temporals.format(tx.createdAt, 'dd/MM/yyyy HH:mm:ss') : '-'}">
+                                                -</td>
+                                        </tr>
+                                        <tr th:if="${transactions == null or transactions.empty}">
+                                            <td colspan="8" class="text-center text-muted py-4">
+                                                <i class="fa-solid fa-inbox fa-3x mb-3 text-secondary opacity-50"></i>
+                                                <p class="mb-0">No transactions found</p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Pagination -->
+                            <div class="row mt-4" th:if="${totalPages > 1}">
+                                <div class="col-md-6 d-flex align-items-center">
+                                    <p class="text-muted mb-0">Showing page [[${currentPage}]] of [[${totalPages}]]
+                                        (Total: [[${totalItems}]] transactions)</p>
+                                </div>
+                                <div class="col-md-6 d-flex justify-content-md-end justify-content-center mt-3 mt-md-0">
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination pagination-sm mb-0">
+                                            <li class="page-item"
+                                                th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                                                <a class="page-link"
+                                                    th:href="@{/admin/transactions/page/{id}(id=${currentPage - 1})}">Previous</a>
+                                            </li>
+                                            <li th:each="i : ${#numbers.sequence(1, totalPages)}" class="page-item"
+                                                th:classappend="${currentPage == i ? 'active' : ''}">
+                                                <a class="page-link" th:href="@{/admin/transactions/page/{id}(id=${i})}"
+                                                    th:text="${i}">1</a>
+                                            </li>
+                                            <li class="page-item"
+                                                th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                                                <a class="page-link"
+                                                    th:href="@{/admin/transactions/page/{id}(id=${currentPage + 1})}">Next</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</body>
+
+</html>

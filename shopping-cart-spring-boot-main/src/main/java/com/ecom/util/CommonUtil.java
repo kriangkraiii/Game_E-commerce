@@ -24,10 +24,10 @@ public class CommonUtil {
 
 	@Autowired
 	private JavaMailSender mailSender;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Value("${aws.s3.bucket.category}")
 	private String categoryBucket;
 
@@ -45,42 +45,42 @@ public class CommonUtil {
 
 	public Boolean sendMail(String url, String reciepentEmail) throws UnsupportedEncodingException, MessagingException {
 
-	    MimeMessage message = mailSender.createMimeMessage();
-	    MimeMessageHelper helper = new MimeMessageHelper(message);
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message);
 
-	    helper.setFrom("daspabitra55@gmail.com", "Shopping Cart");
-	    helper.setTo(reciepentEmail);
+		helper.setFrom("daspabitra55@gmail.com", "Shopping Cart");
+		helper.setTo(reciepentEmail);
 
-	    String content = "<p>Hello,</p>" 
-	            + "<p>You have requested to reset your password.</p>"
-	            + "<p>Click the link below to change your password:</p>" 
-	            + "<p><a href=\"" + url + "\">Change my password</a></p>";
-//	            + "<br>"
-//	            + "<p>If the above link doesn't work, copy and paste this URL into your browser:</p>"
-//	            + "<p>" + url + "</p>";
-	    
-	    helper.setSubject("Password Reset");
-	    helper.setText(content, true); // true enables HTML content
-	    mailSender.send(message);
-	    return true;
+		String content = "<p>Hello,</p>"
+				+ "<p>You have requested to reset your password.</p>"
+				+ "<p>Click the link below to change your password:</p>"
+				+ "<p><a href=\"" + url + "\">Change my password</a></p>";
+		// + "<br>"
+		// + "<p>If the above link doesn't work, copy and paste this URL into your
+		// browser:</p>"
+		// + "<p>" + url + "</p>";
+
+		helper.setSubject("Password Reset");
+		helper.setText(content, true); // true enables HTML content
+		mailSender.send(message);
+		return true;
 	}
-	
+
 	// เพิ่ม method ใหม่สำหรับส่ง email แจ้งเตือน
-			public Boolean sendNotificationEmail(String recipientEmail, String subject, String content) 
-			        throws UnsupportedEncodingException, MessagingException {
-			    
-			    MimeMessage message = mailSender.createMimeMessage();
-			    MimeMessageHelper helper = new MimeMessageHelper(message);
+	public Boolean sendNotificationEmail(String recipientEmail, String subject, String content)
+			throws UnsupportedEncodingException, MessagingException {
 
-			    helper.setFrom("seven1aaplus@gmail.com", "Pet Community");
-			    helper.setTo(recipientEmail);
-			    helper.setSubject(subject);
-			    helper.setText(content, true);
-			    
-			    mailSender.send(message);
-			    return true;
-			}
+		MimeMessage message = mailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message);
 
+		helper.setFrom("seven1aaplus@gmail.com", "Pet Community");
+		helper.setTo(recipientEmail);
+		helper.setSubject(subject);
+		helper.setText(content, true);
+
+		mailSender.send(message);
+		return true;
+	}
 
 	public static String generateUrl(HttpServletRequest request) {
 
@@ -89,13 +89,12 @@ public class CommonUtil {
 
 		return siteUrl.replace(request.getServletPath(), "");
 	}
-	
-	String msg=null;;
-	
-	public Boolean sendMailForProductOrder(ProductOrder order,String status) throws Exception
-	{
-		
-		msg="<p>Hello [[name]],</p>"
+
+	String msg = null;;
+
+	public Boolean sendMailForProductOrder(ProductOrder order, String status) throws Exception {
+
+		msg = "<p>Hello [[name]],</p>"
 				+ "<p>Thank you order <b>[[orderStatus]]</b>.</p>"
 				+ "<p><b>Product Details:</b></p>"
 				+ "<p>Name : [[productName]]</p>"
@@ -103,36 +102,36 @@ public class CommonUtil {
 				+ "<p>Quantity : [[quantity]]</p>"
 				+ "<p>Price : [[price]]</p>"
 				+ "<p>Payment Type : [[paymentType]]</p>";
-		
+
 		MimeMessage message = mailSender.createMimeMessage();
 		MimeMessageHelper helper = new MimeMessageHelper(message);
 
 		helper.setFrom("seven1aaplus@gmail.com", "Shooping Cart");
-		helper.setTo(order.getOrderAddress().getEmail());
+		helper.setTo(order.getUser().getEmail());
 
-		msg=msg.replace("[[name]]",order.getOrderAddress().getFirstName());
-		msg=msg.replace("[[orderStatus]]",status);
-		msg=msg.replace("[[productName]]", order.getProduct().getTitle());
-		msg=msg.replace("[[category]]", order.getProduct().getCategory());
-		msg=msg.replace("[[quantity]]", order.getQuantity().toString());
-		msg=msg.replace("[[price]]", order.getPrice().toString());
-		msg=msg.replace("[[paymentType]]", order.getPaymentType());
-		
+		msg = msg.replace("[[name]]", order.getUser().getName());
+		msg = msg.replace("[[orderStatus]]", status);
+		msg = msg.replace("[[productName]]", order.getProduct().getTitle());
+		msg = msg.replace("[[category]]", order.getProduct().getCategory());
+		msg = msg.replace("[[quantity]]", order.getQuantity().toString());
+		msg = msg.replace("[[price]]", order.getPrice().toString());
+		msg = msg.replace("[[paymentType]]", order.getPaymentType());
+
 		helper.setSubject("Product Order Status");
 		helper.setText(msg, true);
 		mailSender.send(message);
 		return true;
 	}
-	
+
 	public UserDtls getLoggedInUserDetails(Principal p) {
 		String email = p.getName();
 		UserDtls userDtls = userService.getUserByEmail(email);
 		return userDtls;
 	}
-	
+
 	public String getImageUrl(MultipartFile file, Integer bucketType) {
 		String bucketName = null;
-		
+
 		if (bucketType == 1) {
 			bucketName = categoryBucket;
 		} else if (bucketType == 2) {
@@ -144,16 +143,15 @@ public class CommonUtil {
 			bucketName = petprofileBucket;
 		} else if (bucketType == 5) {
 			bucketName = petpostBucket;
-		}else {
+		} else {
 			throw new IllegalArgumentException("Invalid bucket type");
 		}
-		
+
 		String imageName = file != null ? file.getOriginalFilename() : "default.png";
-		
-		String url = "https://"+bucketName+".s3.amazonaws.com/"+imageName;
+
+		String url = "https://" + bucketName + ".s3.amazonaws.com/" + imageName;
 		return url;
-	
+
 	}
-	
 
 }

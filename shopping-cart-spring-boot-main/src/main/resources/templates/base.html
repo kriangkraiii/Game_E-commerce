@@ -197,7 +197,6 @@ body {
                 <li class="nav-item"><a class="nav-link active" href="/products"><i class="fa-solid fa-store"></i> Game Store</a></li>
                 <th:block th:if="${user!=null and user.role!='ROLE_ADMIN'}">
                     <li class="nav-item"><a class="nav-link active" href="/user/community"><i class="fa-solid fa-users"></i> Community</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="/user/community/my-posts"><i class="fa-solid fa-file-pen"></i> My Posts</a></li>
                     <li class="nav-item"><a class="nav-link active" href="/user/game-library"><i class="fa-solid fa-gamepad"></i> Game Library</a></li>
                     <li class="nav-item"><a class="nav-link active" href="/user/wallet"><i class="fa-solid fa-wallet"></i> <span id="wallet-balance-nav">฿...</span></a></li>
                 </th:block>
@@ -231,6 +230,7 @@ body {
                             <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/profile">Profile</a></li>
                             <li th:if="${user.role=='ROLE_ADMIN'}"><a class="dropdown-item" href="/admin/profile">Profile</a></li>
                             <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/user-orders">My Purchases</a></li>
+                            <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/community/my-posts">My Posts</a></li>
                             <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/wallet"><i class="fa-solid fa-wallet"></i> Wallet</a></li>
                             <li th:if="${user.role=='ROLE_USER'}"><a class="dropdown-item" href="/user/login-history">Login History</a></li>
                             <li><hr class="dropdown-divider"></li>

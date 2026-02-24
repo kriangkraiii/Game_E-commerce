@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-	th:replace="~{base::layout(~{::section})}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{base::layout(~{::section})}">
+
 <head>
-<meta charset="UTF-8">
-<title>Add Admin</title>
+	<meta charset="UTF-8">
+	<title>Add Admin</title>
 </head>
+
 <body>
 	<section>
 		<div class="container mt-5 p-4">
@@ -43,9 +44,9 @@
 						</th:block>
 
 						<div class="card-body p-4">
-							<form id="adminForm" action="/admin/save-admin" enctype="multipart/form-data"
-								method="post" novalidate>
-								
+							<form id="adminForm" action="/admin/save-admin" enctype="multipart/form-data" method="post"
+								novalidate>
+
 								<!-- Personal Information -->
 								<div class="row mb-3">
 									<div class="col-12">
@@ -66,18 +67,6 @@
 											Please provide a valid full name.
 										</div>
 									</div>
-
-									<div class="col-md-6">
-										<label class="form-label fw-bold">
-											<i class="fa-solid fa-phone me-1"></i>Mobile Number *
-										</label>
-										<input required class="form-control" name="mobileNumber"
-											type="tel" placeholder="Enter mobile number" id="mobile"
-											pattern="[0-9]{10,15}" minlength="10" maxlength="15">
-										<div class="invalid-feedback">
-											Please provide a valid mobile number (10-15 digits).
-										</div>
-									</div>
 								</div>
 
 								<div class="mb-3">
@@ -91,127 +80,69 @@
 									</div>
 								</div>
 
-								<!-- Address Information -->
-								<div class="row mb-3">
-									<div class="col-12">
-										<h5 class="text-primary mb-3">
-											<i class="fa-solid fa-map-marker-alt me-2"></i>Address Information
-										</h5>
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<div class="col-md-8">
-										<label class="form-label fw-bold">
-											<i class="fa-solid fa-home me-1"></i>Address *
-										</label>
-										<input required class="form-control" name="address" type="text"
-											placeholder="Enter complete address" id="address">
-										<div class="invalid-feedback">
-											Please provide a valid address.
-										</div>
-									</div>
-
-									<div class="col-md-4">
-										<label class="form-label fw-bold">
-											<i class="fa-solid fa-city me-1"></i>City *
-										</label>
-										<input required class="form-control" name="city" type="text"
-											placeholder="Enter city" id="city">
-										<div class="invalid-feedback">
-											Please provide a valid city.
-										</div>
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<div class="col-md-6">
-										<label class="form-label fw-bold">
-											<i class="fa-solid fa-map me-1"></i>Province *
-										</label>
-										<input required class="form-control" name="state" type="text"
-											placeholder="Enter province" id="state">
-										<div class="invalid-feedback">
-											Please provide a valid province.
-										</div>
-									</div>
-
-									<div class="col-md-6">
-										<label class="form-label fw-bold">
-											<i class="fa-solid fa-mail-bulk me-1"></i>Postcode *
-										</label>
-										<input required class="form-control" name="pincode" type="text"
-											placeholder="Enter postcode" id="pincode"
-											pattern="[0-9]{5,6}" minlength="5" maxlength="6">
-										<div class="invalid-feedback">
-											Please provide a valid postcode (5-6 digits).
-										</div>
-									</div>
-								</div>
-
-								<!-- Security Information -->
-								<div class="row mb-3">
-									<div class="col-12">
-										<h5 class="text-primary mb-3">
-											<i class="fa-solid fa-lock me-2"></i>Security Information
-										</h5>
-									</div>
-								</div>
-
-								<div class="row mb-3">
-									<div class="col-md-6">
-										<label class="form-label fw-bold">
-											<i class="fa-solid fa-key me-1"></i>Password *
-										</label>
-										<input required class="form-control" name="password" type="password"
-											placeholder="Enter password" id="password" minlength="6">
-										<div class="invalid-feedback">
-											Password must be at least 6 characters long.
-										</div>
-										<small class="form-text text-muted">Minimum 6 characters</small>
-									</div>
-
-									<div class="col-md-6">
-										<label class="form-label fw-bold">
-											<i class="fa-solid fa-key me-1"></i>Confirm Password *
-										</label>
-										<input required class="form-control" name="cpassword" type="password"
-											placeholder="Confirm password" id="confirmPassword">
-										<div class="invalid-feedback" id="passwordMismatch">
-											Passwords do not match.
-										</div>
-									</div>
-								</div>
-
-								<div class="mb-4">
-									<label class="form-label fw-bold">
-										<i class="fa-solid fa-image me-1"></i>Profile Image
-									</label>
-									<input class="form-control" name="img" type="file" id="profileImage"
-										accept="image/*">
-									<small class="form-text text-muted">Optional: Upload profile image (JPG, PNG)</small>
-								</div>
-
-								<!-- Form Actions -->
-								<div class="d-grid gap-2">
-									<button type="submit" id="submitBtn" 
-										class="btn btn-primary btn-lg">
-										<i class="fa-solid fa-user-plus me-2"></i>Create Admin Account
-									</button>
-									<button type="reset" class="btn btn-outline-secondary">
-										<i class="fa-solid fa-undo me-2"></i>Reset Form
-									</button>
-								</div>
-							</form>
 						</div>
+
+						<!-- Security Information -->
+						<div class="row mb-3">
+							<div class="col-12">
+								<h5 class="text-primary mb-3">
+									<i class="fa-solid fa-lock me-2"></i>Security Information
+								</h5>
+							</div>
+						</div>
+
+						<div class="row mb-3">
+							<div class="col-md-6">
+								<label class="form-label fw-bold">
+									<i class="fa-solid fa-key me-1"></i>Password *
+								</label>
+								<input required class="form-control" name="password" type="password"
+									placeholder="Enter password" id="password" minlength="6">
+								<div class="invalid-feedback">
+									Password must be at least 6 characters long.
+								</div>
+								<small class="form-text text-muted">Minimum 6 characters</small>
+							</div>
+
+							<div class="col-md-6">
+								<label class="form-label fw-bold">
+									<i class="fa-solid fa-key me-1"></i>Confirm Password *
+								</label>
+								<input required class="form-control" name="cpassword" type="password"
+									placeholder="Confirm password" id="confirmPassword">
+								<div class="invalid-feedback" id="passwordMismatch">
+									Passwords do not match.
+								</div>
+							</div>
+						</div>
+
+						<div class="mb-4">
+							<label class="form-label fw-bold">
+								<i class="fa-solid fa-image me-1"></i>Profile Image
+							</label>
+							<input class="form-control" name="img" type="file" id="profileImage" accept="image/*">
+							<small class="form-text text-muted">Optional: Upload profile image (JPG, PNG)</small>
+						</div>
+
+						<!-- Form Actions -->
+						<div class="d-grid gap-2">
+							<button type="submit" id="submitBtn" class="btn btn-primary btn-lg">
+								<i class="fa-solid fa-user-plus me-2"></i>Create Admin Account
+							</button>
+							<button type="reset" class="btn btn-outline-secondary">
+								<i class="fa-solid fa-undo me-2"></i>Reset Form
+							</button>
+						</div>
+						</form>
 					</div>
 				</div>
 			</div>
 		</div>
+		</div>
 
 		<!-- JavaScript for Form Validation -->
 		<script>
-			document.addEventListener('DOMContentLoaded', function() {
+			document.addEventListener('DOMContentLoaded', function () {
 				const form = document.getElementById('adminForm');
 				const submitBtn = document.getElementById('submitBtn');
 				const password = document.getElementById('password');
@@ -259,10 +190,10 @@
 				// Add event listeners for real-time validation
 				const inputs = form.querySelectorAll('input');
 				inputs.forEach(input => {
-					input.addEventListener('input', function() {
+					input.addEventListener('input', function () {
 						// Remove invalid class when user starts typing
 						this.classList.remove('is-invalid');
-						
+
 						// Validate specific field
 						if (this.checkValidity()) {
 							this.classList.add('is-valid');
@@ -279,7 +210,7 @@
 						validateForm();
 					});
 
-					input.addEventListener('blur', function() {
+					input.addEventListener('blur', function () {
 						// Validate on blur
 						if (!this.checkValidity()) {
 							this.classList.add('is-invalid');
@@ -288,7 +219,7 @@
 				});
 
 				// Form submission validation
-				form.addEventListener('submit', function(event) {
+				form.addEventListener('submit', function (event) {
 					event.preventDefault();
 					event.stopPropagation();
 
@@ -318,7 +249,7 @@
 						// Show loading state
 						submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Creating Account...';
 						submitBtn.disabled = true;
-						
+
 						// Submit form
 						form.submit();
 					} else {
@@ -340,24 +271,25 @@
 			.form-control.is-valid {
 				border-color: #198754;
 			}
-			
+
 			.form-control.is-invalid {
 				border-color: #dc3545;
 			}
-			
+
 			.btn.disabled {
 				opacity: 0.6;
 				cursor: not-allowed;
 			}
-			
+
 			.card {
 				border-radius: 15px;
 			}
-			
+
 			.card-header {
 				border-radius: 15px 15px 0 0 !important;
 			}
 		</style>
 	</section>
 </body>
+
 </html>
