@@ -117,10 +117,11 @@ img {
   bottom: 2px;
   left: 50%;
   width: 0;
-  height: 2px;
+  height: 5px;
   background: var(--accent);
   transition: all 0.25s ease;
   transform: translateX(-50%);
+  border-radius: var(--radius-sm);
 }
 
 .navbar-nav .nav-link:hover::after {
@@ -140,7 +141,7 @@ img {
 }
 
 .navbar-toggler {
-  border: 2px solid rgba(255, 255, 255, 0.7);
+  border: 2px solid rgba(106, 21, 21, 0.7);
   padding: var(--space-xs) var(--space-sm);
   background-color: transparent;
   transition: all 0.18s ease;
@@ -176,7 +177,7 @@ img {
 }
 
 .dropdown-item:hover {
-  background: linear-gradient(90deg, var(--accent-light), transparent);
+  background: linear-gradient(550deg, var(--accent-light), transparent);
   color: var(--primary-dark);
   padding-left: calc(var(--space-lg) + 4px);
 }
