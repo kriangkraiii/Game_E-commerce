@@ -27,7 +27,8 @@
 
 					<!-- Profile Image -->
 					<div class="d-flex justify-content-center mb-4">
-						<img th:src="${user.profileImage}" alt="Profile Image" class="border p-2"
+						<img th:src="${user.profileImage != null && #strings.startsWith(user.profileImage, 'http') ? user.profileImage : '/img/profile_img/' + (user.profileImage ?: 'default.png')}"
+							alt="Profile Image" class="border p-2"
 							style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover;"
 							onerror="this.src='/img/profile_img/default.png'">
 					</div>

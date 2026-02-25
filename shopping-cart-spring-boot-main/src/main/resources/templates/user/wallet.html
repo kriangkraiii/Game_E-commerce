@@ -934,6 +934,13 @@
                 const receiverEmailDisplay = document.getElementById('receiverEmailDisplay');
                 const receiverAvatar = document.getElementById('receiverAvatar');
 
+                // Helper: resolve profile image (could be S3 URL or plain filename)
+                function resolveProfileImg(profileImage) {
+                    if (!profileImage) return '/img/profile_img/default.jpg';
+                    if (profileImage.startsWith('http')) return profileImage;
+                    return '/img/profile_img/' + profileImage;
+                }
+
                 searchReceiverBtn.addEventListener('click', function () {
                     const email = searchReceiverEmail.value.trim();
                     if (!email) { showResult(false, 'Error', 'Please enter an email'); return; }
@@ -949,7 +956,7 @@
                             if (data.success) {
                                 searchResult.innerHTML =
                                     '<div class="receiver-card mt-2">' +
-                                    '<img src="/img/profile_img/' + (data.profileImage || 'default.jpg') + '" class="receiver-avatar" onerror="this.src=\'/img/profile_img/default.jpg\'">' +
+                                    '<img src="' + resolveProfileImg(data.profileImage) + '" class="receiver-avatar">' +
                                     '<div class="flex-grow-1"><div class="fw-bold">' + data.name + '</div><small class="text-muted">' + data.email + '</small></div>' +
                                     '<button class="action-btn action-btn-success" style="width:auto;padding:8px 16px;" id="selectReceiverBtn">Select</button></div>';
 
@@ -957,7 +964,7 @@
                                     receiverNameDisplay.textContent = data.name;
                                     receiverEmailDisplay.textContent = data.email;
                                     transferReceiverEmail.value = data.email;
-                                    receiverAvatar.src = '/img/profile_img/' + (data.profileImage || 'default.jpg');
+                                    receiverAvatar.src = resolveProfileImg(data.profileImage);
                                     tfStep1.style.display = 'none';
                                     tfStep2.style.display = 'block';
                                 });

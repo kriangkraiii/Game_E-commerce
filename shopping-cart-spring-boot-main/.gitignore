@@ -32,3 +32,14 @@ build/
 ### VS Code ###
 .vscode/
 **/application.properties
+
+### Uploads ###
+uploads/
+
+### Environment ###
+.env
+.env.*
+
+### Elastic Beanstalk ###
+.elasticbeanstalk/
+*.war

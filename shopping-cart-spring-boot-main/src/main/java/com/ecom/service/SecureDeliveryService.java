@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.lingala.zip4j.io.outputstream.ZipOutputStream;
@@ -30,32 +30,26 @@ import net.lingala.zip4j.model.enums.EncryptionMethod;
 @Service
 public class SecureDeliveryService {
 
-    @Value("${game.files.base-path:uploads/game_files}")
-    private String gameFilesBasePath;
+    @Autowired
+    private FileService fileService;
 
     /**
      * สร้าง Encrypted ZIP file แบบ AES-256 โดย stream ตรงไปที่ OutputStream
      * ไม่สร้างไฟล์ชั่วคราวบน disk → ประหยัด storage และปลอดภัยกว่า
      * 
-     * @param gameFilePath  path ไปยังไฟล์เกม (relative หรือ absolute)
-     * @param licenseKey    License Key ของผู้ซื้อ ใช้เป็น password
-     * @param outputStream  OutputStream ที่จะส่งไฟล์ ZIP เข้ารหัสออกไป
-     * @throws IOException  หากไม่พบไฟล์เกม หรือเกิดข้อผิดพลาดในการสร้าง ZIP
+     * @param gameFilePath path ไปยังไฟล์เกม (relative หรือ absolute)
+     * @param licenseKey   License Key ของผู้ซื้อ ใช้เป็น password
+     * @param outputStream OutputStream ที่จะส่งไฟล์ ZIP เข้ารหัสออกไป
+     * @throws IOException หากไม่พบไฟล์เกม หรือเกิดข้อผิดพลาดในการสร้าง ZIP
      */
-    public void createEncryptedZip(String gameFilePath, String licenseKey, OutputStream outputStream) 
+    public void createEncryptedZip(String gameFilePath, String licenseKey, OutputStream outputStream)
             throws IOException {
-        
-        // Resolve the game file path
-        Path filePath = resolveGameFilePath(gameFilePath);
-        
-        if (!Files.exists(filePath)) {
-            throw new IOException("Game file not found: " + filePath.toString());
+
+        // check if file exists on S3
+        if (!fileService.fileExistsS3(gameFilePath, 6)) {
+            throw new IOException("Game file not found on S3: " + gameFilePath);
         }
 
-        // Read the game file bytes
-        byte[] gameFileBytes = Files.readAllBytes(filePath);
-        String originalFileName = filePath.getFileName().toString();
-        
         // Configure AES-256 encryption parameters
         ZipParameters zipParameters = new ZipParameters();
         zipParameters.setCompressionMethod(CompressionMethod.DEFLATE);
@@ -63,12 +57,27 @@ public class SecureDeliveryService {
         zipParameters.setEncryptFiles(true);
         zipParameters.setEncryptionMethod(EncryptionMethod.AES);
         zipParameters.setAesKeyStrength(AesKeyStrength.KEY_STRENGTH_256);
-        zipParameters.setFileNameInZip(originalFileName);
+
+        // Use the file name from the S3 key
+        String fileNameInZip = Paths.get(gameFilePath).getFileName().toString();
+        zipParameters.setFileNameInZip(fileNameInZip);
 
         // Create encrypted ZIP and write directly to output stream
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream, licenseKey.toCharArray())) {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream, licenseKey.toCharArray());
+                java.io.InputStream s3InputStream = fileService.downloadFileS3(gameFilePath, 6)) {
+
+            if (s3InputStream == null) {
+                throw new IOException("Failed to download game file from S3");
+            }
+
             zipOutputStream.putNextEntry(zipParameters);
-            zipOutputStream.write(gameFileBytes);
+
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = s3InputStream.read(buffer)) != -1) {
+                zipOutputStream.write(buffer, 0, read);
+            }
+
             zipOutputStream.closeEntry();
         }
     }
@@ -77,10 +86,10 @@ public class SecureDeliveryService {
      * สร้าง Encrypted ZIP file แบบ AES-256 เป็น byte array
      * ใช้สำหรับกรณีที่ต้องการ byte array กลับไป (เช่น ส่ง email)
      * 
-     * @param gameFilePath  path ไปยังไฟล์เกม
-     * @param licenseKey    License Key ของผู้ซื้อ
+     * @param gameFilePath path ไปยังไฟล์เกม
+     * @param licenseKey   License Key ของผู้ซื้อ
      * @return byte array ของ encrypted ZIP
-     * @throws IOException  หากไม่พบไฟล์หรือเกิดข้อผิดพลาด
+     * @throws IOException หากไม่พบไฟล์หรือเกิดข้อผิดพลาด
      */
     public byte[] createEncryptedZipBytes(String gameFilePath, String licenseKey) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -95,12 +104,7 @@ public class SecureDeliveryService {
         if (gameFilePath == null || gameFilePath.isEmpty()) {
             return false;
         }
-        try {
-            Path filePath = resolveGameFilePath(gameFilePath);
-            return Files.exists(filePath) && Files.isRegularFile(filePath);
-        } catch (Exception e) {
-            return false;
-        }
+        return fileService.fileExistsS3(gameFilePath, 6);
     }
 
     /**
@@ -110,29 +114,12 @@ public class SecureDeliveryService {
     public String getLockedZipFileName(String gameTitle) {
         // Sanitize the game title for filename
         String safeName = gameTitle.replaceAll("[^a-zA-Z0-9\\s_-]", "")
-                                   .replaceAll("\\s+", "_")
-                                   .trim();
+                .replaceAll("\\s+", "_")
+                .trim();
         if (safeName.isEmpty()) {
             safeName = "Game";
         }
         return safeName + "_Locked.zip";
     }
 
-    /**
-     * Resolve game file path - รองรับทั้ง absolute และ relative path
-     */
-    private Path resolveGameFilePath(String gameFilePath) {
-        Path path = Paths.get(gameFilePath);
-        if (path.isAbsolute()) {
-            return path;
-        }
-        // Try relative to base path first
-        Path basePath = Paths.get(gameFilesBasePath);
-        Path resolved = basePath.resolve(gameFilePath);
-        if (Files.exists(resolved)) {
-            return resolved;
-        }
-        // Try relative to working directory
-        return Paths.get(System.getProperty("user.dir")).resolve(gameFilePath);
-    }
 }

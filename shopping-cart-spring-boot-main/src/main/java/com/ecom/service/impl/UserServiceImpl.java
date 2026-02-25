@@ -35,63 +35,64 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
-@Autowired
-@Lazy
-private CommonUtil commonUtil;
 
-@Autowired
-private FileServiceImpl fileServiceImpl;
+	@Autowired
+	@Lazy
+	private CommonUtil commonUtil;
+
+	@Autowired
+	private FileServiceImpl fileServiceImpl;
 
 	@Override
 	public Integer getUsersCount() {
-	    return (int) userRepository.count();
+		return (int) userRepository.count();
 	}
 
 	@Override
 	public Integer getNewUsersToday() {
-	    Date today = new Date();
-	    Calendar cal = Calendar.getInstance();
-	    cal.setTime(today);
-	    cal.set(Calendar.HOUR_OF_DAY, 0);
-	    cal.set(Calendar.MINUTE, 0);
-	    cal.set(Calendar.SECOND, 0);
-	    cal.set(Calendar.MILLISECOND, 0);
-	    Date startOfDay = cal.getTime();
-	    
-	    cal.add(Calendar.DAY_OF_MONTH, 1);
-	    Date startOfNextDay = cal.getTime();
-	    
-	    return userRepository.countByCreatedDateBetween(startOfDay, startOfNextDay);
+		Date today = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(today);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date startOfDay = cal.getTime();
+
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		Date startOfNextDay = cal.getTime();
+
+		return userRepository.countByCreatedDateBetween(startOfDay, startOfNextDay);
 	}
 
 	@Override
 	public List<UserDtls> getRecentUsers(int limit) {
-	    return userRepository.findTop5ByOrderByCreatedDateDesc();
+		return userRepository.findTop5ByOrderByCreatedDateDesc();
 	}
 
 	@Override
 	public UserDtls saveUser(UserDtls user) {
-	    user.setRole("ROLE_USER");
-	    user.setIsEnable(true);
-	    user.setAccountNonLocked(true);
-	    user.setFailedAttempt(0);
-	    user.setCreatedDate(new Date()); // Add creation date
-	    
-	    // Set default profile image if none provided
-	    if (user.getProfileImage() == null || user.getProfileImage().isEmpty()) {
-	        user.setProfileImage("default.png");
-	    }
+		user.setRole("ROLE_USER");
+		user.setIsEnable(true);
+		user.setAccountNonLocked(true);
+		user.setFailedAttempt(0);
+		user.setCreatedDate(new Date()); // Add creation date
 
-	    String encodePassword = passwordEncoder.encode(user.getPassword());
-	    user.setPassword(encodePassword);
-	    UserDtls saveUser = userRepository.save(user);
-	    return saveUser;
+		// Set default profile image if none provided
+		if (user.getProfileImage() == null || user.getProfileImage().isEmpty()) {
+			user.setProfileImage("default.png");
+		}
+
+		String encodePassword = passwordEncoder.encode(user.getPassword());
+		user.setPassword(encodePassword);
+		UserDtls saveUser = userRepository.save(user);
+		return saveUser;
 	}
+
 	@Override
 	public UserDtls getUserById(Integer id) {
-	    Optional<UserDtls> user = userRepository.findById(id);
-	    return user.orElse(null);
+		Optional<UserDtls> user = userRepository.findById(id);
+		return user.orElse(null);
 	}
 
 	@Override
@@ -176,53 +177,53 @@ private FileServiceImpl fileServiceImpl;
 
 	@Override
 	public UserDtls updateUserProfile(UserDtls user, MultipartFile img) {
-	    UserDtls dbUser = userRepository.findById(user.getId()).get();
+		UserDtls dbUser = userRepository.findById(user.getId()).get();
 
-	    if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
-	        dbUser.setProfileImage(user.getProfileImage());
-	    }
+		if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
+			dbUser.setProfileImage(user.getProfileImage());
+		}
 
-	    if (!ObjectUtils.isEmpty(dbUser)) {
-	        dbUser.setName(user.getName());
-	        dbUser = userRepository.save(dbUser);
-	    }
+		if (!ObjectUtils.isEmpty(dbUser)) {
+			dbUser.setName(user.getName());
+			dbUser = userRepository.save(dbUser);
+		}
 
-	    try {
-	        if (!img.isEmpty()) {
-	            // Save locally with original filename
-	            String uploadDir = System.getProperty("user.dir") + "/uploads/profile_img/";
-	            File uploadFolder = new File(uploadDir);
-	            if (!uploadFolder.exists()) {
-	                uploadFolder.mkdirs();
-	            }
+		try {
+			if (!img.isEmpty()) {
+				// Save locally with original filename
+				String uploadDir = System.getProperty("user.dir") + "/uploads/profile_img/";
+				File uploadFolder = new File(uploadDir);
+				if (!uploadFolder.exists()) {
+					uploadFolder.mkdirs();
+				}
 
-	            Path filePath = Paths.get(uploadDir, img.getOriginalFilename());
-	            Files.copy(img.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+				Path filePath = Paths.get(uploadDir, img.getOriginalFilename());
+				Files.copy(img.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-	    return dbUser;
+		return dbUser;
 	}
 
 	@Override
 	public UserDtls saveAdmin(UserDtls user) {
-	    user.setRole("ROLE_ADMIN");
-	    user.setIsEnable(true);
-	    user.setAccountNonLocked(true);
-	    user.setFailedAttempt(0);
-	    user.setCreatedDate(new Date()); // Add creation date
-	    
-	    // Set default profile image if none provided
-	    if (user.getProfileImage() == null || user.getProfileImage().isEmpty()) {
-	        user.setProfileImage("default.png");
-	    }
+		user.setRole("ROLE_ADMIN");
+		user.setIsEnable(true);
+		user.setAccountNonLocked(true);
+		user.setFailedAttempt(0);
+		user.setCreatedDate(new Date()); // Add creation date
 
-	    String encodePassword = passwordEncoder.encode(user.getPassword());
-	    user.setPassword(encodePassword);
-	    UserDtls saveUser = userRepository.save(user);
-	    return saveUser;
+		// Set default profile image if none provided
+		if (user.getProfileImage() == null || user.getProfileImage().isEmpty()) {
+			user.setProfileImage("default.png");
+		}
+
+		String encodePassword = passwordEncoder.encode(user.getPassword());
+		user.setPassword(encodePassword);
+		UserDtls saveUser = userRepository.save(user);
+		return saveUser;
 	}
 
 	@Override
@@ -234,6 +235,5 @@ private FileServiceImpl fileServiceImpl;
 	public List<UserDtls> getAllUsers() {
 		return userRepository.findAll();
 	}
-
 
 }

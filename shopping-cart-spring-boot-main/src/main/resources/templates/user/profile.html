@@ -27,11 +27,10 @@
 
 					<!-- Profile Image -->
 					<div class="d-flex justify-content-center mb-4">
-						<img th:src="${user.profileImage}"
-							 alt="Profile Image"
-							 class="border p-2"
-							 style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover;"
-							 onerror="this.src='/img/profile_img/default.png'">
+						<img th:src="${user.profileImage != null && #strings.startsWith(user.profileImage, 'http') ? user.profileImage : '/img/profile_img/' + (user.profileImage ?: 'default.png')}"
+							alt="Profile Image" class="border p-2"
+							style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover;"
+							onerror="this.src='/img/profile_img/default.png'">
 					</div>
 
 					<!-- Profile Update Form -->
@@ -85,14 +84,14 @@
 							<div class="d-flex align-items-center justify-content-between">
 								<div>
 									<p class="fw-bold mb-1">Two-Factor Authentication (OTP)</p>
-									<p class="text-muted mb-0">Receive a one-time code to your email every time you sign in.</p>
+									<p class="text-muted mb-0">Receive a one-time code to your email every time you sign
+										in.</p>
 								</div>
 								<form action="/user/toggle-otp" method="post" class="ms-4">
 									<div class="form-check form-switch mb-0">
 										<input class="form-check-input" type="checkbox" role="switch"
-											   style="width:2.5em;height:1.3em;cursor:pointer;"
-											   th:checked="${user.otpEnabled}"
-											   onchange="this.form.submit()">
+											style="width:2.5em;height:1.3em;cursor:pointer;"
+											th:checked="${user.otpEnabled}" onchange="this.form.submit()">
 									</div>
 								</form>
 							</div>

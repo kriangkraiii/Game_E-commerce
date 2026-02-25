@@ -29,6 +29,9 @@ public class FileServiceImpl implements FileService {
 	@Value("${aws.s3.bucket.profile}")
 	private String profileBucket;
 
+	@Value("${aws.s3.bucket.gamefile}")
+	private String gamefileBucket;
+
 	@Override
 	public Boolean uploadFileS3(MultipartFile file, Integer bucketType) {
 
@@ -43,6 +46,8 @@ public class FileServiceImpl implements FileService {
 				bucketName = productBucket;
 			} else if (bucketType == 3) {
 				bucketName = profileBucket;
+			} else if (bucketType == 6) {
+				bucketName = gamefileBucket;
 			}
 
 			String fileName = file.getOriginalFilename();
@@ -63,5 +68,47 @@ public class FileServiceImpl implements FileService {
 
 		}
 		return false;
+	}
+
+	@Override
+	public InputStream downloadFileS3(String key, Integer bucketType) {
+		String bucketName = getBucketNameByType(bucketType);
+		if (bucketName == null || key == null)
+			return null;
+
+		try {
+			if (amazonS3.doesObjectExist(bucketName, key)) {
+				return amazonS3.getObject(bucketName, key).getObjectContent();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public boolean fileExistsS3(String key, Integer bucketType) {
+		String bucketName = getBucketNameByType(bucketType);
+		if (bucketName == null || key == null)
+			return false;
+
+		try {
+			return amazonS3.doesObjectExist(bucketName, key);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	private String getBucketNameByType(Integer bucketType) {
+		if (bucketType == 1)
+			return categoryBucket;
+		if (bucketType == 2)
+			return productBucket;
+		if (bucketType == 3)
+			return profileBucket;
+		if (bucketType == 6)
+			return gamefileBucket;
+		return null;
 	}
 }

@@ -361,17 +361,14 @@ public class AdminController {
 
 		// Handle game file upload for Secure Digital Delivery (AES-256)
 		if (gameFile != null && !gameFile.isEmpty()) {
-			String gameUploadDir = System.getProperty("user.dir") + "/uploads/game_files/";
-			File gameFolder = new File(gameUploadDir);
-			if (!gameFolder.exists()) {
-				gameFolder.mkdirs();
-			}
-
 			String originalName = gameFile.getOriginalFilename();
 			String safeFileName = System.currentTimeMillis() + "_" + originalName;
-			Path gameFilePath = Paths.get(gameUploadDir + safeFileName);
-			Files.copy(gameFile.getInputStream(), gameFilePath, StandardCopyOption.REPLACE_EXISTING);
-			product.setGameFilePath("uploads/game_files/" + safeFileName);
+
+			// Upload game file to S3 (BucketType 6 = GAMEFILE)
+			fileService.uploadFileS3(gameFile, 6);
+
+			// Store the S3 object key (which is the original name used by FileServiceImpl)
+			product.setGameFilePath(originalName);
 
 			// Auto-set file size if not provided
 			if (product.getFileSize() == null || product.getFileSize().isEmpty()) {
@@ -544,17 +541,12 @@ public class AdminController {
 			// Handle game file upload for Secure Digital Delivery (AES-256)
 			if (gameFile != null && !gameFile.isEmpty()) {
 				try {
-					String gameUploadDir = System.getProperty("user.dir") + "/uploads/game_files/";
-					File gameFolder = new File(gameUploadDir);
-					if (!gameFolder.exists()) {
-						gameFolder.mkdirs();
-					}
-
 					String originalName = gameFile.getOriginalFilename();
-					String safeFileName = System.currentTimeMillis() + "_" + originalName;
-					Path gameFilePath = Paths.get(gameUploadDir + safeFileName);
-					Files.copy(gameFile.getInputStream(), gameFilePath, StandardCopyOption.REPLACE_EXISTING);
-					product.setGameFilePath("uploads/game_files/" + safeFileName);
+					// Upload game file to S3 (BucketType 6 = GAMEFILE)
+					fileService.uploadFileS3(gameFile, 6);
+
+					// Store the S3 object key
+					product.setGameFilePath(originalName);
 
 					// Auto-set file size if not provided
 					if (product.getFileSize() == null || product.getFileSize().isEmpty()) {

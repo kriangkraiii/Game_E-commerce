@@ -1,8 +1,8 @@
 package com.ecom.util;
 
 public enum BucketType {
-	
-	CATEGORY(1, ""), PRODUCT(2, ""), PROFILE(3, "");
+
+	CATEGORY(1, ""), PRODUCT(2, ""), PROFILE(3, ""), GAMEFILE(6, "");
 
 	private Integer id;
 
@@ -28,6 +28,5 @@ public enum BucketType {
 	public void setName(String name) {
 		this.name = name;
 	}
-
 
 }

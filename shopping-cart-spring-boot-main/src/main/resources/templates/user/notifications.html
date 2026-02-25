@@ -142,10 +142,9 @@
 				<div class="notification-content">
 
 					<!-- Actor Avatar -->
-					<img th:if="${notification.actor != null}" 
-						 th:src="@{'/static/img/profile_img/' + ${notification.actor.profileImage}}"
-						 class="notification-avatar"
-						 alt="User avatar">
+					<img th:if="${notification.actor != null}"
+						th:src="${notification.actor.profileImage != null && #strings.startsWith(notification.actor.profileImage, 'http') ? notification.actor.profileImage : '/img/profile_img/' + (notification.actor.profileImage ?: 'default.png')}"
+						class="notification-avatar" alt="User avatar">
 
 					<div class="notification-details">
 						<div class="notification-message" th:text="${notification.message}">Notification message</div>
@@ -156,7 +155,8 @@
 
 					<div class="notification-icon"
 						th:classappend="${notification.type.name() == 'POST_LIKE' || notification.type.name() == 'LIKE'} ? ' like' : ' comment'">
-						<i th:class="${notification.type.name() == 'POST_LIKE' || notification.type.name() == 'LIKE'} ? 'fas fa-heart' : 'fas fa-comment'"></i>
+						<i
+							th:class="${notification.type.name() == 'POST_LIKE' || notification.type.name() == 'LIKE'} ? 'fas fa-heart' : 'fas fa-comment'"></i>
 					</div>
 				</div>
 
@@ -172,7 +172,7 @@
 			const CSRF_HEADER = /*[[${_csrf?.headerName}]]*/ 'X-CSRF-TOKEN';
 
 			function authHeaders() {
-				const h = {'X-Requested-With': 'XMLHttpRequest'};
+				const h = { 'X-Requested-With': 'XMLHttpRequest' };
 				if (CSRF_TOKEN) h[CSRF_HEADER] = CSRF_TOKEN;
 				return h;
 			}
