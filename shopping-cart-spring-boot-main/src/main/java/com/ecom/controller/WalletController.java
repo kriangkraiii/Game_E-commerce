@@ -318,6 +318,13 @@ public class WalletController {
             return ResponseEntity.ok(response);
         }
 
+        // Block transfers to admin accounts
+        if ("ROLE_ADMIN".equals(receiver.getRole())) {
+            response.put("success", false);
+            response.put("message", "ไม่สามารถโอนเงินให้แอดมินได้");
+            return ResponseEntity.ok(response);
+        }
+
         if (currentUser.getId().equals(receiver.getId())) {
             response.put("success", false);
             response.put("message", "ไม่สามารถโอนเงินให้ตัวเองได้");

@@ -410,6 +410,11 @@ public class WalletService {
             return TransferResult.failed("ไม่สามารถโอนเงินให้ตัวเองได้");
         }
 
+        // 3.5 ห้ามโอนเงินให้แอดมิน
+        if ("ROLE_ADMIN".equals(receiver.getRole())) {
+            return TransferResult.failed("ไม่สามารถโอนเงินให้แอดมินได้");
+        }
+
         // 4. ตรวจสอบยอดเงินเพียงพอ
         Wallet senderWallet = getOrCreateWallet(sender);
         if (senderWallet.getBalance().compareTo(amount) < 0) {
